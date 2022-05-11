@@ -9843,6 +9843,11 @@ type Mutation {
   createInquiryOfferOrder(
     input: CommerceCreateInquiryOfferOrderWithArtworkInput!
   ): CommerceCreateInquiryOfferOrderWithArtworkPayload
+
+  # Creates an order and links the conversation to it
+  createInquiryOrder(
+    input: CommerceCreateInquiryOrderWithArtworkInput!
+  ): CommerceCreateInquiryOrderWithArtworkPayload
   createSavedSearch(input: CreateSavedSearchInput!): CreateSavedSearchPayload
   createSmsSecondFactor(input: CreateSmsSecondFactorInput!): CreateSmsSecondFactorPayload
   createUserAddress(input: CreateUserAddressInput!): CreateUserAddressPayload
@@ -11508,6 +11513,16 @@ type Query {
     tagID: String
     width: String
   ): FilterArtworksConnection
+
+  # A connection of artworks for a user.
+  artworksForUser(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    page: Int
+    userId: String
+  ): ArtworkConnection
 
   # An auction result
   auctionResult(
@@ -14796,6 +14811,16 @@ type Viewer {
     tagID: String
     width: String
   ): FilterArtworksConnection
+
+  # A connection of artworks for a user.
+  artworksForUser(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    page: Int
+    userId: String
+  ): ArtworkConnection
 
   # An auction result
   auctionResult(
