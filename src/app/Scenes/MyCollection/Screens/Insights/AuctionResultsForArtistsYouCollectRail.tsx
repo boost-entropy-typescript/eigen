@@ -3,11 +3,11 @@ import { AuctionResultListItemFragmentContainer } from "app/Components/Lists/Auc
 import { SectionTitle } from "app/Components/SectionTitle"
 import { navigate } from "app/navigation/navigate"
 import { extractNodes } from "app/utils/extractNodes"
-import { useScreenDimensions } from "app/utils/useScreenDimensions"
 import { Flex, Separator } from "palette"
 import React from "react"
 import { FlatList } from "react-native-gesture-handler"
 import { graphql, useFragment } from "react-relay"
+import { useScreenDimensions } from "shared/hooks"
 
 interface AuctionResultsForArtistsYouCollectRailProps {
   auctionResults: AuctionResultsForArtistsYouCollectRail_me$key
@@ -30,7 +30,7 @@ export const AuctionResultsForArtistsYouCollectRail: React.FC<
     <Flex pb={3}>
       <SectionTitle
         title="Auction Results"
-        subtitle="Recent Auction Results from the Artists You Collect"
+        subtitle="Based on Auction Results for the Last 36 Months"
         onPress={() => {
           navigate("/auction-results-for-artists-you-collect")
         }}

@@ -2,12 +2,12 @@
 // import { StorybookUIRoot } from "../storybook/storybook-ui"
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
-import { SafeAreaInsets } from "app/types/SafeAreaInsets"
 import React, { useEffect } from "react"
 import { AppRegistry, LogBox, Platform, View } from "react-native"
 import { GraphQLTaggedNode } from "relay-runtime"
+import { SafeAreaInsets, useScreenDimensions } from "shared/hooks"
+import { ArtsyKeyboardAvoidingViewContext } from "shared/utils"
 import { AppProviders } from "./AppProviders"
-import { ArtsyKeyboardAvoidingViewContext } from "./Components/ArtsyKeyboardAvoidingView"
 import { ArtsyReactWebViewPage, useWebViewCookies } from "./Components/ArtsyReactWebView"
 import { FadeIn } from "./Components/FadeIn"
 import { FPSCounter } from "./Components/FPSCounter"
@@ -96,6 +96,7 @@ import { OrderHistoryQueryRender } from "./Scenes/OrderHistory/OrderHistory"
 import { PartnerQueryRenderer } from "./Scenes/Partner"
 import { PartnerLocationsQueryRenderer } from "./Scenes/Partner/Screens/PartnerLocations"
 import { PrivacyRequest } from "./Scenes/PrivacyRequest"
+import { ReverseSearchImageResults } from "./Scenes/ReverseSearchImageResults/ReverseSearchImageResults"
 import { SaleQueryRenderer, SaleScreenQuery } from "./Scenes/Sale"
 import { SaleFAQ } from "./Scenes/SaleFAQ/SaleFAQ"
 import { SaleInfoQueryRenderer } from "./Scenes/SaleInfo"
@@ -132,7 +133,6 @@ import { useDebugging } from "./utils/useDebugging"
 import { useFreshInstallTracking } from "./utils/useFreshInstallTracking"
 import { useIdentifyUser } from "./utils/useIdentifyUser"
 import { usePreferredThemeTracking } from "./utils/usePreferredThemeTracking"
-import { useScreenDimensions } from "./utils/useScreenDimensions"
 import { useScreenReaderTracking } from "./utils/useScreenReaderTracking"
 import { useStripeConfig } from "./utils/useStripeConfig"
 import useSyncNativeAuthState from "./utils/useSyncAuthState"
@@ -423,6 +423,7 @@ export const modules = defineModules({
   PartnerLocations: reactModule(PartnerLocations),
   PrivacyRequest: reactModule(PrivacyRequest),
   RequestForPriceEstimateScreen: reactModule(RequestForPriceEstimateScreen),
+  ReverseSearchImageResults: reactModule(ReverseSearchImageResults),
   Sales: reactModule(SellWithArtsy, { isRootViewForTabName: "sell" }, [
     SellWithArtsyHomeScreenQuery,
   ]),
