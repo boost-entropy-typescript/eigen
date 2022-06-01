@@ -1,24 +1,34 @@
 import { MyCollectionInsightsQuery } from "__generated__/MyCollectionInsightsQuery.graphql"
+import { StickyTabPageFlatListContext } from "app/Components/StickyTabPage/StickyTabPageFlatList"
 import { StickyTabPageScrollView } from "app/Components/StickyTabPage/StickyTabPageScrollView"
 import { defaultEnvironment } from "app/relay/createEnvironment"
-import { useFeatureFlag } from "app/store/GlobalStore"
+import { Tab } from "app/Scenes/MyProfile/MyProfileHeaderMyCollectionAndSavedWorks"
+import { setVisualClueAsSeen, useFeatureFlag, useVisualClue } from "app/store/GlobalStore"
 import { extractNodes } from "app/utils/extractNodes"
-import { MY_COLLECTION_REFRESH_KEY, RefreshEvents } from "app/utils/refreshHelpers"
+import {
+  MY_COLLECTION_INSIGHTS_REFRESH_KEY,
+  MY_COLLECTION_REFRESH_KEY,
+  RefreshEvents,
+} from "app/utils/refreshHelpers"
 import { Flex, Spinner, useSpace } from "palette"
-import React, { Suspense, useEffect, useState } from "react"
+import React, { Suspense, useContext, useEffect, useState } from "react"
 import { RefreshControl } from "react-native"
 import { useLazyLoadQuery } from "react-relay"
 import { fetchQuery, graphql } from "relay-runtime"
+import { MyCollectionArtworkUploadMessages } from "../ArtworkForm/MyCollectionArtworkUploadMessages"
 import { ActivateMoreMarketInsightsBanner } from "./ActivateMoreMarketInsightsBanner"
 import { AuctionResultsForArtistsYouCollectRail } from "./AuctionResultsForArtistsYouCollectRail"
 import { MarketSignalsSectionHeader } from "./MarketSignalsSectionHeader"
 import { MyCollectionInsightsEmptyState } from "./MyCollectionInsightsEmptyState"
 import { MyCollectionInsightsOverview } from "./MyCollectionInsightsOverview"
+import { MyCollectionInsightsIncompleteMessage } from "./MyCollectionMessages"
 
 export const MyCollectionInsights: React.FC<{}> = ({}) => {
+  const { showVisualClue } = useVisualClue()
   const space = useSpace()
   const enablePhase1 = useFeatureFlag("AREnableMyCollectionInsightsPhase1Part1")
 
+  const [areInsightsIncomplete, setAreInsightsIncomplete] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const data = useLazyLoadQuery<MyCollectionInsightsQuery>(MyCollectionInsightsScreenQuery, {}, {})
@@ -28,11 +38,19 @@ export const MyCollectionInsights: React.FC<{}> = ({}) => {
   const hasMarketSignals = !!data.me?.auctionResults?.totalCount
 
   useEffect(() => {
-    RefreshEvents.addListener(MY_COLLECTION_REFRESH_KEY, refresh)
+    RefreshEvents.addListener(MY_COLLECTION_REFRESH_KEY, handleRefreshEvent)
+    RefreshEvents.addListener(MY_COLLECTION_INSIGHTS_REFRESH_KEY, handleRefreshEvent)
     return () => {
-      RefreshEvents.removeListener(MY_COLLECTION_REFRESH_KEY, refresh)
+      RefreshEvents.removeListener(MY_COLLECTION_REFRESH_KEY, handleRefreshEvent)
+      RefreshEvents.removeListener(MY_COLLECTION_INSIGHTS_REFRESH_KEY, handleRefreshEvent)
     }
   }, [])
+
+  const handleRefreshEvent = (...args: any[]) => {
+    refresh()
+
+    setAreInsightsIncomplete(!!args[0]?.collectionHasArtworksWithoutInsights)
+  }
 
   const refresh = () => {
     if (isRefreshing) {
@@ -51,6 +69,31 @@ export const MyCollectionInsights: React.FC<{}> = ({}) => {
     })
   }
 
+  const setJSX = useContext(StickyTabPageFlatListContext).setJSX
+
+  const showMessages = async () => {
+    const showMyCollectionInsightsIncompleteMessage =
+      showVisualClue("MyCollectionInsightsIncompleteMessage") && areInsightsIncomplete
+
+    setJSX(
+      <Flex>
+        {!!showMyCollectionInsightsIncompleteMessage && (
+          <MyCollectionInsightsIncompleteMessage
+            onClose={() => setVisualClueAsSeen("MyCollectionInsightsIncompleteMessage")}
+          />
+        )}
+        <MyCollectionArtworkUploadMessages
+          sourceTab={Tab.insights}
+          hasMarketSignals={hasMarketSignals}
+        />
+      </Flex>
+    )
+  }
+
+  useEffect(() => {
+    showMessages()
+  }, [data.me?.myCollectionInfo?.artworksCount, areInsightsIncomplete])
+
   const renderContent = () => {
     return (
       <>
@@ -58,7 +101,7 @@ export const MyCollectionInsights: React.FC<{}> = ({}) => {
         {hasMarketSignals && !!enablePhase1 && (
           <>
             <MarketSignalsSectionHeader />
-            <AuctionResultsForArtistsYouCollectRail auctionResults={data.me!} />
+            <AuctionResultsForArtistsYouCollectRail me={data.me!} />
             {/* TODO: The banner should be visible always as long as the user has at least an artwork with insights */}
             <ActivateMoreMarketInsightsBanner />
           </>
@@ -103,10 +146,11 @@ export const MyCollectionInsightsScreenQuery = graphql`
   query MyCollectionInsightsQuery {
     me {
       ...AuctionResultsForArtistsYouCollectRail_me
-      auctionResults: myCollectionAuctionResults(first: 1) {
+      auctionResults: myCollectionAuctionResults(first: 3) {
         totalCount
       }
       myCollectionInfo {
+        artworksCount
         ...MyCollectionInsightsOverview_myCollectionInfo
       }
       myCollectionConnection(first: 1) {
