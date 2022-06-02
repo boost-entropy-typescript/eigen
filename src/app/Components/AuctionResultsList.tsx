@@ -1,44 +1,58 @@
-import { AuctionResultListItem_auctionResult } from "__generated__/AuctionResultListItem_auctionResult.graphql"
+import {
+  AuctionResultListItem_auctionResult,
+  AuctionResultListItem_auctionResult$key,
+} from "__generated__/AuctionResultListItem_auctionResult.graphql"
 import { PlaceholderBox, PlaceholderText, ProvidePlaceholderContext } from "app/utils/placeholders"
+import { groupBy } from "lodash"
+import moment from "moment"
 import { Flex, Separator, Spacer, Text } from "palette"
 import React from "react"
 import { RefreshControl, SectionList, SectionListData } from "react-native"
 import { useScreenDimensions } from "shared/hooks"
 import { AuctionResultListItemFragmentContainer } from "./Lists/AuctionResultListItem"
-import { PageWithSimpleHeader } from "./PageWithSimpleHeader"
 import Spinner from "./Spinner"
 
-interface SectionT {
-  [key: string]: any
-}
-type ItemT = any // TODO: ><'
-
 interface AuctionResultsListProps {
-  sections: ReadonlyArray<SectionListData<ItemT, SectionT>>
+  auctionResults: Array<
+    AuctionResultListItem_auctionResult$key & { readonly saleDate: string | null }
+  >
   refreshing: boolean
   handleRefresh: () => void
   onEndReached: () => void
-  ListHeaderComponent: React.ReactElement
+  ListHeaderComponent?: React.FC
   onItemPress: (item: AuctionResultListItem_auctionResult) => void
   isLoadingNext: boolean
 }
 
-export const AuctionResultsList: React.FC<AuctionResultsListProps> = (props) => {
-  const {
-    sections,
-    refreshing,
-    handleRefresh,
-    onEndReached,
-    ListHeaderComponent,
-    onItemPress,
-    isLoadingNext,
-  } = props
+interface SectionT {
+  [key: string]: any
+}
+
+export const AuctionResultsList: React.FC<AuctionResultsListProps> = ({
+  auctionResults,
+  refreshing,
+  handleRefresh,
+  onEndReached,
+  ListHeaderComponent,
+  onItemPress,
+  isLoadingNext,
+}) => {
+  const groupedAuctionResults = groupBy(auctionResults, (item) =>
+    moment(item!.saleDate!).format("YYYY-MM")
+  )
+
+  const groupedAuctionResultSections: ReadonlyArray<SectionListData<any, SectionT>> =
+    Object.entries(groupedAuctionResults).map(([date, data]) => {
+      const sectionTitle = moment(date).format("MMMM, YYYY")
+
+      return { sectionTitle, data }
+    })
 
   return (
     <Flex flexDirection="column" justifyContent="space-between" height="100%">
       <SectionList
         testID="Results_Section_List"
-        sections={sections}
+        sections={groupedAuctionResultSections}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={onEndReached}
         keyExtractor={(item) => item.internalID}
@@ -54,13 +68,11 @@ export const AuctionResultsList: React.FC<AuctionResultsListProps> = (props) => 
         )}
         renderItem={({ item }) =>
           item ? (
-            <Flex>
-              <AuctionResultListItemFragmentContainer
-                auctionResult={item}
-                showArtistName
-                onPress={() => onItemPress(item)}
-              />
-            </Flex>
+            <AuctionResultListItemFragmentContainer
+              auctionResult={item}
+              showArtistName
+              onPress={() => onItemPress(item)}
+            />
           ) : (
             <></>
           )
@@ -79,7 +91,6 @@ export const AuctionResultsList: React.FC<AuctionResultsListProps> = (props) => 
 }
 
 export const LoadingSkeleton: React.FC<{ title: string; listHeader: React.ReactElement }> = ({
-  title,
   listHeader,
 }) => {
   const placeholderResults = []
@@ -117,16 +128,16 @@ export const LoadingSkeleton: React.FC<{ title: string; listHeader: React.ReactE
   }
   return (
     <ProvidePlaceholderContext>
-      <PageWithSimpleHeader title={title}>
-        {listHeader}
-        <Flex mx={2}>
-          <Spacer height={20} />
-          <PlaceholderText height={24} width={100 + Math.random() * 50} />
-          <Spacer height={10} />
-          <Separator borderColor="black10" />
-          {placeholderResults}
-        </Flex>
-      </PageWithSimpleHeader>
+      <Spacer mb={5} />
+
+      {listHeader}
+      <Flex mx={2}>
+        <Spacer height={20} />
+        <PlaceholderText height={24} width={100 + Math.random() * 50} />
+        <Spacer height={10} />
+        <Separator borderColor="black10" />
+        {placeholderResults}
+      </Flex>
     </ProvidePlaceholderContext>
   )
 }
