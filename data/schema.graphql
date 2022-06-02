@@ -1122,6 +1122,7 @@ type ArticleSponsor {
 }
 
 type Artist implements EntityWithFilterArtworksConnectionInterface & Node & Searchable {
+  activeSecondaryMarket: Boolean
   alternateNames: [String]
   articlesConnection(
     after: String
@@ -4920,6 +4921,7 @@ type CommerceShippingQuote {
     # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
     timezone: String
   ): String!
+  currencyCode: String!
   displayName: String!
   id: ID!
   isSelected: Boolean!
