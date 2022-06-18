@@ -105,12 +105,6 @@ export const features = defineFeatures({
     showInAdminMenu: true,
     echoFlagKey: "AREnableQueriesPrefetching",
   },
-  ARShowLinkedAccounts: {
-    readyForRelease: true,
-    description: "Show linked social accounts",
-    showInAdminMenu: true,
-    echoFlagKey: "ARShowLinkedAccounts",
-  },
   ARAllowLinkSocialAccountsOnSignUp: {
     readyForRelease: true,
     description: "Allow linking of social accounts on sign up",
@@ -201,9 +195,10 @@ export const features = defineFeatures({
     echoFlagKey: "AREnableAuctionShareButton",
   },
   AREnableNewOpaqueImageView: {
-    readyForRelease: false,
+    readyForRelease: true,
     description: "Enable New Opaque Image View",
     showInAdminMenu: true,
+    echoFlagKey: "AREnableNewOpaqueImageView",
   },
   AREnableConversationalBuyNow: {
     readyForRelease: false,
