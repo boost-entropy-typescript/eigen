@@ -1,5 +1,4 @@
 import { Sans } from "palette"
-import React from "react"
 import { TouchableWithoutFeedback } from "react-native"
 import { graphql, QueryRenderer } from "react-relay"
 import { ReactTestRenderer } from "react-test-renderer"
@@ -8,7 +7,8 @@ import { createMockEnvironment } from "relay-test-utils"
 import { EmailConfirmationBanner_me$data } from "__generated__/EmailConfirmationBanner_me.graphql"
 import { EmailConfirmationBannerTestsQuery } from "__generated__/EmailConfirmationBannerTestsQuery.graphql"
 import { flushPromiseQueue } from "app/tests/flushPromiseQueue"
-import { renderWithWrappers } from "app/tests/renderWithWrappers"
+import { rejectMostRecentRelayOperation } from "app/tests/rejectMostRecentRelayOperation"
+import { renderWithWrappersLEGACY } from "app/tests/renderWithWrappers"
 import { CleanRelayFragment } from "app/utils/relayHelpers"
 import { EmailConfirmationBannerFragmentContainer } from "./EmailConfirmationBanner"
 
@@ -40,7 +40,7 @@ describe("EmailConfirmationBanner", () => {
   )
 
   const mount = (data: { me: CleanRelayFragment<EmailConfirmationBanner_me$data> }) => {
-    const component = renderWithWrappers(<TestRenderer />)
+    const component = renderWithWrappersLEGACY(<TestRenderer />)
     env.mock.resolveMostRecentOperation({ data, errors: [] })
     return component
   }
@@ -169,7 +169,7 @@ describe("EmailConfirmationBanner", () => {
 
     getSubmitButton(component).props.onPress()
 
-    env.mock.rejectMostRecentOperation(new Error("failed to fetch"))
+    rejectMostRecentRelayOperation(env, new Error("failed to fetch"))
 
     await flushPromiseQueue()
     expect(extractText(component)).toEqual("Something went wrong. Try again?")

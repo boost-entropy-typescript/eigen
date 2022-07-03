@@ -18,7 +18,6 @@ import { mockNavigate } from "app/tests/navigationMocks"
 import { renderWithWrappersTL } from "app/tests/renderWithWrappers"
 import { resolveMostRecentRelayOperation } from "app/tests/resolveMostRecentRelayOperation"
 import { Theme } from "palette"
-import React from "react"
 import { graphql, QueryRenderer } from "react-relay"
 import { useTracking } from "react-tracking"
 import { createMockEnvironment } from "relay-test-utils"
@@ -298,9 +297,9 @@ describe("Filter modal navigation flow", () => {
   })
 
   it("allows users to exit filter modal screen when selecting close icon", () => {
-    const { getByA11yLabel } = renderWithWrappersTL(<MockFilterModalNavigator />)
+    const { getByLabelText } = renderWithWrappersTL(<MockFilterModalNavigator />)
 
-    fireEvent.press(getByA11yLabel("Header back button"))
+    fireEvent.press(getByLabelText("Header back button"))
 
     expect(closeModalMock).toHaveBeenCalled()
   })

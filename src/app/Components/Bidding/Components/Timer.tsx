@@ -164,7 +164,7 @@ export const Countdown: React.FC<CountdownProps> = ({
   const cascadingEndTimeFeatureEnabled = useFeatureFlag("AREnableCascadingEndTimerLotPage")
 
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="center" accessibilityLabel="Countdown">
       {cascadingEndTimeFeatureEnabled && cascadingEndTimeIntervalMinutes ? (
         <ModernTicker duration={duration} hasStarted={hasStarted} isExtended={hasBeenExtended} />
       ) : (
@@ -188,7 +188,7 @@ export const Countdown: React.FC<CountdownProps> = ({
         <>
           <Spacer mt={1} />
           <Text variant="xs" color="black60" textAlign="center">
-            *Closure times may be extended to accomodate last minute bids
+            *Closure times may be extended to accommodate last minute bids
           </Text>
         </>
       )}

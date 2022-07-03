@@ -608,12 +608,12 @@ describe("Search Screen", () => {
     })
 
     it("when clear button is pressed", () => {
-      const { queryByA11yState, getByPlaceholderText, getByText, getByA11yLabel } = tree
+      const { queryByA11yState, getByPlaceholderText, getByText, getByLabelText } = tree
       const searchInput = getByPlaceholderText("Search artists, artworks, galleries, etc")
 
       fireEvent(searchInput, "changeText", "prev value")
       fireEvent(getByText("Artists"), "press")
-      fireEvent(getByA11yLabel("Clear input button"), "press")
+      fireEvent(getByLabelText("Clear input button"), "press")
       fireEvent(searchInput, "changeText", "new value")
 
       expect(queryByA11yState({ selected: true })).toHaveTextContent("Top")

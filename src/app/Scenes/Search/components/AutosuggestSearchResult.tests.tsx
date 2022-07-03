@@ -2,10 +2,9 @@ import { fireEvent } from "@testing-library/react-native"
 import { EntityType, navigate, navigateToEntity, SlugType } from "app/navigation/navigate"
 import { GlobalStore, GlobalStoreProvider } from "app/store/GlobalStore"
 import { extractText } from "app/tests/extractText"
-import { renderWithWrappers, renderWithWrappersTL } from "app/tests/renderWithWrappers"
+import { renderWithWrappersLEGACY, renderWithWrappersTL } from "app/tests/renderWithWrappers"
 import { CatchErrors } from "app/utils/CatchErrors"
 import { Touchable } from "palette"
-import React from "react"
 import { Pressable } from "react-native"
 import { act } from "react-test-renderer"
 import { SearchContext } from "../SearchContext"
@@ -74,21 +73,21 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it("does not render delete button when onDelete callback is not passed", async () => {
-    const { queryByA11yLabel } = renderWithWrappersTL(<TestWrapper result={result} />)
-    expect(queryByA11yLabel("Remove recent search item")).toBeFalsy()
+    const { queryByLabelText } = renderWithWrappersTL(<TestWrapper result={result} />)
+    expect(queryByLabelText("Remove recent search item")).toBeFalsy()
   })
 
   it("calls onDelete calback when pressing on delete button", async () => {
-    const { getByA11yLabel } = renderWithWrappersTL(
+    const { getByLabelText } = renderWithWrappersTL(
       <TestWrapper result={result} onDelete={onDeleteMock} />
     )
 
-    fireEvent.press(getByA11yLabel("Remove recent search item"))
+    fireEvent.press(getByLabelText("Remove recent search item"))
     expect(onDeleteMock).toHaveBeenCalled()
   })
 
   it("blurs the input and navigates to the correct page when tapped", async () => {
-    const tree = renderWithWrappers(<TestWrapper result={result} />)
+    const tree = renderWithWrappersLEGACY(<TestWrapper result={result} />)
     expect(navigate).not.toHaveBeenCalled()
     tree.root.findByType(Touchable).props.onPress()
     await new Promise((r) => setTimeout(r, 50))
@@ -111,7 +110,7 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it(`updates recent searches by default`, async () => {
-    const tree = renderWithWrappers(<TestWrapper result={result} />)
+    const tree = renderWithWrappersLEGACY(<TestWrapper result={result} />)
     expect(navigate).not.toHaveBeenCalled()
     expect(recentSearchesArray).toHaveLength(0)
     act(() => {
@@ -122,7 +121,7 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it(`won't update recent searches if told not to`, async () => {
-    const tree = renderWithWrappers(
+    const tree = renderWithWrappersLEGACY(
       <TestWrapper result={result} updateRecentSearchesOnTap={false} />
     )
     expect(navigate).not.toHaveBeenCalled()
@@ -135,19 +134,19 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it(`optionally hides the entity type`, () => {
-    const tree = renderWithWrappers(<TestWrapper result={result} />)
+    const tree = renderWithWrappersLEGACY(<TestWrapper result={result} />)
     expect(extractText(tree.root)).not.toContain("Artist")
   })
 
   it(`allows for custom touch handlers on search result items`, () => {
     const spy = jest.fn()
-    const tree = renderWithWrappers(<TestWrapper result={result} onResultPress={spy} />)
+    const tree = renderWithWrappersLEGACY(<TestWrapper result={result} onResultPress={spy} />)
     tree.root.findByType(Touchable).props.onPress()
     expect(spy).toHaveBeenCalled()
   })
 
   it(`navigates correctly when the item is a fair`, async () => {
-    const tree = renderWithWrappers(
+    const tree = renderWithWrappersLEGACY(
       <TestWrapper
         result={{
           displayLabel: "Art Expo 2020",
@@ -171,7 +170,7 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it(`shows navigation buttons when enabled and available`, async () => {
-    const tree = renderWithWrappers(
+    const tree = renderWithWrappersLEGACY(
       <TestWrapper
         result={{
           displayLabel: "Banksy",
@@ -192,7 +191,7 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it(`does not show navigation buttons when disabled`, async () => {
-    const tree = renderWithWrappers(
+    const tree = renderWithWrappersLEGACY(
       <TestWrapper
         result={{
           displayLabel: "Banksy",
@@ -213,7 +212,7 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it(`does not show navigation buttons when enabled, but unavailable`, async () => {
-    const tree = renderWithWrappers(
+    const tree = renderWithWrappersLEGACY(
       <TestWrapper
         result={{
           displayLabel: "Banksy",
@@ -234,7 +233,7 @@ describe(AutosuggestSearchResult, () => {
   })
 
   it(`quick navigation buttons navigate correctly`, async () => {
-    const tree = renderWithWrappers(
+    const tree = renderWithWrappersLEGACY(
       <TestWrapper
         result={{
           displayLabel: "Banksy",

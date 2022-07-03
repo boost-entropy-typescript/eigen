@@ -3,7 +3,6 @@ import OpaqueImageView from "app/Components/OpaqueImageView/OpaqueImageView"
 import { ReadMore } from "app/Components/ReadMore"
 import { Schema } from "app/utils/track"
 import { Box, Sans } from "palette"
-import React from "react"
 import { Dimensions } from "react-native"
 import { createFragmentContainer, graphql } from "react-relay"
 
@@ -30,7 +29,7 @@ export const CollectionHeader: React.FC<CollectionHeaderProps> = (props) => {
         {title}
       </Sans>
       {!!collectionDescription && (
-        <Box mx="2" mb="2" mt="0.3">
+        <Box mx="2" mb="2" mt="0.3" accessibilityLabel="Read more">
           <ReadMore
             content={collectionDescription}
             maxChars={screenWidth > 700 ? 300 : 250} // truncate at 300 characters on iPads and 250 on all other devices

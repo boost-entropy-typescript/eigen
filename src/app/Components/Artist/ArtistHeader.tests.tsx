@@ -1,11 +1,10 @@
 import { ArtistHeaderTestsQuery } from "__generated__/ArtistHeaderTestsQuery.graphql"
-import React from "react"
 import { graphql, QueryRenderer } from "react-relay"
 import { createMockEnvironment } from "relay-test-utils"
 
 import { ArtistHeaderFragmentContainer } from "app/Components/Artist/ArtistHeader"
 import { extractText } from "app/tests/extractText"
-import { renderWithWrappers } from "app/tests/renderWithWrappers"
+import { renderWithWrappersLEGACY } from "app/tests/renderWithWrappers"
 import { resolveMostRecentRelayOperation } from "app/tests/resolveMostRecentRelayOperation"
 import { Button, Sans } from "palette"
 
@@ -39,7 +38,7 @@ describe("ArtistHeader", () => {
   }
 
   it("renders properly", () => {
-    const tree = renderWithWrappers(<TestRenderer />)
+    const tree = renderWithWrappersLEGACY(<TestRenderer />)
 
     resolveMostRecentRelayOperation(mockEnvironment, {
       Artist: () => mockArtist,
@@ -49,7 +48,7 @@ describe("ArtistHeader", () => {
   })
 
   it("displays follow button for artist", () => {
-    const tree = renderWithWrappers(<TestRenderer />)
+    const tree = renderWithWrappersLEGACY(<TestRenderer />)
 
     resolveMostRecentRelayOperation(mockEnvironment, {
       Artist: () => mockArtist,
@@ -61,7 +60,7 @@ describe("ArtistHeader", () => {
   it("does not show followers count when it is < 2", () => {
     mockArtist.counts.follows = 1
 
-    const tree = renderWithWrappers(<TestRenderer />)
+    const tree = renderWithWrappersLEGACY(<TestRenderer />)
 
     resolveMostRecentRelayOperation(mockEnvironment, {
       Artist: () => mockArtist,

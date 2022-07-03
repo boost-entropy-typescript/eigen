@@ -2,7 +2,6 @@ import { fireEvent } from "@testing-library/react-native"
 import { InquiryPurchaseButtonTestsQuery } from "__generated__/InquiryPurchaseButtonTestsQuery.graphql"
 import { navigate } from "app/navigation/navigate"
 import { renderWithWrappersTL } from "app/tests/renderWithWrappers"
-import React from "react"
 import { Alert } from "react-native"
 import { graphql, QueryRenderer } from "react-relay"
 import { act } from "react-test-renderer"
@@ -62,13 +61,13 @@ describe("InquiryPurchaseButton", () => {
   })
 
   it("navigates to the order webview when button is tapped", () => {
-    const { getAllByText } = getWrapper({
+    const { getByText } = getWrapper({
       Artwork: () => ({
         internalID: "test-id",
       }),
     })
 
-    fireEvent.press(getAllByText("Purchase")[1])
+    fireEvent.press(getByText("Purchase"))
     environment.mock.resolveMostRecentOperation((operation) => {
       return MockPayloadGenerator.generate(operation, {
         Mutation: () => {
@@ -92,13 +91,13 @@ describe("InquiryPurchaseButton", () => {
   })
 
   it("presents an error dialogue if mutation returns an error response", () => {
-    const { getAllByText } = getWrapper({
+    const { getByText } = getWrapper({
       Artwork: () => ({
         internalID: "test-id",
       }),
     })
 
-    fireEvent.press(getAllByText("Purchase")[1])
+    fireEvent.press(getByText("Purchase"))
     environment.mock.resolveMostRecentOperation((operation) => {
       return MockPayloadGenerator.generate(operation, {
         Mutation: () => {

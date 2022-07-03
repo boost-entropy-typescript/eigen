@@ -1,7 +1,6 @@
 import { fireEvent } from "@testing-library/react-native"
 import { __globalStoreTestUtils__ } from "app/store/GlobalStore"
 import { renderWithWrappersTL } from "app/tests/renderWithWrappers"
-import React from "react"
 import { AnimatableHeader, AnimatableHeaderProps } from "./AnimatableHeader"
 
 const defaultProps: AnimatableHeaderProps = {
@@ -55,11 +54,11 @@ describe("AnimatableHeader", () => {
 
   it('should call "onLeftButtonPress" handler when back button is pressed', () => {
     const onLeftButtonPressMock = jest.fn()
-    const { getByA11yLabel } = renderWithWrappersTL(
+    const { getByLabelText } = renderWithWrappersTL(
       <TestWrapper onLeftButtonPress={onLeftButtonPressMock} />
     )
 
-    fireEvent.press(getByA11yLabel("Header back button"))
+    fireEvent.press(getByLabelText("Header back button"))
 
     expect(onLeftButtonPressMock).toBeCalled()
   })

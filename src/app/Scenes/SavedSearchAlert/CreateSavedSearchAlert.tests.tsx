@@ -13,7 +13,6 @@ import { mockFetchNotificationPermissions } from "app/tests/mockFetchNotificatio
 import { renderWithWrappersTL } from "app/tests/renderWithWrappers"
 import { resolveMostRecentRelayOperation } from "app/tests/resolveMostRecentRelayOperation"
 import { PushAuthorizationStatus } from "app/utils/PushNotification"
-import React from "react"
 import { createMockEnvironment } from "relay-test-utils"
 import { MockResolvers } from "relay-test-utils/lib/RelayMockPayloadGenerator"
 import { CreateSavedSearchAlert } from "./CreateSavedSearchAlert"
@@ -127,14 +126,14 @@ describe("CreateSavedSearchAlert", () => {
     const onCompleteMock = jest.fn()
 
     setStatusForPushNotifications(PushAuthorizationStatus.Authorized)
-    const { getByTestId, getAllByText } = renderWithWrappersTL(
+    const { getByTestId, getByText } = renderWithWrappersTL(
       <TestRenderer onComplete={onCompleteMock} />
     )
 
     resolveMostRecentRelayOperation(mockEnvironment)
 
     fireEvent.changeText(getByTestId("alert-input-name"), "something new")
-    fireEvent.press(getAllByText("Save Alert")[1])
+    fireEvent.press(getByText("Save Alert"))
 
     // Check alert duplicate
     await mockOperationByName("getSavedSearchIdByCriteriaQuery", {
