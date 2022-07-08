@@ -9701,6 +9701,12 @@ type MarketingCollection {
 
   # Returns collections by the same artist if more than 4 exist, otherwise returns collections from the same category
   relatedCollections(size: Int = 10): [MarketingCollection!]!
+
+  # Show featured artists section in header. Defaults to true
+  showFeaturedArtists: Boolean!
+
+  # Show artworks rail in header. Defaults to true
+  showHeaderArtworksRail: Boolean!
   slug: String!
   thumbnail: String
   title: String!
@@ -9793,6 +9799,39 @@ type MarketPriceInsightsEdge {
 
   # The item at the end of the edge.
   node: MarketPriceInsights
+}
+
+union Match =
+    Article
+  | Artist
+  | Artwork
+  | Fair
+  | Feature
+  | Gene
+  | Page
+  | Profile
+  | Sale
+  | Show
+  | Tag
+
+# A connection to a list of items.
+type MatchConnection {
+  # A list of edges.
+  edges: [MatchEdge]
+  pageCursors: PageCursors!
+
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+# An edge in a connection.
+type MatchEdge {
+  # A cursor for use in pagination
+  cursor: String!
+
+  # The item at the end of the edge
+  node: Match
 }
 
 type Me implements Node {
@@ -12041,6 +12080,22 @@ type Query {
   # Find an agreement by ID
   agreement(id: ID!): Agreement
 
+  # Get the year sparklines for the current artist.
+  analyticsArtistSparklines(
+    # Returns the elements in the list that come after the specified cursor.
+    after: String
+    artistId: String!
+
+    # Returns the elements in the list that come before the specified cursor.
+    before: String
+
+    # Returns the first _n_ elements from the list.
+    first: Int
+
+    # Returns the last _n_ elements from the list.
+    last: Int
+  ): AnalyticsArtistSparklineConnection
+
   # Get all recommended artworks for the current user.
   analyticsArtworkRecommendations(
     # Returns the elements in the list that come after the specified cursor.
@@ -12609,6 +12664,35 @@ type Query {
 
   # Get price insights for a market.
   marketPriceInsights(artistId: ID!, medium: String!): MarketPriceInsights
+  matchConnection(
+    after: String
+    before: String
+
+    # ARTIST_SERIES, CITY, COLLECTION, and VIEWING_ROOM are not yet supported
+    entities: [SearchEntity!] = [
+      ARTICLE
+      ARTIST
+      ARTWORK
+      FAIR
+      FEATURE
+      GALLERY
+      GENE
+      INSTITUTION
+      PAGE
+      PROFILE
+      SALE
+      SHOW
+      TAG
+    ]
+    first: Int
+    last: Int
+
+    # Mode of search to execute
+    mode: SearchMode = SITE
+    page: Int = 1
+    size: Int = 10
+    term: String!
+  ): MatchConnection
   me: Me
 
   # Fetches an object given its globally unique ID.
@@ -13844,6 +13928,7 @@ type SearchCriteria {
   href: String!
   inquireableOnly: Boolean
   internalID: ID!
+  keyword: String
 
   # Human-friendly labels that are added by Metaphysics to the upstream SearchCriteria type coming from Gravity
   labels: [SearchCriteriaLabel!]!
@@ -13872,6 +13957,7 @@ input SearchCriteriaAttributes {
   dimensionRange: String = null
   height: String = null
   inquireableOnly: Boolean = null
+  keyword: String = null
   locationCities: [String!] = []
   majorPeriods: [String!] = []
   materialsTerms: [String!] = []
@@ -15885,6 +15971,35 @@ type Viewer {
     size: Int
     slugs: [String!]
   ): [MarketingCollection]
+  matchConnection(
+    after: String
+    before: String
+
+    # ARTIST_SERIES, CITY, COLLECTION, and VIEWING_ROOM are not yet supported
+    entities: [SearchEntity!] = [
+      ARTICLE
+      ARTIST
+      ARTWORK
+      FAIR
+      FEATURE
+      GALLERY
+      GENE
+      INSTITUTION
+      PAGE
+      PROFILE
+      SALE
+      SHOW
+      TAG
+    ]
+    first: Int
+    last: Int
+
+    # Mode of search to execute
+    mode: SearchMode = SITE
+    page: Int = 1
+    size: Int = 10
+    term: String!
+  ): MatchConnection
   me: Me
 
   # Fetches an object given its globally unique ID.
