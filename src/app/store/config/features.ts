@@ -190,23 +190,17 @@ export const features = defineFeatures({
     showInAdminMenu: true,
     echoFlagKey: "AREnableAuctionShareButton",
   },
-  AREnableNewOpaqueImageView: {
+  AREnableNewImageComponent: {
     readyForRelease: true,
-    description: "Enable New Opaque Image View",
+    description: "Enable New Image Component",
     showInAdminMenu: true,
-    echoFlagKey: "AREnableNewOpaqueImageView",
+    echoFlagKey: "AREnableNewImageComponent",
   },
   AREnableConversationalBuyNow: {
     readyForRelease: true,
     description: "Conversational Buy Now",
     showInAdminMenu: true,
     echoFlagKey: "AREnableConversationalBuyNow",
-  },
-  AREnableCompleteProfileMessage: {
-    readyForRelease: true,
-    description: "Enable Collector Profile Complete Message",
-    showInAdminMenu: true,
-    echoFlagKey: "AREnableCompleteProfileMessage",
   },
   AREnableMyCollectionInsights: {
     readyForRelease: true,
@@ -337,6 +331,9 @@ export const devToggles = defineDevToggles({
   },
   DTShowErrorInLoadFailureView: {
     description: "Show error in load failure view",
+  },
+  DTShowDebugReverseImageView: {
+    description: "Show debug view for reverse image",
   },
 })
 
