@@ -1,21 +1,31 @@
-import { NavigationContainer } from "@react-navigation/native"
+import { NavigationContainer, useFocusEffect } from "@react-navigation/native"
 import { createStackNavigator } from "@react-navigation/stack"
-import { useEffect } from "react"
+import {
+  ArtsyNativeModule,
+  DEFAULT_NAVIGATION_BAR_COLOR,
+} from "app/NativeModules/ArtsyNativeModule"
+import { useCallback } from "react"
 import { Platform, StatusBar } from "react-native"
 import { ReverseImageArtworkNotFoundScreen } from "./Screens/ArtworkNotFound/ReverseImageArtworkNotFoundScreen"
 import { ReverseImageCameraScreen } from "./Screens/Camera/ReverseImageCamera"
 import { ReverseImageMultipleResultsScreen } from "./Screens/MultipleResults/ReverseImageMultipleResults"
 import { ReverseImagePreviewScreen } from "./Screens/Preview/ReverseImagePreview"
-import { ReverseImageNavigationStack } from "./types"
+import { ReverseImageNavigationStack, ReverseImageOwner } from "./types"
+
+interface ReverseImageProps {
+  owner: ReverseImageOwner
+}
 
 const Stack = createStackNavigator<ReverseImageNavigationStack>()
 
-export const ReverseImage = () => {
-  useEffect(() => {
+export const ReverseImage: React.FC<ReverseImageProps> = ({ owner }) => {
+  const onFocusEffect = useCallback(() => {
     StatusBar.setBarStyle("light-content")
 
     if (Platform.OS === "android") {
       StatusBar.setBackgroundColor("transparent")
+      ArtsyNativeModule.setNavigationBarColor("#000000")
+      ArtsyNativeModule.setAppLightContrast(true)
     }
 
     return () => {
@@ -24,9 +34,13 @@ export const ReverseImage = () => {
 
       if (Platform.OS === "android") {
         StatusBar.setBackgroundColor("transparent")
+        ArtsyNativeModule.setNavigationBarColor(DEFAULT_NAVIGATION_BAR_COLOR)
+        ArtsyNativeModule.setAppLightContrast(false)
       }
     }
   }, [])
+
+  useFocusEffect(onFocusEffect)
 
   return (
     <NavigationContainer independent>
@@ -36,9 +50,16 @@ export const ReverseImage = () => {
           headerShown: false,
           headerMode: "screen",
           animationTypeForReplace: "push",
+          cardStyle: {
+            backgroundColor: "#000",
+          },
         }}
       >
-        <Stack.Screen name="Camera" component={ReverseImageCameraScreen} />
+        <Stack.Screen
+          name="Camera"
+          component={ReverseImageCameraScreen}
+          initialParams={{ owner }}
+        />
         <Stack.Screen name="MultipleResults" component={ReverseImageMultipleResultsScreen} />
         <Stack.Screen name="ArtworkNotFound" component={ReverseImageArtworkNotFoundScreen} />
         <Stack.Screen
