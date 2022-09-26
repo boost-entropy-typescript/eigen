@@ -10,7 +10,7 @@ import { captureException, withScope } from "@sentry/react-native"
 import { goBack } from "app/navigation/navigate"
 import { requestPhotos } from "app/utils/requestPhotos"
 import { useIsForeground } from "app/utils/useIsForeground"
-import { BackButton, Flex, Spinner, useColor } from "palette"
+import { Flex, Spinner, useColor } from "palette"
 import { useEffect, useRef, useState } from "react"
 import { Linking, StyleSheet } from "react-native"
 import {
@@ -22,6 +22,7 @@ import {
 import { useTracking } from "react-tracking"
 import { Background, BACKGROUND_COLOR } from "../../Components/Background"
 import { CameraFramesContainer } from "../../Components/CameraFramesContainer"
+import { HeaderBackButton } from "../../Components/HeaderBackButton"
 import { HeaderContainer } from "../../Components/HeaderContainer"
 import { HeaderTitle } from "../../Components/HeaderTitle"
 import { useReverseImageContext } from "../../ReverseImageContext"
@@ -39,7 +40,7 @@ export const ReverseImageCameraScreen: React.FC<Props> = (props) => {
   const { navigation } = props
   const tracking = useTracking()
   const color = useColor()
-  const { analytics } = useReverseImageContext()
+  const { analytics, isRootScreenFocused } = useReverseImageContext()
   const [cameraPermission, setCameraPermission] = useState<CameraPermissionStatus | null>(null)
   const [enableFlash, setEnableFlash] = useState(false)
   const [isCameraInitialized, setIsCameraInitialized] = useState(false)
@@ -53,7 +54,7 @@ export const ReverseImageCameraScreen: React.FC<Props> = (props) => {
 
   const isFocused = useIsFocused()
   const isForeground = useIsForeground()
-  const isActive = isFocused && isForeground
+  const isActive = isFocused && isForeground && isRootScreenFocused
 
   const requestCameraPermission = async () => {
     const permission = await Camera.requestCameraPermission()
@@ -251,7 +252,7 @@ export const ReverseImageCameraScreen: React.FC<Props> = (props) => {
       <Flex {...StyleSheet.absoluteFillObject}>
         <Background>
           <HeaderContainer>
-            <BackButton color="white100" onPress={goBack} />
+            <HeaderBackButton onPress={goBack} />
             <HeaderTitle title="Position Artwork in this Frame" />
           </HeaderContainer>
         </Background>

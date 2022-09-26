@@ -4,17 +4,20 @@ import {
   SearchedReverseImageWithNoResults,
   SearchedReverseImageWithResults,
 } from "@artsy/cohesion"
+import { CommonActions } from "@react-navigation/native"
 import { StackScreenProps } from "@react-navigation/stack"
 import { captureMessage } from "@sentry/react-native"
 import { navigate } from "app/navigation/navigate"
+import { nextTick } from "app/utils/nextTick"
 import { useImageSearch } from "app/utils/useImageSearch"
 import { compact } from "lodash"
-import { BackButton, Flex } from "palette"
+import { Flex } from "palette"
 import { useEffect, useRef } from "react"
 import { Alert, Image, StyleSheet } from "react-native"
 import { useTracking } from "react-tracking"
 import { Background } from "../../Components/Background"
 import { CameraFramesContainer } from "../../Components/CameraFramesContainer"
+import { HeaderBackButton } from "../../Components/HeaderBackButton"
 import { HeaderContainer } from "../../Components/HeaderContainer"
 import { HeaderTitle } from "../../Components/HeaderTitle"
 import { useReverseImageContext } from "../../ReverseImageContext"
@@ -63,7 +66,15 @@ export const ReverseImagePreviewScreen: React.FC<Props> = (props) => {
 
       if (results.length === 1) {
         await navigate(`/artwork/${artworkIDs[0]}`)
-        return navigation.popToTop()
+        await nextTick()
+
+        // Navigate to the camera screen **without** animation
+        return navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Camera" }],
+          })
+        )
       }
 
       navigation.replace("MultipleResults", {
@@ -112,7 +123,7 @@ export const ReverseImagePreviewScreen: React.FC<Props> = (props) => {
       <Flex {...StyleSheet.absoluteFillObject}>
         <Background>
           <HeaderContainer>
-            <BackButton color="white100" onPress={handleGoBack} />
+            <HeaderBackButton onPress={handleGoBack} />
             <HeaderTitle title="Looking for Results..." />
           </HeaderContainer>
         </Background>
