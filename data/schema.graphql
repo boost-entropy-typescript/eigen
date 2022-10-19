@@ -2073,6 +2073,9 @@ type Artwork implements Node & Searchable & Sellable {
   isComparableWithAuctionResults: Boolean
   isDownloadable: Boolean
   isEdition: Boolean
+
+  # Artwork is eligible for the Artsy Guarantee
+  isEligibleForArtsyGuarantee: Boolean!
   isEmbeddableVideo: Boolean
   isForSale: Boolean
   isHangable: Boolean
@@ -11280,7 +11283,7 @@ type Notification implements Node {
     # http://www.iana.org/time-zones,
     # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
     timezone: String
-  ): String
+  ): String @deprecated(reason: "Please use `publishedAt` instead")
 
   # A globally unique ID.
   id: ID!
@@ -11290,6 +11293,10 @@ type Notification implements Node {
   isUnread: Boolean!
   message: String!
   notificationType: NotificationTypesEnum!
+  publishedAt(
+    # pass `RELATIVE` to display the human-friendly date (e.g. "Today", "Yesterday", "5 days ago")
+    format: String
+  ): String!
   targetHref: String!
   title: String!
 }
