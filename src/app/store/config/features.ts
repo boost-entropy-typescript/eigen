@@ -146,11 +146,6 @@ export const features = defineFeatures({
     description: "Enable placeholder layout animation",
     echoFlagKey: "AREnablePlaceholderLayoutAnimation",
   },
-  AREnableAvalaraPhase2: {
-    readyForRelease: false,
-    description: "Enable Avalara Phase 2",
-    showInAdminMenu: true,
-  },
   ARDarkModeSupport: {
     readyForRelease: false,
     description: "Support dark mode",
@@ -220,9 +215,10 @@ export const features = defineFeatures({
     echoFlagKey: "AREnableArtworksConnectionForAuction",
   },
   AREnableActivity: {
-    readyForRelease: false,
+    readyForRelease: true,
     description: "Enable Activity",
     showInAdminMenu: true,
+    echoFlagKey: "AREnableActivity",
   },
   AREnableCollectionsInOnboarding: {
     description: "Replace genes with collections in onboarding",
