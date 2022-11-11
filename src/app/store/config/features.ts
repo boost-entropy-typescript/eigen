@@ -196,6 +196,11 @@ export const features = defineFeatures({
     showInAdminMenu: true,
     echoFlagKey: "AREnableActivity",
   },
+  AREnableMyCollectionHFOnboarding: {
+    readyForRelease: false,
+    description: "Enable My Collection home feed onboarding",
+    showInAdminMenu: true,
+  },
   AREnableCollectionsInOnboarding: {
     description: "Replace genes with collections in onboarding",
     showInAdminMenu: true,
@@ -210,6 +215,11 @@ export const features = defineFeatures({
   },
   ARReorderSWAArtworkSubmissionFlow: {
     description: "Reorder SWA Artwork submission flow",
+    showInAdminMenu: true,
+    readyForRelease: false,
+  },
+  ARArtworkRedesingPhase2: {
+    description: "Enable redesigned artwork page (phase 2)",
     showInAdminMenu: true,
     readyForRelease: false,
   },
