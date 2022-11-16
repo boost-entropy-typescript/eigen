@@ -215,7 +215,14 @@ function getDomainMap(): Record<string, RouteMatcher[] | null> {
     addRoute("/selling-with-artsy", "MyCollectionSellingWithartsyFAQ"),
 
     addRoute("/partner/:partnerID", "Partner"),
-    addRoute("/partner/:partnerID/works", "Partner"),
+    addRoute("/partner/:partnerID/works", "Partner", (params) => ({
+      ...params,
+      initialTab: "Artworks",
+    })),
+    addRoute("/partner/:partnerID/shows", "Partner", (params) => ({
+      ...params,
+      initialTab: "Shows",
+    })),
     addRoute("/partner/:partnerID/artists/:artistID", "Partner"),
     addRoute("/partner-locations/:partnerID", "PartnerLocations"),
 
@@ -234,7 +241,7 @@ function getDomainMap(): Record<string, RouteMatcher[] | null> {
     addRoute("/auctions", "Auctions"),
     addRoute("/lots-by-artists-you-follow", "LotsByArtistsYouFollow"),
     addRoute("/works-for-you", "WorksForYou"),
-    addRoute("/new-works-for-you", "NewWorksForYou"),
+    addRoute("/new-for-you", "NewWorksForYou"),
     addRoute("/reverse-image", "ReverseImage"),
     addWebViewRoute("/categories"),
     addWebViewRoute("/privacy"),
