@@ -183,6 +183,7 @@ export const features = defineFeatures({
     readyForRelease: false,
     description: "Enable My Collection artworks from non-Artsy artists",
     showInAdminMenu: true,
+    echoFlagKey: "AREnableArtworksFromNonArtsyArtists",
   },
   AREnableArtworksConnectionForAuction: {
     readyForRelease: true,
@@ -197,9 +198,10 @@ export const features = defineFeatures({
     echoFlagKey: "AREnableActivity",
   },
   AREnableMyCollectionHFOnboarding: {
-    readyForRelease: false,
+    readyForRelease: true,
     description: "Enable My Collection home feed onboarding",
     showInAdminMenu: true,
+    echoFlagKey: "AREnableMyCollectionHFOnboarding",
   },
   AREnableCollectionsInOnboarding: {
     description: "Replace genes with collections in onboarding",
