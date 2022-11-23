@@ -217,6 +217,11 @@ export const features = defineFeatures({
     showInAdminMenu: true,
     readyForRelease: false,
   },
+  AREnablePanOnStaticHeader: {
+    description: "Enable Scroll/Pan on StaticHeader",
+    showInAdminMenu: true,
+    readyForRelease: false,
+  },
   ARIosSearchTabCuratedCollections: {
     description: "Display curated collection on Search tab on ios",
     showInAdminMenu: true,
@@ -224,6 +229,17 @@ export const features = defineFeatures({
   },
   AREnforceLargeNewWorksRail: {
     description: "Enforce large new works rail",
+    showInAdminMenu: true,
+    readyForRelease: false,
+  },
+  AREnableArtworkGridSaveIcon: {
+    description: "Enable artwork grid save icon",
+    showInAdminMenu: true,
+    readyForRelease: true,
+    echoFlagKey: "AREnableArtworkGridSaveIcon",
+  },
+  AREnableSmallTredingArtistCardSize: {
+    description: "Use small size card for treding artists",
     showInAdminMenu: true,
     readyForRelease: false,
   },
