@@ -1,11 +1,15 @@
 import { ActionType, ContextModule, OwnerType } from "@artsy/cohesion"
-import { TappedCuratedCollection } from "@artsy/cohesion/dist/Schema/Events/Tap"
+import { TappedCollectionGroup } from "@artsy/cohesion/dist/Schema/Events/Tap"
 import { CuratedCollectionItem_collection$key } from "__generated__/CuratedCollectionItem_collection.graphql"
+import { CardRailCard, CardRailMetadataContainer } from "app/Components/Home/CardRailCard"
+import { ThreeUpImageLayout } from "app/Components/ThreeUpImageLayout"
 import { navigate } from "app/navigation/navigate"
-import { Flex, Spacer, Text, Touchable } from "palette"
+import { extractNodes } from "app/utils/extractNodes"
+import { isPad } from "app/utils/hardware"
+import { compact } from "lodash"
+import { Box, Text, TextVariantV3 } from "palette"
 import { graphql, useFragment } from "react-relay"
 import { useTracking } from "react-tracking"
-import { IMAGE_SIZE, SearchResultImage } from "./components/SearchResultImage"
 
 interface CuratedCollectionItemProps {
   collection: CuratedCollectionItem_collection$key
@@ -18,34 +22,30 @@ export const CuratedCollectionItem: React.FC<CuratedCollectionItemProps> = ({
 }) => {
   const tracking = useTracking()
   const item = useFragment(CuratedCollectionItemFragment, collection)
-  const thumbnail = item.thumbnailImage?.resized?.url || null
+  const imageURLs = extractNodes(item.artworksConnection, (artwork) => artwork.image?.url)
+  const availableArtworkImageURLs = compact(imageURLs)
+  const textVariant: TextVariantV3 = isPad() ? "xs" : "sm-display"
 
-  const onPress = (collectionId: string, collectionSlug: string) => {
-    tracking.trackEvent(
-      trackingEvent.tappedCuratedCollection(collectionId, collectionSlug, position)
-    )
+  const onPress = () => {
+    tracking.trackEvent(trackingEvent.tappedCollectionGroup(item.internalID, item.slug, position))
 
-    navigate(`/collection/${collectionSlug}`)
+    navigate(`/collection/${item.slug}`)
   }
 
   return (
-    <Touchable key={item.internalID} onPress={() => onPress(item.internalID, item.slug)}>
-      <Flex height={IMAGE_SIZE} flexDirection="row" alignItems="center">
-        <SearchResultImage imageURL={thumbnail} resultType="Collection" />
-
-        <Spacer ml={1} />
-
-        <Flex flex={1}>
-          <Text variant="xs" numberOfLines={1}>
+    <CardRailCard onPress={onPress}>
+      <Box>
+        <ThreeUpImageLayout imageURLs={availableArtworkImageURLs} />
+        <CardRailMetadataContainer>
+          <Text variant={textVariant} numberOfLines={1}>
             {item.title}
           </Text>
-
-          <Text variant="xs" color="black60">
+          <Text variant={textVariant} numberOfLines={1} color="black60">
             Collection
           </Text>
-        </Flex>
-      </Flex>
-    </Touchable>
+        </CardRailMetadataContainer>
+      </Box>
+    </CardRailCard>
   )
 }
 
@@ -54,26 +54,31 @@ const CuratedCollectionItemFragment = graphql`
     internalID
     slug
     title
-    thumbnailImage {
-      resized(width: 40) {
-        url
+    artworksConnection(first: 3) {
+      edges {
+        node {
+          image {
+            url(version: "large")
+          }
+        }
       }
     }
   }
 `
 
 const trackingEvent = {
-  tappedCuratedCollection: (
+  tappedCollectionGroup: (
     collectionId: string,
     collectionSlug: string,
     position: number
-  ): TappedCuratedCollection => ({
-    action: ActionType.tappedCuratedCollection,
+  ): TappedCollectionGroup => ({
+    action: ActionType.tappedCollectionGroup,
     context_module: ContextModule.curatedCollections,
     context_screen_owner_type: OwnerType.search,
     destination_screen_owner_type: OwnerType.collection,
     destination_screen_owner_slug: collectionSlug,
     destination_screen_owner_id: collectionId,
-    position,
+    horizontal_slide_position: position,
+    type: "thumbnail",
   }),
 }
