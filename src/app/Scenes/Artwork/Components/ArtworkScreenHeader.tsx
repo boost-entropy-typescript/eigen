@@ -1,13 +1,15 @@
 import { ContextModule, OwnerType } from "@artsy/cohesion"
 import { ArtworkScreenHeader_artwork$data } from "__generated__/ArtworkScreenHeader_artwork.graphql"
+import { AuctionTimerState } from "app/Components/Bidding/Components/Timer"
 import { goBack } from "app/navigation/navigate"
 import { refreshFavoriteArtworks } from "app/utils/refreshHelpers"
 import { Schema } from "app/utils/track"
 import { userHadMeaningfulInteraction } from "app/utils/userHadMeaningfulInteraction"
 import { isEmpty } from "lodash"
-import { BackButton, Flex, HeartFillIcon, HeartIcon, Text, Touchable, useSpace } from "palette"
+import { BackButton, Button, Flex, HeartFillIcon, HeartIcon, useSpace } from "palette"
 import { createFragmentContainer, graphql, useMutation } from "react-relay"
 import { useTracking } from "react-tracking"
+import { ArtworkStore } from "../ArtworkStore"
 import { ArtworkScreenHeaderCreateAlertFragmentContainer } from "./ArtworkScreenHeaderCreateAlert"
 
 const HEADER_HEIGHT = 44
@@ -26,10 +28,11 @@ interface ArtworkScreenHeaderProps {
 const ArtworkScreenHeader: React.FC<ArtworkScreenHeaderProps> = ({ artwork }) => {
   const { trackEvent } = useTracking()
   const space = useSpace()
+  const auctionState = ArtworkStore.useStoreState((state) => state.auctionState)
 
   const { isSaved, sale } = artwork
 
-  const [commit, isInFlight] = useMutation(graphql`
+  const [commit] = useMutation(graphql`
     mutation ArtworkScreenHeaderSaveMutation($input: SaveArtworkInput!) {
       saveArtwork(input: $input) {
         artwork {
@@ -78,7 +81,10 @@ const ArtworkScreenHeader: React.FC<ArtworkScreenHeaderProps> = ({ artwork }) =>
     })
   }
 
-  const isOpenSale = !isEmpty(sale) && sale?.isAuction && !sale.isClosed
+  const isOpenSale =
+    !isEmpty(sale) &&
+    sale?.isAuction &&
+    (!sale.isClosed || auctionState !== AuctionTimerState.CLOSED)
 
   const saveButtonText = () => {
     if (isOpenSale) {
@@ -111,26 +117,20 @@ const ArtworkScreenHeader: React.FC<ArtworkScreenHeaderProps> = ({ artwork }) =>
       </Flex>
 
       <Flex flexDirection="row" alignItems="center">
-        <Touchable
+        <Button
+          icon={<SaveIcon isSaved={!!isSaved} />}
+          size="small"
+          variant="text"
           accessibilityRole="button"
           accessibilityLabel={saveButtonText()}
           haptic
           onPress={handleArtworkSave}
-          disabled={isInFlight}
+          longestText={isOpenSale ? "Watch lot" : "Saved"}
+          textVariant="sm-display"
         >
-          <Flex flexDirection="row" alignItems="center" pr={0.5}>
-            <SaveIcon isSaved={!!isSaved} />
-            <Text variant="sm-display" color={isSaved ? "blue100" : "black100"}>
-              {saveButtonText()}
-              {/* this is a hacky way of preventing the save text / button to be jumpy when it changes to saved */}
-              {!isSaved && !__TEST__ && (
-                <Text accessibilityElementsHidden variant="sm-display" color="transparent">
-                  d
-                </Text>
-              )}
-            </Text>
-          </Flex>
-        </Touchable>
+          {saveButtonText()}
+        </Button>
+
         <ArtworkScreenHeaderCreateAlertFragmentContainer artwork={artwork} />
       </Flex>
     </Flex>
