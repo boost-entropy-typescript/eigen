@@ -12,7 +12,7 @@ import { BackButton } from "app/navigation/BackButton"
 import { navigationEvents } from "app/navigation/navigate"
 import { defaultEnvironment } from "app/relay/createEnvironment"
 import { ArtistSeriesMoreSeriesFragmentContainer as ArtistSeriesMoreSeries } from "app/Scenes/ArtistSeries/ArtistSeriesMoreSeries"
-import { useFeatureFlag } from "app/store/GlobalStore"
+import { GlobalStore, useFeatureFlag } from "app/store/GlobalStore"
 import { AboveTheFoldQueryRenderer } from "app/utils/AboveTheFoldQueryRenderer"
 import { ProvidePlaceholderContext } from "app/utils/placeholders"
 import { QAInfoPanel } from "app/utils/QAInfo"
@@ -31,7 +31,6 @@ import usePrevious from "react-use/lib/usePrevious"
 import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment"
 import { useScreenDimensions } from "shared/hooks"
 import { ResponsiveValue } from "styled-system"
-import { setBottomTabVisibilityForCurrentScreen } from "../BottomTabs/setBottomTabVisibilityForCurrentScreen"
 import { OfferSubmittedModal } from "../Inbox/Components/Conversations/OfferSubmittedModal"
 import { ArtworkStore, ArtworkStoreProvider } from "./ArtworkStore"
 import { AboutArtistFragmentContainer as AboutArtist } from "./Components/AboutArtist"
@@ -82,6 +81,9 @@ export const Artwork: React.FC<ArtworkProps> = ({
   const [fetchingData, setFetchingData] = useState(false)
   const enableConversationalBuyNow = useFeatureFlag("AREnableConversationalBuyNow")
   const enableArtworkRedesign = useFeatureFlag("ARArtworkRedesingPhase2")
+  const isDeepZoomModalVisible = GlobalStore.useAppState(
+    (store) => store.devicePrefs.sessionState.isDeepZoomModalVisible
+  )
 
   const { internalID, slug, isInAuction, partner: partnerAbove } = artworkAboveTheFold || {}
   const { contextGrids, artistSeriesConnection, artist, context } = artworkBelowTheFold || {}
@@ -130,12 +132,6 @@ export const Artwork: React.FC<ArtworkProps> = ({
 
     return consignableArtists.length || isAcquireable || isOfferable || isBiddableInAuction
   }
-
-  useEffect(() => {
-    if (enableArtworkRedesign) {
-      setBottomTabVisibilityForCurrentScreen(false)
-    }
-  }, [enableArtworkRedesign])
 
   useEffect(() => {
     markArtworkAsRecentlyViewed()
@@ -195,6 +191,11 @@ export const Artwork: React.FC<ArtworkProps> = ({
   }
 
   const handleModalDismissed = () => {
+    // If the deep zoom modal is visible, we don't want to refetch the artwork
+    // This results in app crash, while testing. This wouldn't occur on Prod
+    if (isDeepZoomModalVisible) {
+      return
+    }
     setFetchingData(true)
     refetch(() => setFetchingData(false))
     return true
