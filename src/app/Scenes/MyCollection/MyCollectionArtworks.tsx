@@ -169,6 +169,7 @@ export const MyCollectionArtworks: React.FC<MyCollectionArtworksProps> = ({
           />
         ) : (
           <MyCollectionArtworkList
+            myCollectionIsRefreshing={myCollectionIsRefreshing}
             myCollectionConnection={me.myCollectionConnection}
             hasMore={relay.hasMore}
             loadMore={relay.loadMore}
@@ -201,7 +202,7 @@ const MyCollectionZeroState: React.FC = () => {
   const { trackEvent } = useTracking()
   const space = useSpace()
 
-  const image = require("images/my-collection-empty-state.png")
+  const image = require("images/my-collection-empty-state.jpg")
 
   return (
     <ZeroState
