@@ -3518,11 +3518,13 @@ type CollectorProfileType {
   ): String
   email: String
   emailConfirmed: Boolean
+    @deprecated(reason: "emailConfirmed is going to be removed, use isEmailConfirmed instead")
   icon: Image
 
   # A globally unique ID.
   id: ID!
   identityVerified: Boolean
+    @deprecated(reason: "identityVerified is going to be removed, use isIdentityVerified instead")
   institutionalAffiliations: String
   intents: [String]
 
@@ -3530,6 +3532,8 @@ type CollectorProfileType {
   internalID: ID!
   isActiveBidder: Boolean
   isActiveInquirer: Boolean
+  isEmailConfirmed: Boolean
+  isIdentityVerified: Boolean
   location: MyLocation
   loyaltyApplicantAt(
     format: String
@@ -5593,8 +5597,15 @@ type ConsignmentInquiry {
   userId: String
 }
 
+type ConsignmentInquiryMutationError {
+  error: String
+  message: String!
+  statusCode: Int
+  type: String
+}
+
 type ConsignmentInquiryMutationFailure {
-  mutationError: GravityMutationError
+  mutationError: ConsignmentInquiryMutationError
 }
 
 type ConsignmentInquiryMutationSuccess {
@@ -9765,11 +9776,13 @@ type InquirerCollectorProfile {
   ): String
   email: String
   emailConfirmed: Boolean
+    @deprecated(reason: "emailConfirmed is going to be removed, use isEmailConfirmed instead")
   icon: Image
 
   # A globally unique ID.
   id: ID!
   identityVerified: Boolean
+    @deprecated(reason: "identityVerified is going to be removed, use isIdentityVerified instead")
   institutionalAffiliations: String
   intents: [String]
 
@@ -9777,6 +9790,8 @@ type InquirerCollectorProfile {
   internalID: ID!
   isActiveBidder: Boolean
   isActiveInquirer: Boolean
+  isEmailConfirmed: Boolean
+  isIdentityVerified: Boolean
   location: MyLocation
   loyaltyApplicantAt(
     format: String
@@ -16092,11 +16107,13 @@ type UpdateCollectorProfilePayload {
   ): String
   email: String
   emailConfirmed: Boolean
+    @deprecated(reason: "emailConfirmed is going to be removed, use isEmailConfirmed instead")
   icon: Image
 
   # A globally unique ID.
   id: ID!
   identityVerified: Boolean
+    @deprecated(reason: "identityVerified is going to be removed, use isIdentityVerified instead")
   institutionalAffiliations: String
   intents: [String]
 
@@ -16104,6 +16121,8 @@ type UpdateCollectorProfilePayload {
   internalID: ID!
   isActiveBidder: Boolean
   isActiveInquirer: Boolean
+  isEmailConfirmed: Boolean
+  isIdentityVerified: Boolean
   location: MyLocation
   loyaltyApplicantAt(
     format: String
