@@ -67,16 +67,6 @@ export const features = defineFeatures({
     readyForRelease: false,
     description: "Enable Saved Addresses",
   },
-  AREnableTrove: {
-    readyForRelease: true,
-    description: "Enable Trove in homepage",
-    echoFlagKey: "AREnableTrove",
-  },
-  AREnableShowsRail: {
-    readyForRelease: true,
-    description: "Enable Shows in homepage",
-    echoFlagKey: "AREnableShowsRail",
-  },
   ARGoogleAuth: {
     readyForRelease: true,
     description: "Enable Google authentication",
