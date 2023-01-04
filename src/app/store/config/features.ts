@@ -97,11 +97,6 @@ export const features = defineFeatures({
     description: "Enable My Collection search bar",
     echoFlagKey: "AREnableMyCollectionSearchBar",
   },
-  AREnablePlaceholderLayoutAnimation: {
-    readyForRelease: true,
-    description: "Enable placeholder layout animation",
-    echoFlagKey: "AREnablePlaceholderLayoutAnimation",
-  },
   ARDarkModeSupport: {
     readyForRelease: false,
     description: "Support dark mode",
@@ -131,11 +126,6 @@ export const features = defineFeatures({
     description: "Enable Crossplatform Map Screen",
     showInDevMenu: true,
   },
-  AREnableAuctionShareButton: {
-    readyForRelease: true,
-    description: "Show share button in auction screen",
-    echoFlagKey: "AREnableAuctionShareButton",
-  },
   AREnableNewOpaqueImageComponent: {
     readyForRelease: true,
     description: "Enable New Image Component",
@@ -146,11 +136,6 @@ export const features = defineFeatures({
     readyForRelease: true,
     description: "Conversational Buy Now",
     echoFlagKey: "AREnableConversationalBuyNow",
-  },
-  AREnableMyCollectionInsights: {
-    readyForRelease: true,
-    description: "Enable My Collection insights tab",
-    echoFlagKey: "AREnableMyCollectionInsights",
   },
   AREnableArtworksFromNonArtsyArtists: {
     readyForRelease: false,
