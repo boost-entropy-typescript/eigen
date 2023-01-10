@@ -111,11 +111,6 @@ export const features = defineFeatures({
     description: "Enable My Collection Price Estimate Range",
     showInDevMenu: false,
   },
-  AREnableMapScreen: {
-    readyForRelease: false,
-    description: "Enable Crossplatform Map Screen",
-    showInDevMenu: true,
-  },
   AREnableNewOpaqueImageComponent: {
     readyForRelease: true,
     description: "Enable New Image Component",
@@ -206,11 +201,11 @@ export const features = defineFeatures({
     readyForRelease: true,
     echoFlagKey: "AREnableLargeArtworkRailSaveIcon",
   },
-  AREnableConsignmentInquiryFlow: {
+  AREnableConsignmentInquiry: {
     description: "Enable Sell With Artsy Inquiry",
     showInDevMenu: true,
     readyForRelease: true,
-    echoFlagKey: "AREnableConsignmentInquiryFlow",
+    echoFlagKey: "AREnableConsignmentInquiry",
   },
   ARShowUpcomingAuctionResultsRails: {
     description: "Show upcoming auction rails",
