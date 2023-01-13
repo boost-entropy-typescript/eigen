@@ -7,11 +7,13 @@
 
   - User facing changes:
 
+    - Clean up ARGoogleAuth feature flag - ole
     - Add complete your profile banner in Edit Profile screen - mrsltun
     - added confirmation modal to the edit artwork screen -daria
     - App ConsignmentInquiry Improvements - kizito
 
   - Dev changes:
+    - bump minor deps versions - gkartalis
     - Rename Consignment Inquiry Feature Flag - kizito
     - remove unused `CityGuideNewCTA` code - dimatretyak
     - Throw error when `exec` function breaks - mrsltun
