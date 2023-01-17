@@ -7,6 +7,7 @@
 
   - User facing changes:
 
+    - Fix MyCollection Add Photos freeze - kizito
     - Fix dirty form check when uploading a new artwork - ole
     - Clean up ARGoogleAuth feature flag - ole
     - Add complete your profile banner in Edit Profile screen - mrsltun
@@ -14,6 +15,7 @@
     - App ConsignmentInquiry Improvements - kizito
 
   - Dev changes:
+    - Replace emailConfirmed and identityVerified with isEmailConfirmed and isIdentityVerified - mrsltun
     - Allow releasing specific builds on Android - Brian
     - prompt for confirmation before updating env vars in s3 - mounir
     - bump minor deps versions - gkartalis
