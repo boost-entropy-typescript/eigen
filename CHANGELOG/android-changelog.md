@@ -7,6 +7,8 @@
 
   - User facing changes:
 
+    - update showing stopwatch logic for auction results item - mrsltun
+    - fix my collection upload - mounir
     - fix SWA and MyCollection Submission bug - kizito
     - Updates review prompt logic to every 5th session and after a purchase - pvinis, Brian
     - mark single activity item notification as read when pressed - gkartalis

@@ -2055,7 +2055,10 @@ type Artwork implements Node & Searchable & Sellable {
   fair: Fair
 
   # A list of images and videos for the artwork
-  figures: [ArtworkFigures!]!
+  figures(
+    # Include all images, even if they are not ready or processing failed.
+    includeAll: Boolean
+  ): [ArtworkFigures!]!
 
   # Formatted artwork metadata, including artist, title, date and partner; e.g., 'Andy Warhol, Truck, 1980, Westward Gallery'.
   formattedMetadata: String
@@ -11216,7 +11219,7 @@ type Money {
   ): Float!
 
   # An amount of money expressed in minor units (like cents).
-  minor: Int!
+  minor: Long!
 }
 
 # A money object with amount in minor currency and a currency code, or an error object
@@ -11786,8 +11789,8 @@ input MyCollectionCreateArtworkInput {
   medium: String
   metric: String
 
-  # @deprecated use the cost major and cost minor fields instead
-  pricePaidCents: Int
+  # The price paid for the MyCollection artwork in cents for any given currency
+  pricePaidCents: Long
   pricePaidCurrency: String
   provenance: String
   submissionId: String
@@ -11871,7 +11874,7 @@ input MyCollectionUpdateArtworkInput {
   isEdition: Boolean
   medium: String
   metric: String
-  pricePaidCents: Int
+  pricePaidCents: Long
   pricePaidCurrency: String
   provenance: String
   submissionId: String
