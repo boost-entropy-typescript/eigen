@@ -331,14 +331,17 @@ export const updateArtwork = async (
     others.editionSize = ""
   }
 
+  const { artist, ...restOfOthers } = others
+
   if (props.mode === "add") {
+    console.log("cleanArtworkPayload(others)", cleanArtworkPayload(others))
     const response = await myCollectionCreateArtwork({
+      ...cleanArtworkPayload(restOfOthers),
       artistIds: artistSearchResult?.internalID ? [artistSearchResult?.internalID] : undefined,
       artists: artistDisplayName ? [{ displayName: artistDisplayName }] : undefined,
       externalImageUrls,
       pricePaidCents,
       pricePaidCurrency,
-      ...cleanArtworkPayload(others),
     })
 
     const slug = response.myCollectionCreateArtwork?.artworkOrError?.artworkEdge?.node?.slug
@@ -357,8 +360,8 @@ export const updateArtwork = async (
       externalImageUrls,
       pricePaidCents: pricePaidCents ?? null,
       pricePaidCurrency,
-      ...cleanArtworkPayload(others),
-      ...explicitlyClearedFields(others, dirtyFormCheckValues),
+      ...cleanArtworkPayload(restOfOthers),
+      ...explicitlyClearedFields(restOfOthers, dirtyFormCheckValues),
     })
 
     const slug = response.myCollectionUpdateArtwork?.artworkOrError?.artwork?.slug

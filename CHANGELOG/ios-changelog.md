@@ -7,6 +7,8 @@
 
   - User facing changes:
 
+    - fix SWA and MyCollection Submission bug - kizito
+    - Updates review prompt logic to every 5th session and after a purchase - pvinis, Brian
     - mark single activity item notification as read when pressed - gkartalis
     - show works using new recs model for the new works for you - mounir
     - Fix MyCollection Add Photos freeze - kizito
@@ -18,6 +20,7 @@
     - Prevent swiping back gesture - mounir
 
   - Dev changes:
+    - fix default local metaphysics url on dev menu - gkartalis
     - Support screen options inside react module - mounir
     - update setupTestWrapper and add testing docs - gkartalis
     - Update tracking event - mounir

@@ -9,7 +9,7 @@ import {
   getGeminiCredentialsForEnvironment,
   uploadFileToS3,
 } from "app/Scenes/SellWithArtsy/SubmitArtwork/UploadPhotos/utils/uploadFileToS3"
-import { __globalStoreTestUtils__, GlobalStore } from "app/store/GlobalStore"
+import { GlobalStore, __globalStoreTestUtils__ } from "app/store/GlobalStore"
 import { defaultEnvironment } from "app/system/relay/createEnvironment"
 import { flushPromiseQueue } from "app/utils/tests/flushPromiseQueue"
 import { renderWithHookWrappersTL } from "app/utils/tests/renderWithWrappers"
@@ -170,8 +170,9 @@ describe("MyCollectionArtworkForm", () => {
         expect(createArtworkOperation.request.variables).toMatchInlineSnapshot(`
           {
             "input": {
-              "artist": "banksy",
-              "artistIds": [],
+              "artistIds": [
+                "internal-id",
+              ],
               "artists": undefined,
               "category": "Print",
               "date": "2007",
