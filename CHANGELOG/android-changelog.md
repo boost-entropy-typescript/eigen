@@ -1,12 +1,13 @@
 ## Undeployed Changes
 
-### v8.6.0
+### v8.7.0
 
 - Status: **Beta**
 - Changelog:
 
   - User facing changes:
 
+    - add switchContainer and ff for new search screen - gkartalis
     - update showing stopwatch logic for auction results item - mrsltun
     - fix my collection upload - mounir
     - fix SWA and MyCollection Submission bug - kizito
