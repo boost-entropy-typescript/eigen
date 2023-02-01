@@ -7,6 +7,7 @@
 
   - User facing changes:
 
+    - The changes are cross-platform, applicable to all users.
     - ToolTip Component - kizito
     - Fix issue making some artwork images not visible in the home screen large artworks rail - mounir
     - add search2 with ES only Artwork / Top pill functionality, behind FF - gkartalis
@@ -20,9 +21,14 @@
     - Updates review prompt logic to every 5th session and after a purchase - pvinis, Brian
     - mark single activity item notification as read when pressed - gkartalis
     - Fix MyCollection Add Photos freeze - kizito
+    - Fix career highlights cards modal - mounir
     - Release deep zoom - mounir
 
   - Dev changes:
+    - Update home screen modules tracking - mounir
+    - sentry cli bump - gkartalis
+    - update jest-native dep - gkartalis
+    - Hide the global blue dot indicator if there are no unseen notifications - dimatretyak
     - make sure app is rehydrated before initializing unleash - mounir
     - add unused imports eslint rule - gkartalis
     - fix: error with old opaque image view in search - gkartalis
