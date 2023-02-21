@@ -2,7 +2,6 @@ import { Input, InputProps, InputRef } from "palette"
 import { Select } from "palette/elements/Select"
 import { SelectProps } from "palette/elements/Select/Select"
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import { Platform } from "react-native"
 
 // Mark the props that should pass to Select Component with ForSelect suffix
 type TypeForSelect = {
@@ -18,9 +17,6 @@ export interface ValuePayload {
   }
 }
 
-/** Underline bar height for text input on android when focused */
-const UNDERLINE_TEXTINPUT_HEIGHT_ANDROID = 1.5
-
 export const INTERNALSelectAndInputCombinationBase = forwardRef<
   InputRef,
   {
@@ -33,10 +29,6 @@ export const INTERNALSelectAndInputCombinationBase = forwardRef<
 >(
   (
     {
-      inputTextStyle = Platform.select({
-        android: { paddingTop: UNDERLINE_TEXTINPUT_HEIGHT_ANDROID },
-        default: {},
-      }),
       formatInputValue,
       onValueChange,
       value,
@@ -71,14 +63,13 @@ export const INTERNALSelectAndInputCombinationBase = forwardRef<
       }
       validate?.()
       onValueChange({ select: { value: valueForSelect }, input: { value: innerValue } })
-    }, [innerValue, valueForSelect])
+    }, [innerValue, value, valueForSelect])
 
     return (
       <Input
         {...rest}
         ref={innerRef}
         value={formatInputValue ? formatInputValue(innerValue) : value}
-        inputTextStyle={inputTextStyle}
         onChangeText={(text) => {
           setInnerValue(text)
         }}
