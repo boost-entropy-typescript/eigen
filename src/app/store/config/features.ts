@@ -113,12 +113,6 @@ export const features = defineFeatures({
     description: "Use artworksConnection for Auction screen",
     echoFlagKey: "AREnableArtworksConnectionForAuction",
   },
-  AREnableMyCollectionHFOnboarding: {
-    readyForRelease: true,
-    description: "Enable My Collection home feed onboarding",
-    showInDevMenu: true,
-    echoFlagKey: "AREnableMyCollectionHFOnboarding",
-  },
   AREnableCollectionsInOnboarding: {
     readyForRelease: true,
     description: "Replace genes with collections in onboarding",
@@ -135,12 +129,6 @@ export const features = defineFeatures({
     showInDevMenu: true,
     readyForRelease: true,
     echoFlagKey: "ARReorderSWAArtworkSubmissionFlow",
-  },
-  ARArtworkRedesingPhase2: {
-    description: "Enable redesigned artwork page (phase 2)",
-    showInDevMenu: true,
-    readyForRelease: true,
-    echoFlagKey: "ARArtworkRedesingPhase2",
   },
   AREnablePanOnStaticHeader: {
     description: "Enable Scroll/Pan on StaticHeader",
@@ -209,6 +197,12 @@ export const features = defineFeatures({
     description: "Enable New SWA Landing Page",
     showInDevMenu: true,
     readyForRelease: false,
+  },
+  AREnableBrowseMoreArtworksCard: {
+    description: "Enable Browse More Artworks Card on Home Screen",
+    showInDevMenu: true,
+    readyForRelease: true,
+    echoFlagKey: "AREnableBrowseMoreArtworksCard",
   },
 })
 
