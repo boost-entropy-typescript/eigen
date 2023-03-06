@@ -9,10 +9,11 @@ import {
 } from "app/Components/Containers/WorksForYou"
 import { FadeIn } from "app/Components/FadeIn"
 import { PageableScreensView } from "app/Components/PageableScreensView/PageableScreensView"
-import { ArtQuizArtworks } from "app/Scenes/ArtQuiz/ArtQuizArtworks"
-import { ArtQuizNavigation } from "app/Scenes/ArtQuiz/ArtQuizNavigation"
+import { ArtQuiz } from "app/Scenes/ArtQuiz/ArtQuiz"
 import { ArtQuizResults } from "app/Scenes/ArtQuiz/ArtQuizResults/ArtQuizResults"
 import { ArtworkRecommendationsScreen } from "app/Scenes/ArtworkRecommendations/ArtworkRecommendations"
+import { HomeContainer } from "app/Scenes/Home/HomeContainer"
+import { NewWorksFromGalleriesYouFollowScreen } from "app/Scenes/NewWorksFromGalleriesYouFollow/NewWorksFromGalleriesYouFollow"
 import {
   RecentlyViewedScreen,
   RecentlyViewedScreenQuery,
@@ -20,6 +21,7 @@ import {
 import { SearchScreenQuery } from "app/Scenes/Search/Search"
 import { SearchScreenQuery as SearchScreenQuery2 } from "app/Scenes/Search/Search2"
 import { SearchSwitchContainer } from "app/Scenes/Search/SearchSwitchContainer"
+import { SimilarToRecentlyViewedScreen } from "app/Scenes/SimilarToRecentlyViewed/SimilarToRecentlyViewed"
 import React from "react"
 import { AppRegistry, LogBox, Platform, View } from "react-native"
 import { GraphQLTaggedNode } from "relay-runtime"
@@ -72,7 +74,6 @@ import { FairMoreInfoQueryRenderer } from "./Scenes/Fair/FairMoreInfo"
 import { Favorites } from "./Scenes/Favorites/Favorites"
 import { FeatureQueryRenderer } from "./Scenes/Feature/Feature"
 import { GeneQueryRenderer } from "./Scenes/Gene/Gene"
-import { HomeQueryRenderer } from "./Scenes/Home/Home"
 import { MakeOfferModalQueryRenderer } from "./Scenes/Inbox/Components/Conversations/MakeOfferModal"
 import { PurchaseModalQueryRenderer } from "./Scenes/Inbox/Components/Conversations/PurchaseModal"
 import { ConversationNavigator } from "./Scenes/Inbox/ConversationNavigator"
@@ -151,7 +152,6 @@ import {
   SegmentTrackingProvider,
   SEGMENT_TRACKING_PROVIDER,
 } from "./utils/track/SegmentTrackingProvider"
-import { NewWorksFromGalleriesYouFollowScreen } from "app/Scenes/NewWorksFromGalleriesYouFollow/NewWorksFromGalleriesYouFollow"
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -361,9 +361,11 @@ function defineModules<T extends string>(obj: Record<T, ModuleDescriptor>) {
 }
 
 const artQuizScreenOptions = {
-  hidesBottomTabs: true,
   hidesBackButton: true,
   fullBleed: true,
+  screenOptions: {
+    gestureEnabled: false,
+  },
 }
 
 export type AppModule = keyof typeof modules
@@ -377,9 +379,8 @@ export const modules = defineModules({
   DevMenu: reactModule(DevMenu, { alwaysPresentModally: true, hasOwnModalCloseButton: true }),
   About: reactModule(About),
   AddOrEditMyCollectionArtwork: reactModule(MyCollectionArtworkForm, { hidesBackButton: true }),
-  ArtQuiz: reactModule(ArtQuizNavigation, artQuizScreenOptions),
-  ArtQuizArtworks: reactModule(ArtQuizArtworks, artQuizScreenOptions),
-  ArtQuizResults: reactModule(ArtQuizResults, { hidesBackButton: true, fullBleed: true }),
+  ArtQuiz: reactModule(ArtQuiz, { ...artQuizScreenOptions, hidesBottomTabs: true }),
+  ArtQuizResults: reactModule(ArtQuizResults, artQuizScreenOptions),
   Articles: reactModule(ArticlesScreen, {}, [ArticlesScreenQuery]),
   Artist: reactModule(ArtistQueryRenderer, { hidesBackButton: true }, [ArtistScreenQuery]),
   ArtistShows: reactModule(ArtistShows2QueryRenderer),
@@ -455,7 +456,9 @@ export const modules = defineModules({
   FullFeaturedArtistList: reactModule(CollectionFullFeaturedArtistListQueryRenderer),
   Gene: reactModule(GeneQueryRenderer),
   Tag: reactModule(TagQueryRenderer),
-  Home: reactModule(HomeQueryRenderer, { isRootViewForTabName: "home" }),
+  Home: reactModule(HomeContainer, {
+    isRootViewForTabName: "home",
+  }),
   Inbox: reactModule(InboxQueryRenderer, { isRootViewForTabName: "inbox" }, [InboxScreenQuery]),
   Inquiry: reactModule(Inquiry, { alwaysPresentModally: true, hasOwnModalCloseButton: true }),
   LiveAuction: reactModule(LiveAuctionView, {
@@ -540,6 +543,7 @@ export const modules = defineModules({
     alwaysPresentModally: true,
     hasOwnModalCloseButton: false,
   }),
+  SimilarToRecentlyViewed: reactModule(SimilarToRecentlyViewedScreen),
   ConsignmentInquiry: reactModule(ConsignmentInquiryScreen, {
     screenOptions: {
       gestureEnabled: false,
