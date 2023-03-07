@@ -222,10 +222,10 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@artsy/cohesion@4.116.0":
-  version "4.116.0"
-  resolved "https://registry.yarnpkg.com/@artsy/cohesion/-/cohesion-4.116.0.tgz#47f918cef77ec8999c7dc15edd6995827422df29"
-  integrity sha512-Wb5pOETSwe9vRhbd2ATqZrclh3wtPpjNAU93eYePn0gd9OnuYCHkpEzGZqhwd62Z38jmcxAGNa2JC/TT20wNnA==
+"@artsy/cohesion@4.117.0":
+  version "4.117.0"
+  resolved "https://registry.yarnpkg.com/@artsy/cohesion/-/cohesion-4.117.0.tgz#210e7c9e110e651e3e5da851d545369b64886659"
+  integrity sha512-I66htlNleQ23In8Udlo35NWOtKQNFBNYbBnDOf515Zq2nJ5se9SbQ9IfSYP2dhSx67lvU/eA4Vf2Bz2hTitAjA==
   dependencies:
     core-js "3"
 
@@ -12325,9 +12325,9 @@ minimatch@^3.0.0, minimatch@^3.0.2, minimatch@^3.0.4, minimatch@^3.0.5, minimatc
     brace-expansion "^1.1.7"
 
 minimist@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.2.1.tgz#827ba4e7593464e7c221e8c5bed930904ee2c455"
-  integrity sha512-GY8fANSrTMfBVfInqJAY41QkOM+upUTytK1jZ0c8+3HdHrJxBJ3rF5i9moClXTE8uUSnUo8cAsCoxDXvSY4DHg==
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.2.4.tgz#0085d5501e29033748a2f2a4da0180142697a475"
+  integrity sha512-Pkrrm8NjyQ8yVt8Am9M+yUt74zE3iokhzbG1bFVNjLB92vwM71hf40RkEsryg98BujhVOncKm/C1xROxZ030LQ==
 
 minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.5, minimist@^1.2.6:
   version "1.2.7"
@@ -16244,9 +16244,9 @@ typical@^5.0.0, typical@^5.1.0:
   integrity sha512-dvdQgNDNJo+8B2uBQoqdb11eUCE1JQXhvjC/CZtgvZseVd5TYMXnq0+vuUemXbd/Se29cTaUuPX3YIc2xgbvIg==
 
 ua-parser-js@^0.7.30, ua-parser-js@^0.7.9:
-  version "0.7.31"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.31.tgz#649a656b191dffab4f21d5e053e27ca17cbff5c6"
-  integrity sha512-qLK/Xe9E2uzmYI3qLeOmI0tEOt+TBBQyUIAh4aAgU05FVYzeZrKUdkAZfBNVGRaHVgV0TDkdEngJSw/SyQchkQ==
+  version "0.7.33"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.33.tgz#1d04acb4ccef9293df6f70f2c3d22f3030d8b532"
+  integrity sha512-s8ax/CeZdK9R/56Sui0WM6y9OFREJarMRHqLB2EwkovemBxNQ+Bqu8GAsUnVcXKgphb++ghr/B2BZx4mahujPw==
 
 uc.micro@^1.0.1:
   version "1.0.6"
