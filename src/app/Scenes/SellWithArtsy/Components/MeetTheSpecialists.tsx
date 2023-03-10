@@ -27,7 +27,11 @@ const pills: PillData[] = [
 ]
 
 export const MeetTheSpecialists: React.FC<{
-  onInquiryPress: (trackingargs?: TappedConsignmentInquiry) => void
+  onInquiryPress: (
+    trackingargs?: TappedConsignmentInquiry,
+    recipientEmail?: string,
+    recipientName?: string
+  ) => void
 }> = ({ onInquiryPress }) => {
   const color = useColor()
   const space = useSpace()
@@ -85,11 +89,17 @@ export const MeetTheSpecialists: React.FC<{
         data={specialistsToDisplay}
         renderItem={({ item }) => {
           const buttonText = `Contact ${item.firstName}`
+          const imgHeightToWidthRatio = 1.511 // based on designs
+          const imgWidth = 250
           return (
             <ImageBackground
               source={item.image}
               resizeMode="cover"
-              style={{ width: 250, height: 350, marginRight: space(1) }}
+              style={{
+                width: imgWidth,
+                height: imgWidth * imgHeightToWidthRatio,
+                marginRight: space(1),
+              }}
             >
               <LinearGradient
                 colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 1)"]}
@@ -114,7 +124,11 @@ export const MeetTheSpecialists: React.FC<{
                   mt={1}
                   variant="outlineLight"
                   onPress={() => {
-                    onInquiryPress(tracks.consignmentInquiryTapped(buttonText))
+                    onInquiryPress(
+                      tracks.consignmentInquiryTapped(buttonText),
+                      item.email,
+                      item.firstName
+                    )
                   }}
                 >
                   {buttonText}

@@ -2573,6 +2573,9 @@ type ArtworkVersion implements Node {
   # The Artwork Version attribution class
   attributionClass: AttributionClass
 
+  # Artwork condition description
+  condition_description: String
+
   # The Artwork Version formatted date
   date: String
 
@@ -2593,6 +2596,9 @@ type ArtworkVersion implements Node {
 
   # The Artwork Version medium
   medium: String
+
+  # Artwork provenance
+  provenance: String
 
   # Artwork title
   title: String
@@ -15885,6 +15891,9 @@ input SendIdentityVerificationEmailMutationInput {
 
   # The name to be used for the user undergoing identity verification
   name: String
+
+  # Whether an automated identity verification is sent or not
+  sendEmail: Boolean
 
   # The user Id for the user undergoing identity verification
   userID: String
