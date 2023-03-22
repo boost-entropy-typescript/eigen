@@ -19,7 +19,7 @@ import Spinner from "app/Components/Spinner"
 import { CascadingEndTimesBanner } from "app/Scenes/Artwork/Components/CascadingEndTimesBanner"
 import { unsafe__getEnvironment, useFeatureFlag } from "app/store/GlobalStore"
 import { navigate, popParentViewController } from "app/system/navigation/navigate"
-import { defaultEnvironment } from "app/system/relay/createEnvironment"
+import { getRelayEnvironment } from "app/system/relay/defaultEnvironment"
 import { AboveTheFoldQueryRenderer } from "app/utils/AboveTheFoldQueryRenderer"
 import { AuctionWebsocketContextProvider } from "app/utils/Websockets/auctions/AuctionSocketContext"
 import { PlaceholderBox, PlaceholderText, ProvidePlaceholderContext } from "app/utils/placeholders"
@@ -27,7 +27,7 @@ import { ProvideScreenTracking, Schema } from "app/utils/track"
 import _, { times } from "lodash"
 import { DateTime } from "luxon"
 import { Join } from "palette"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Animated, FlatList, RefreshControl } from "react-native"
 import { createRefetchContainer, graphql, RelayRefetchProp } from "react-relay"
 import { useTracking } from "react-tracking"
@@ -144,7 +144,7 @@ export const Sale: React.FC<Props> = ({ sale, me, below, relay }) => {
   }
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 30 })
-  const viewableItemsChangedRef = React.useRef(({ viewableItems }: ViewableItems) => {
+  const viewableItemsChangedRef = useRef(({ viewableItems }: ViewableItems) => {
     const artworksItem = (viewableItems! ?? []).find((viewableItem: ViewToken) => {
       return viewableItem?.item?.key === "saleLotsList"
     })
@@ -475,7 +475,7 @@ export const SaleQueryRenderer: React.FC<{
       render={() => {
         return (
           <AboveTheFoldQueryRenderer<SaleAboveTheFoldQuery, SaleBelowTheFoldQuery>
-            environment={environment || defaultEnvironment}
+            environment={environment || getRelayEnvironment()}
             above={{
               query: SaleScreenQuery,
               variables: { saleID, saleSlug: saleID },
