@@ -169,7 +169,7 @@ const Home = memo((props: HomeProps) => {
             tracking.trackEvent(
               HomeAnalytics.trackRailViewed({
                 contextModule: contextModule,
-                positionY: allModulesKeys.findIndex((key) => key === key),
+                positionY: allModulesKeys.findIndex((moduleKey) => moduleKey === key),
               })
             )
           }
@@ -476,6 +476,7 @@ export const HomeFragmentContainer = memo(
           auctionResultsByFollowedArtistsUpcoming: auctionResultsByFollowedArtists(
             first: 12
             state: UPCOMING
+            sort: DATE_ASC
           ) {
             totalCount
             ...AuctionResultsRail_auctionResults
