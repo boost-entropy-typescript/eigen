@@ -175,7 +175,7 @@ describe("inquiry offer", () => {
       expect(cta).not.toBeDefined()
     })
 
-    it("renders a copper offer CTA if there is a pending offer from the seller", () => {
+    it("renders a orange offer CTA if there is a pending offer from the seller", () => {
       const tree = getWrapper({
         Conversation: () => ({
           items: [
@@ -213,7 +213,7 @@ describe("inquiry offer", () => {
       expect(cta).toBeDefined()
       expect(cta.children.length).toBe(1)
       expect(extractText(cta)).toContain("Counteroffer Received")
-      expect(cta.findAllByType(Flex)[0].props).toEqual(expect.objectContaining({ bg: "copper100" }))
+      expect(cta.findAllByType(Flex)[0].props).toEqual(expect.objectContaining({ bg: "orange150" }))
     })
 
     it("renders a green cta if the seller has approved the buyer's offer", () => {

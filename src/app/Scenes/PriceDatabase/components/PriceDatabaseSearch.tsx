@@ -1,4 +1,3 @@
-import { stringify } from "querystring"
 import { ActionType, ContextModule, OwnerType } from "@artsy/cohesion"
 import { ArtsyKeyboardAvoidingView, Flex, Spacer, Text, Button } from "@artsy/palette-mobile"
 import { StackScreenProps } from "@react-navigation/stack"
@@ -16,6 +15,7 @@ import {
 import { PriceDatabaseSearchModel } from "app/Scenes/PriceDatabase/validation"
 import { navigate } from "app/system/navigation/navigate"
 import { useFormikContext } from "formik"
+import { stringify } from "query-string"
 import { ScrollView } from "react-native"
 import { useTracking } from "react-tracking"
 
@@ -39,7 +39,7 @@ export const PriceDatabaseSearch: React.FC<StackScreenProps<ArtworkFilterNavigat
 
     const pathName = `/artist/${values.artistId}/auction-results`
     const searchFilters = filterSearchFilters(values, ALLOWED_FILTERS)
-    const queryString = stringify(paramsToSnakeCase(searchFilters))
+    const queryString = stringify(paramsToSnakeCase(searchFilters), { arrayFormat: "index" })
     const paramFlag = "scroll_to_market_signals=true"
 
     const url = queryString ? `${pathName}?${queryString}&${paramFlag}` : `${pathName}?${paramFlag}`
@@ -51,12 +51,11 @@ export const PriceDatabaseSearch: React.FC<StackScreenProps<ArtworkFilterNavigat
 
   return (
     <ArtsyKeyboardAvoidingView>
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Flex my={2}>
-          <Flex mx={2} mb={2}>
-            <Text variant="xl">Artsy Price</Text>
-            <Text variant="xl" mb={0.5}>
-              Database
+          <Flex mx={2} my={2}>
+            <Text variant="lg" mb={0.5}>
+              Artsy Price Database
             </Text>
 
             <Text variant="xs">
