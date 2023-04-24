@@ -242,6 +242,11 @@ export const features = defineFeatures({
     showInDevMenu: true,
     echoFlagKey: "AREnableSWALandingPageTestimonials",
   },
+  AREnableInstantViewInRoom: {
+    description: "Enable Instant View In Room",
+    readyForRelease: false,
+    showInDevMenu: true,
+  },
   AREnableSkeletonAnimation: {
     description: "Enable Skeleton Animation",
     readyForRelease: true,
@@ -250,7 +255,7 @@ export const features = defineFeatures({
   },
   ARImpressionsTrackingHomeItemViews: {
     description: "Enable Tracking Items views on Home Screen",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "ARImpressionsTrackingHomeItemViews",
   },
