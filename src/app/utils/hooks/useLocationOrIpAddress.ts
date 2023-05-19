@@ -1,5 +1,5 @@
 import Geolocation from "@react-native-community/geolocation"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { NetworkInfo } from "react-native-network-info"
 
 export interface Location {
@@ -14,8 +14,8 @@ Geolocation.setRNConfiguration({ skipPermissionRequests: true })
  * Usage:
  *   const { isLoading, location, ip } = useLocationOrIpAddress()
  */
-export const useLocationOrIpAddress = () => {
-  const [isLoading, setIsLoading] = useState(true)
+export const useLocationOrIpAddress = (disabled = false) => {
+  const [isLoading, setIsLoading] = useState(!disabled)
   const [location, setLocation] = useState<Location | null>(null)
   const [ipAddress, setIpAddress] = useState<string | null>(null)
 
@@ -26,7 +26,7 @@ export const useLocationOrIpAddress = () => {
 
       setIpAddress(ipv4Address)
     } catch (error) {
-      console.error("Failed to get IPv4 address.", error)
+      console.log("Failed to get devices IP address for location.", error)
     } finally {
       setIsLoading(false)
     }
@@ -40,7 +40,7 @@ export const useLocationOrIpAddress = () => {
         setIsLoading(false)
       },
       (error) => {
-        console.error("Failed to get current position. Falling back to IP address", error)
+        console.log("Couldn't get device's location. Falling back to IP address", error)
         // Get IP address as a fallback
         getIpAddress()
       },
@@ -49,8 +49,12 @@ export const useLocationOrIpAddress = () => {
   }
 
   useEffect(() => {
+    if (disabled) {
+      return
+    }
+
     getLocation()
-  }, [])
+  }, [disabled])
 
   return { isLoading, location, ipAddress }
 }
