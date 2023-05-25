@@ -1,9 +1,10 @@
+import { ActionType, OwnerType, ViewedArtworkList } from "@artsy/cohesion"
 import { Flex, Separator, useScreenDimensions, useSpace } from "@artsy/palette-mobile"
 import { ArtworkListQuery, CollectionArtworkSorts } from "__generated__/ArtworkListQuery.graphql"
 import { ArtworkList_artworksConnection$key } from "__generated__/ArtworkList_artworksConnection.graphql"
 import { GenericGridPlaceholder } from "app/Components/ArtworkGrids/GenericGrid"
 import { InfiniteScrollArtworksGridContainer } from "app/Components/ArtworkGrids/InfiniteScrollArtworksGrid"
-import { ArtworkListsProvider } from "app/Components/ArtworkLists/ArtworkListsContext"
+import { ArtworkListProvider } from "app/Components/ArtworkLists/ArtworkListContext"
 import { SortOption, SortByModal } from "app/Components/SortByModal/SortByModal"
 import { PAGE_SIZE } from "app/Components/constants"
 import { ArtworkListArtworksGridHeader } from "app/Scenes/ArtworkList/ArtworkListArtworksGridHeader"
@@ -11,8 +12,9 @@ import { ArtworkListEmptyState } from "app/Scenes/ArtworkList/ArtworkListEmptySt
 import { ArtworkListHeader } from "app/Scenes/ArtworkList/ArtworkListHeader"
 import { PlaceholderText, ProvidePlaceholderContext } from "app/utils/placeholders"
 import { useRefreshControl } from "app/utils/refreshHelpers"
-import { FC, Suspense, useState } from "react"
+import { FC, Suspense, useEffect, useState } from "react"
 import { graphql, useLazyLoadQuery, usePaginationFragment } from "react-relay"
+import { useTracking } from "react-tracking"
 import usePrevious from "react-use/lib/usePrevious"
 
 interface ArtworkListScreenProps {
@@ -81,7 +83,7 @@ export const ArtworkList: FC<ArtworkListScreenProps> = ({ listID }) => {
   }
 
   return (
-    <ArtworkListsProvider artworkListId={listID}>
+    <ArtworkListProvider artworkListID={listID}>
       <ArtworkListHeader me={queryData.me} />
       <InfiniteScrollArtworksGridContainer
         connection={data?.artworkList?.artworks}
@@ -106,7 +108,7 @@ export const ArtworkList: FC<ArtworkListScreenProps> = ({ listID }) => {
         onSelectOption={handleSelectOption}
         onModalFinishedClosing={handleSortByModalClosed}
       />
-    </ArtworkListsProvider>
+    </ArtworkListProvider>
   )
 }
 
@@ -155,6 +157,18 @@ const artworkListFragment = graphql`
 `
 
 export const ArtworkListScreen: FC<ArtworkListScreenProps> = (props) => {
+  const { trackEvent } = useTracking()
+
+  useEffect(() => {
+    const event: ViewedArtworkList = {
+      action: ActionType.viewedArtworkList,
+      context_owner_type: OwnerType.saves,
+      owner_id: props.listID,
+    }
+
+    trackEvent(event)
+  }, [props.listID, trackEvent])
+
   return (
     <Suspense fallback={<ArtworkListPlaceholder />}>
       <ArtworkList {...props} />
