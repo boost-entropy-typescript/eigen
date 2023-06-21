@@ -3,20 +3,15 @@ import {
   AddIcon,
   Button,
   CloseIcon,
-  FilterIcon,
   Flex,
-  Input,
   Spacer,
-  Text,
   Touchable,
-  TouchableHighlightColor,
-  bullet,
   useSpace,
 } from "@artsy/palette-mobile"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { ArtworksFilterHeader } from "app/Components/ArtworkGrids/ArtworksFilterHeader"
-import SearchIcon from "app/Components/Icons/SearchIcon"
 import { Pill } from "app/Components/Pill"
+import { MyCollectionArtworkFilters } from "app/Scenes/MyCollection/Components/MyCollectionArtworkFiltersStickyTab"
 import { MyCollectionArtworksKeywordStore } from "app/Scenes/MyCollection/Components/MyCollectionArtworksKeywordStore"
 import { HAS_SEEN_MY_COLLECTION_NEW_WORKS_BANNER } from "app/Scenes/MyCollection/MyCollection"
 import { MyCollectionArtworkUploadMessages } from "app/Scenes/MyCollection/Screens/ArtworkForm/MyCollectionArtworkUploadMessages"
@@ -35,7 +30,7 @@ import { useMeasure } from "app/utils/hooks/useMeasure"
 import { setVisualClueAsSeen, useVisualClue } from "app/utils/hooks/useVisualClue"
 import { debounce } from "lodash"
 import { MotiView } from "moti"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useRef } from "react"
 import { useTracking } from "react-tracking"
 
 // CONSTANTS
@@ -92,12 +87,37 @@ export const MainStickyHeader: React.FC<{ hasArtworks: boolean }> = ({ hasArtwor
   const closeIconRef = useRef(null)
 
   const selectedTab = MyCollectionTabsStore.useStoreState((state) => state.selectedTab)
+
   const setSelectedTab = MyCollectionTabsStore.useStoreActions((actions) => actions.setSelectedTab)
   const setViewKind = MyCollectionTabsStore.useStoreActions((actions) => actions.setViewKind)
 
   const showAddToMyCollectionBottomSheet = debounce(() => {
     setViewKind({ viewKind: "Add" })
   }, 100)
+
+  const handleCreateButtonPress = () => {
+    switch (selectedTab) {
+      case "Artists":
+        navigate("my-collection/collected-artists/new")
+        break
+      case "Artworks":
+        navigate("my-collection/artworks/new", {
+          passProps: {
+            mode: "add",
+            source: Tab.collection,
+            onSuccess: () => {
+              // hide the bottom sheet
+              setViewKind({ viewKind: null })
+              popToRoot()
+            },
+          },
+        })
+        break
+      default:
+        showAddToMyCollectionBottomSheet()
+        break
+    }
+  }
 
   const { width } = useMeasure({ ref: closeIconRef })
 
@@ -132,7 +152,7 @@ export const MainStickyHeader: React.FC<{ hasArtworks: boolean }> = ({ hasArtwor
         {/* Seach and Add */}
         <Flex justifyContent="center" alignItems="center" flexDirection="row">
           <Touchable
-            onPress={showAddToMyCollectionBottomSheet}
+            onPress={handleCreateButtonPress}
             haptic
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
@@ -149,6 +169,9 @@ const AnimatedCloseIcon: React.FC<{
 }> = ({ closeIconRef }) => {
   const selectedTab = MyCollectionTabsStore.useStoreState((state) => state.selectedTab)
   const setSelectedTab = MyCollectionTabsStore.useStoreActions((actions) => actions.setSelectedTab)
+  const setKeyword = debounce(
+    MyCollectionArtworksKeywordStore.useStoreActions((actions) => actions.setKeyword)
+  )
 
   const space = useSpace()
 
@@ -168,6 +191,7 @@ const AnimatedCloseIcon: React.FC<{
       >
         <Touchable
           onPress={() => {
+            setKeyword("")
             setSelectedTab(null)
           }}
           haptic="impactLight"
@@ -250,7 +274,7 @@ const AnimatedPill: React.FC<{
   )
 }
 
-interface FiltersProps {
+export interface FiltersProps {
   filtersCount: number
   showModal: () => void
 }
@@ -263,7 +287,7 @@ const Filters: React.FC<FiltersProps> = (props) => {
   const enableCollectedArtists = useFeatureFlag("AREnableMyCollectionCollectedArtists")
 
   if (enableCollectedArtists) {
-    return <ArtworkFilters {...props} />
+    return <MyCollectionArtworkFilters {...props} />
   }
 
   return (
@@ -288,58 +312,6 @@ const Filters: React.FC<FiltersProps> = (props) => {
           Upload Artwork
         </Button>
       </ArtworksFilterHeader>
-    </Flex>
-  )
-}
-
-const ArtworkFilters: React.FC<FiltersProps> = (props) => {
-  const space = useSpace()
-  const { showModal, filtersCount } = props
-  const keyword = MyCollectionArtworksKeywordStore.useStoreState((state) => state.keyword)
-  const [query, setQuery] = useState(keyword)
-
-  const setKeyword = debounce(
-    MyCollectionArtworksKeywordStore.useStoreActions((actions) => actions.setKeyword)
-  )
-
-  useEffect(() => {
-    // We're making the update here to avoid having a laggy experience when typing
-    setKeyword(query)
-  }, [query])
-
-  return (
-    <Flex backgroundColor="white100" flexDirection="row" pb={1}>
-      <Input
-        testID="MyCollectionSearchBarInput"
-        icon={<SearchIcon width={18} height={18} />}
-        placeholder="Search Your Artworks"
-        onChangeText={setQuery}
-        enableClearButton
-        value={query}
-        returnKeyType="done"
-        autoCorrect={false}
-        style={{
-          marginLeft: space(2),
-        }}
-      />
-
-      <Flex px={2} justifyContent="center">
-        <TouchableHighlightColor
-          haptic
-          onPress={showModal}
-          testID="sort-and-filter-button"
-          render={({ color }) => (
-            <Flex flexDirection="row" alignItems="center">
-              <FilterIcon fill={color} width={26} height={26} />
-              {filtersCount > 0 && (
-                <Text variant="xs" color="blue100">
-                  {` ${bullet} ${filtersCount}`}
-                </Text>
-              )}
-            </Flex>
-          )}
-        />
-      </Flex>
     </Flex>
   )
 }
