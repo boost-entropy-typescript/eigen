@@ -144,11 +144,6 @@ export const features: { [key: string]: FeatureDescriptor } = {
     readyForRelease: true,
     echoFlagKey: "ARShowArtQuizApp",
   },
-  AREnableESOnlySearch: {
-    description: "Enable ES only search",
-    readyForRelease: true,
-    echoFlagKey: "AREnableESOnlySearch",
-  },
   AREnableMoneyFormattingInMyCollectionForm: {
     description: "Enable Money formatting in MyCollection Form",
     readyForRelease: true,
@@ -259,6 +254,12 @@ export const features: { [key: string]: FeatureDescriptor } = {
     description: "Enable Inline price control for Create Alert modal flow",
     readyForRelease: false,
     showInDevMenu: true,
+  },
+  AREnableAdditionalSiftAndroidTracking: {
+    description: "Send additional events to Sift on Android",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableAdditionalSiftAndroidTracking",
   },
 }
 
