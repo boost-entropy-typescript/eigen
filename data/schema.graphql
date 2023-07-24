@@ -11756,6 +11756,9 @@ type Me implements Node {
     category: UserInterestCategory
     first: Int
 
+    # Id of the user interests to return if found. Can be an 'Artist' Id or a 'Gene' Id
+    interestID: String
+
     # UserInterest InterestType to select. 'Artist' or 'Gene' type
     interestType: UserInterestInterestType
     last: Int
@@ -12489,6 +12492,9 @@ type Mutation {
   updateUser(input: UpdateUserMutationInput!): UpdateUserMutationPayload
   updateUserAddress(input: UpdateUserAddressInput!): UpdateUserAddressPayload
   updateUserDefaultAddress(input: UpdateUserDefaultAddressInput!): UpdateUserDefaultAddressPayload
+
+  # Updates a UserInterest on the logged in User's CollectorProfile.
+  updateUserInterest(input: UpdateUserInterestMutationInput!): UpdateUserInterestMutationPayload
 
   # Update the user sale profile
   updateUserSaleProfile(
@@ -18105,6 +18111,29 @@ type UpdateUserDefaultAddressPayload {
   clientMutationId: String
   me: Me
   userAddressOrErrors: UserAddressOrErrorsUnion!
+}
+
+type UpdateUserInterestFailure {
+  mutationError: GravityMutationError
+}
+
+input UpdateUserInterestMutationInput {
+  clientMutationId: String
+  id: String!
+  private: Boolean
+}
+
+type UpdateUserInterestMutationPayload {
+  clientMutationId: String
+
+  # On success: the new state of the UserInterest
+  userInterestOrError: UpdateUserInterestResponseOrError
+}
+
+union UpdateUserInterestResponseOrError = UpdateUserInterestFailure | UpdateUserInterestSuccess
+
+type UpdateUserInterestSuccess {
+  userInterest: UserInterest
 }
 
 input UpdateUserMutationInput {
