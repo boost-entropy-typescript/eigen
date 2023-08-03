@@ -229,13 +229,13 @@ export const features: { [key: string]: FeatureDescriptor } = {
   },
   AREnableMyCollectionCollectedArtists: {
     description: "Enable Collected Artists in My Collection",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableMyCollectionCollectedArtists",
   },
   AREnableLongPressOnArtworkCards: {
     description: "Enable Context Menu on artwork cards",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableLongPressOnArtworkCards",
   },
@@ -265,7 +265,7 @@ export const features: { [key: string]: FeatureDescriptor } = {
   },
   ARShowCollectedArtistOnboarding: {
     description: "Show Collected Artist Onboarding",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "ARShowCollectedArtistOnboarding",
   },
