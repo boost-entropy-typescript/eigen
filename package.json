@@ -27,7 +27,7 @@
     "ci:skip-native-if-possible": "node scripts/ci-skip-native-if-possible.js",
     "ci:type-check": "tsc --pretty false | tee tsc_raw.log",
     "clean": "yarn clean-ios; yarn clean-android",
-    "clean-android": "cd android; ./gradlew clean cleanBuildCache; cd -",
+    "clean-android": "cd android; ./gradlew clean; cd -",
     "clean-ios": "yarn rimraf ~/Library/Developer/Xcode/DerivedData",
     "danger": "danger",
     "dead-code": "./scripts/check-dead-code.sh",
@@ -109,7 +109,7 @@
   },
   "dependencies": {
     "@artsy/cohesion": "4.136.0",
-    "@artsy/palette-mobile": "11.2.17",
+    "@artsy/palette-mobile": "12.0.1",
     "@artsy/to-title-case": "1.1.0",
     "@expo/react-native-action-sheet": "4.0.1",
     "@formatjs/intl-datetimeformat": "6.8.0",

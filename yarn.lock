@@ -24,29 +24,29 @@
   dependencies:
     core-js "3"
 
-"@artsy/palette-mobile@11.2.17":
-  version "11.2.17"
-  resolved "https://registry.yarnpkg.com/@artsy/palette-mobile/-/palette-mobile-11.2.17.tgz#97fe8d8e0e34ae275037b84d7c9633d198e3b4b0"
-  integrity sha512-fWT5rcmXRVB6ibCYr3UmBC9P3Yz61kB7RIFh40RnCPfyqTug1WRJgeHojEW1wNH7uLCg8oKgEGJS0gCLr5YstQ==
+"@artsy/palette-mobile@12.0.1":
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/@artsy/palette-mobile/-/palette-mobile-12.0.1.tgz#39e0dee6719a50fc37b62df3d2430f70b00c88f1"
+  integrity sha512-q3s4m8e7zE1/No9FV9oIr+qa/R7fD3iMhRdINtwxGla5b1ooKFAdRhurUx54dpuLXgw2ImvPPVZV8+4MxaOzFg==
   dependencies:
-    "@artsy/palette-tokens" "^4.0.1"
+    "@artsy/palette-tokens" "^5.0.0"
     "@styled-system/core" "^5.1.2"
     "@styled-system/theme-get" "^5.1.2"
     events "^3.3.0"
     lodash "^4.17.21"
     moti "^0.25.3"
     react-nanny "^2.15.0"
-    react-native-collapsible-tab-view "^6.1.4"
+    react-native-collapsible-tab-view "^6.2.0"
     react-native-fast-image "^8.6.3"
     react-native-pager-view "^6.2.0"
     react-native-popover-view "^5.1.7"
     react-spring "8.0.23"
     styled-system "^5.1.5"
 
-"@artsy/palette-tokens@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@artsy/palette-tokens/-/palette-tokens-4.0.1.tgz#ef171c0449f3c0a1c0765253a06beec160b0eed1"
-  integrity sha512-JQ4t6eCAL3LpYnwyIMJCKc3UiVWY17IvKadNXRXfplo+GFZUqZs61nFGlchNWZvtNESpHkGKOksA5dZq3G1wiw==
+"@artsy/palette-tokens@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@artsy/palette-tokens/-/palette-tokens-5.0.0.tgz#d1e1917d8163d88e7a9f877cf06b609fa8c8178c"
+  integrity sha512-nloC0ubH5XDVNiplehwTtDLEgY0vjeE3l8QUYppEIHFCgadntXm6aVlmEC79inO7L3lDYN7JckYlIYRrTJg3vw==
 
 "@artsy/to-title-case@1.1.0":
   version "1.1.0"
@@ -14408,10 +14408,10 @@ react-native-codegen@^0.69.2:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
-react-native-collapsible-tab-view@^6.1.4:
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/react-native-collapsible-tab-view/-/react-native-collapsible-tab-view-6.1.4.tgz#011c8abab29d9229a22caa287395f0081fae644e"
-  integrity sha512-eGGAdze91WgXOrd+8wPsd18YxdrQvp8WlR4bv7GjgGwkzM72Ka7esz3GhHeDb6F6MxDYAvwfgm2Q4kDLvxaRTw==
+react-native-collapsible-tab-view@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-collapsible-tab-view/-/react-native-collapsible-tab-view-6.2.0.tgz#f57409f40e4f5a1a9eefdc7d32cad0fd61d2ef56"
+  integrity sha512-EAlsatGZpoqr2SBRU0iAO6mUENoXB8yXhjqVD/e/S+9yNlWyJBR5JxqIWhtbqOt/WAqpwb18ipDECusRoDkbiA==
   dependencies:
     use-deep-compare "^1.1.0"
 
