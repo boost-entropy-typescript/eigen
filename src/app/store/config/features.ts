@@ -192,12 +192,6 @@ export const features: { [key: string]: FeatureDescriptor } = {
     showInDevMenu: true,
     echoFlagKey: "AREnableGalleriesForYou",
   },
-  AREnablePriceControlForCreateAlertFlow: {
-    description: "Enable Inline price control for Create Alert modal flow",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnablePriceControlForCreateAlertFlow",
-  },
   AREnableAdditionalSiftAndroidTracking: {
     description: "Send additional events to Sift on Android",
     readyForRelease: true,
@@ -242,7 +236,7 @@ export const features: { [key: string]: FeatureDescriptor } = {
   },
   ARShowArtistsAlertsSet: {
     description: "Show Artists Alerts Set in Artist Page",
-    readyForRelease: true,
+    readyForRelease: false,
     showInDevMenu: true,
     echoFlagKey: "ARShowArtistsAlertsSet",
   },
@@ -251,6 +245,11 @@ export const features: { [key: string]: FeatureDescriptor } = {
     readyForRelease: false,
     showInDevMenu: true,
     echoFlagKey: "AREnableSingleActivityPanelScreen",
+  },
+  AREnableAlertsFilters: {
+    description: "Enable filters in alerts screen",
+    readyForRelease: false,
+    showInDevMenu: true,
   },
 }
 
