@@ -1,3 +1,4 @@
+import { ActionType, ContextModule, OwnerType, TappedVerifiedRepresentative } from "@artsy/cohesion"
 import {
   Box,
   Flex,
@@ -7,6 +8,7 @@ import {
   Text,
   Touchable,
   useScreenDimensions,
+  useSpace,
 } from "@artsy/palette-mobile"
 import { useScreenScrollContext } from "@artsy/palette-mobile/dist/elements/Screen/ScreenScrollContext"
 import { ArtistHeader_artist$data } from "__generated__/ArtistHeader_artist.graphql"
@@ -17,6 +19,7 @@ import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
 import { pluralize } from "app/utils/pluralize"
 import { FlatList, LayoutChangeEvent, ViewProps } from "react-native"
 import { RelayProp, createFragmentContainer, graphql } from "react-relay"
+import { useTracking } from "react-tracking"
 
 export const ARTIST_HEADER_HEIGHT = 156
 export const ARTIST_IMAGE_TABLET_HEIGHT = 375
@@ -44,9 +47,11 @@ export const useArtistHeaderImageDimensions = () => {
 }
 
 export const ArtistHeader: React.FC<Props> = ({ artist, me, onLayoutChange }) => {
+  const space = useSpace()
   const { width, height, aspectRatio } = useArtistHeaderImageDimensions()
   const { updateScrollYOffset } = useScreenScrollContext()
   const showArtistsAlertsSetFeatureFlag = useFeatureFlag("ARShowArtistsAlertsSet")
+  const tracking = useTracking()
 
   const getBirthdayString = () => {
     const birthday = artist.birthday
@@ -80,9 +85,12 @@ export const ArtistHeader: React.FC<Props> = ({ artist, me, onLayoutChange }) =>
     }
   }
 
-  const handleRepresentativePress = (href: string | null) => {
-    if (href) {
-      navigate(href)
+  const handleRepresentativePress = (
+    partner: ArtistHeader_artist$data["verifiedRepresentatives"][number]["partner"]
+  ) => {
+    if (partner?.href && partner?.internalID) {
+      tracking.trackEvent(tracks.tappedVerifiedRepresentative(artist, partner))
+      navigate(partner.href)
     }
   }
 
@@ -115,8 +123,8 @@ export const ArtistHeader: React.FC<Props> = ({ artist, me, onLayoutChange }) =>
       </Box>
 
       {!!hasVerifiedRepresentatives && (
-        <Flex pointerEvents="box-none" px={2}>
-          <Flex pointerEvents="none">
+        <Flex pointerEvents="box-none">
+          <Flex pointerEvents="none" px={2}>
             <Text pt={2} pb={1} variant="sm" color="black60">
               Featured representation
             </Text>
@@ -129,12 +137,15 @@ export const ArtistHeader: React.FC<Props> = ({ artist, me, onLayoutChange }) =>
               <Pill
                 variant="profile"
                 src={item.partner.profile?.icon?.url!}
-                onPress={() => handleRepresentativePress(item.partner.href)}
+                onPress={() => handleRepresentativePress(item.partner)}
               >
                 {item.partner.name}
               </Pill>
             )}
             ItemSeparatorComponent={() => <Spacer x={1} />}
+            contentContainerStyle={{
+              paddingHorizontal: space(2),
+            }}
           />
           <Spacer y={2} />
         </Flex>
@@ -162,6 +173,7 @@ export const ArtistHeader: React.FC<Props> = ({ artist, me, onLayoutChange }) =>
 export const ArtistHeaderFragmentContainer = createFragmentContainer(ArtistHeader, {
   artist: graphql`
     fragment ArtistHeader_artist on Artist {
+      slug
       birthday
       coverArtwork {
         image {
@@ -193,3 +205,17 @@ export const ArtistHeaderFragmentContainer = createFragmentContainer(ArtistHeade
     }
   `,
 })
+
+export const tracks = {
+  tappedVerifiedRepresentative: (
+    artist: ArtistHeader_artist$data,
+    partner: ArtistHeader_artist$data["verifiedRepresentatives"][number]["partner"]
+  ): TappedVerifiedRepresentative => ({
+    action: ActionType.tappedVerifiedRepresentative,
+    context_module: ContextModule.artistHeader,
+    context_screen_owner_type: OwnerType.artist,
+    context_screen_owner_id: artist.internalID,
+    destination_screen_owner_id: partner.internalID,
+    destination_screen_owner_type: OwnerType.partner,
+  }),
+}
