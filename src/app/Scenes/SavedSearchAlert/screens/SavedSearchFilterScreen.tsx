@@ -1,20 +1,33 @@
-import { Join, Separator, Text, Touchable } from "@artsy/palette-mobile"
+import {
+  ArtsyKeyboardAvoidingView,
+  Button,
+  Flex,
+  Join,
+  Separator,
+  Spacer,
+  Text,
+  Touchable,
+  useScreenDimensions,
+} from "@artsy/palette-mobile"
 import { useNavigation } from "@react-navigation/native"
 import { SearchCriteria } from "app/Components/ArtworkFilter/SavedSearch/types"
 import { FancyModalHeader } from "app/Components/FancyModal/FancyModalHeader"
-import { SavedSearchAppliedFilters } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterAppliedFilters"
-import { SavedSearchFilterColour } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterColour"
+import { SavedSearchFilterAdditionalGeneIDs } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterAdditionalGeneIDs"
+import { SavedSearchFilterAppliedFilters } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterAppliedFilters"
+import { SavedSearchFilterColor } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterColor"
 import { SavedSearchFilterPriceRangeQR } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterPriceRange"
-import { SavedSearchRarity } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterRarity"
+import { SavedSearchFilterRarity } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterRarity"
+import { SavedSearchFilterWaysToBuy } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterWaysToBuy"
 import { SavedSearchStore } from "app/Scenes/SavedSearchAlert/SavedSearchStore"
 import { MotiView } from "moti"
-import { Alert, ScrollView } from "react-native"
+import { Alert, Platform, ScrollView } from "react-native"
 
 export const SavedSearchFilterScreen: React.FC<{}> = () => {
   const navigation = useNavigation()
+  const { bottom } = useScreenDimensions().safeAreaInsets
 
   return (
-    <ScrollView>
+    <ArtsyKeyboardAvoidingView>
       <FancyModalHeader
         hideBottomDivider
         onLeftButtonPress={navigation.goBack}
@@ -23,13 +36,30 @@ export const SavedSearchFilterScreen: React.FC<{}> = () => {
       >
         Filters
       </FancyModalHeader>
-      <Join separator={<Separator my={2} borderColor="black10" />}>
-        <SavedSearchAppliedFilters />
-        <SavedSearchFilterPriceRangeQR />
-        <SavedSearchRarity />
-        <SavedSearchFilterColour />
-      </Join>
-    </ScrollView>
+      <ScrollView>
+        <Join separator={<Separator my={2} borderColor="black10" />}>
+          <SavedSearchFilterAppliedFilters />
+          <SavedSearchFilterPriceRangeQR />
+          <SavedSearchFilterRarity />
+          <SavedSearchFilterAdditionalGeneIDs />
+          <SavedSearchFilterWaysToBuy />
+          <SavedSearchFilterColor />
+        </Join>
+
+        <Spacer y={2} />
+      </ScrollView>
+
+      <Flex
+        p={2}
+        pb={Platform.OS === "android" ? 2 : 0}
+        borderTopWidth={1}
+        borderTopColor="black10"
+      >
+        <Button block onPress={navigation.goBack} haptic mb={`${bottom}px`}>
+          Set Filters
+        </Button>
+      </Flex>
+    </ArtsyKeyboardAvoidingView>
   )
 }
 

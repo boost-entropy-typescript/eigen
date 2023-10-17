@@ -1,7 +1,7 @@
 import { OwnerType } from "@artsy/cohesion"
 import { fireEvent, waitFor } from "@testing-library/react-native"
-import { ATTRIBUTION_CLASS_OPTIONS } from "app/Components/ArtworkFilter/Filters/AttributionClassOptions"
-import { SavedSearchFilterRarity } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterRarity"
+import { WAYS_TO_BUY_OPTIONS } from "app/Components/ArtworkFilter/Filters/WaysToBuyOptions"
+import { SavedSearchFilterWaysToBuy } from "app/Scenes/SavedSearchAlert/Components/SavedSearchFilterWaysToBuy"
 import {
   SavedSearchModel,
   SavedSearchStoreProvider,
@@ -11,15 +11,15 @@ import { renderWithWrappers } from "app/utils/tests/renderWithWrappers"
 
 const black100Hex = "#000000"
 
-describe("SavedSearchFilterRarity", () => {
-  it("shows all available rarity options unselected", () => {
+describe("SavedSearchFilterWaysToBuy", () => {
+  it("shows all available ways to buy options unselected", () => {
     const { getByText } = renderWithWrappers(
       <SavedSearchStoreProvider runtimeModel={initialData}>
-        <SavedSearchFilterRarity />
+        <SavedSearchFilterWaysToBuy />
       </SavedSearchStoreProvider>
     )
 
-    ATTRIBUTION_CLASS_OPTIONS.forEach((option) => {
+    WAYS_TO_BUY_OPTIONS.forEach((option) => {
       expect(getByText(option.displayText)).toBeDefined()
       expect(getByText(option.displayText)).toHaveStyle({
         color: black100Hex,
@@ -27,43 +27,46 @@ describe("SavedSearchFilterRarity", () => {
     })
   })
 
-  it("shows the right selected state with the right colors", () => {
+  it("shows the right selected state", () => {
     const { getByText } = renderWithWrappers(
-      <SavedSearchStoreProvider
-        runtimeModel={{ ...initialData, attributes: { attributionClass: ["unique"] } }}
-      >
-        <SavedSearchFilterRarity />
+      <SavedSearchStoreProvider runtimeModel={{ ...initialData, attributes: { atAuction: true } }}>
+        <SavedSearchFilterWaysToBuy />
       </SavedSearchStoreProvider>
     )
 
-    expect(getByText("Unique")).not.toHaveStyle({ color: black100Hex })
-    expect(getByText("Limited Edition")).toHaveStyle({ color: black100Hex })
-    expect(getByText("Open Edition")).toHaveStyle({ color: black100Hex })
-    expect(getByText("Unknown Edition")).toHaveStyle({ color: black100Hex })
+    WAYS_TO_BUY_OPTIONS.forEach((option) => {
+      if (option.paramName === "atAuction") {
+        expect(getByText(option.displayText)).not.toHaveStyle({
+          color: black100Hex,
+        })
+      } else {
+        expect(getByText(option.displayText)).toHaveStyle({
+          color: black100Hex,
+        })
+      }
+    })
   })
 
   it("Updates selected filters on press", () => {
     const { getByText } = renderWithWrappers(
       <SavedSearchStoreProvider runtimeModel={initialData}>
-        <SavedSearchFilterRarity />
+        <SavedSearchFilterWaysToBuy />
       </SavedSearchStoreProvider>
     )
 
-    expect(getByText("Unique")).toHaveStyle({ color: black100Hex })
+    expect(getByText("Bid")).toHaveStyle({ color: black100Hex })
 
-    fireEvent(getByText("Unique"), "onPress")
+    fireEvent(getByText("Bid"), "onPress")
 
     waitFor(() => {
-      expect(getByText("Unique")).not.toHaveStyle({ color: black100Hex })
+      expect(getByText("Bid")).not.toHaveStyle({ color: black100Hex })
     })
   })
 })
 
 const initialData: SavedSearchModel = {
   ...savedSearchModel,
-  attributes: {
-    atAuction: true,
-  },
+  attributes: {},
   entity: {
     artists: [{ id: "artistID", name: "Banksy" }],
     owner: {
