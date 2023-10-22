@@ -7,7 +7,6 @@ import { PriceRange } from "app/Components/PriceRange/types"
 import { getBarsFromAggregations } from "app/Components/PriceRange/utils"
 import { SavedSearchStore } from "app/Scenes/SavedSearchAlert/SavedSearchStore"
 import { useSearchCriteriaAttributes } from "app/Scenes/SavedSearchAlert/helpers"
-import { GlobalStore } from "app/store/GlobalStore"
 import { withSuspense } from "app/utils/hooks/withSuspense"
 import { useEffect, useState } from "react"
 import { graphql, useLazyLoadQuery } from "react-relay"
@@ -28,17 +27,16 @@ const SavedSearchFilterPriceRange: React.FC<SavedSearchFilterPriceRangeProps> = 
     storePriceRangeValue || DEFAULT_PRICE_RANGE
   )
 
-  const setValueToAttributesByKeyAction = SavedSearchStore.useStoreActions(
-    (actions) => actions.setValueToAttributesByKeyAction
+  const addValueToAttributesByKeyAction = SavedSearchStore.useStoreActions(
+    (actions) => actions.addValueToAttributesByKeyAction
   )
 
   useDebounce(
     () => {
-      setValueToAttributesByKeyAction({
+      addValueToAttributesByKeyAction({
         key: SearchCriteria.priceRange,
         value: filterPriceRange,
       })
-      GlobalStore.actions.recentPriceRanges.addNewPriceRange(filterPriceRange)
     },
     200,
     [filterPriceRange]

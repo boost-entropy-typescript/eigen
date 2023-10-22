@@ -10,8 +10,8 @@ export const SavedSearchFilterRarity = () => {
     SearchCriteria.attributionClass
   ) as string[]
 
-  const setValueToAttributesByKeyAction = SavedSearchStore.useStoreActions(
-    (actions) => actions.setValueToAttributesByKeyAction
+  const addValueToAttributesByKeyAction = SavedSearchStore.useStoreActions(
+    (actions) => actions.addValueToAttributesByKeyAction
   )
   const removeValueFromAttributesByKeyAction = SavedSearchStore.useStoreActions(
     (actions) => actions.removeValueFromAttributesByKeyAction
@@ -30,12 +30,16 @@ export const SavedSearchFilterRarity = () => {
       })
     } else {
       const newValues = (selectedAttributes || []).concat(value)
-      setValueToAttributesByKeyAction({
+      addValueToAttributesByKeyAction({
         key: SearchCriteria.attributionClass,
         value: newValues,
       })
     }
   }
+
+  const options = KNOWN_ATTRIBUTION_CLASS_OPTIONS.filter((option) =>
+    ["unique", "limited edition"].includes(option.paramValue as string)
+  )
 
   return (
     <Flex px={2}>
@@ -46,7 +50,7 @@ export const SavedSearchFilterRarity = () => {
       <Spacer y={1} />
 
       <Flex flexDirection="row" flexWrap="wrap">
-        {KNOWN_ATTRIBUTION_CLASS_OPTIONS.map((option) => {
+        {options.map((option) => {
           return (
             <SavedSearchFilterPill
               key={option.paramValue as string}
