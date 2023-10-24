@@ -1,5 +1,4 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react-native"
-import { __globalStoreTestUtils__ } from "app/store/GlobalStore"
 import { goBack } from "app/system/navigation/navigate"
 import { getMockRelayEnvironment } from "app/system/relay/defaultEnvironment"
 import { PushAuthorizationStatus } from "app/utils/PushNotification"
@@ -16,8 +15,6 @@ describe("EditSavedSearchAlert", () => {
   const notificationPermissions = mockFetchNotificationPermissions(false)
 
   beforeEach(() => {
-    __globalStoreTestUtils__?.injectFeatureFlags({ AREnableFallbackToGeneratedAlertNames: true })
-
     mockEnvironment = getMockRelayEnvironment()
     notificationPermissions.mockImplementationOnce((cb) =>
       cb(null, PushAuthorizationStatus.Authorized)
@@ -126,6 +123,7 @@ describe("EditSavedSearchAlert", () => {
           push: true,
           email: true,
           name: "",
+          details: "",
         },
       })
     })
@@ -323,6 +321,7 @@ const searchCriteria = {
     name: null,
     push: true,
     email: true,
+    details: null,
   },
 }
 

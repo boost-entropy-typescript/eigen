@@ -188,12 +188,6 @@ export const features: { [key: string]: FeatureDescriptor } = {
     showInDevMenu: true,
     echoFlagKey: "AREnableAuctionHeaderAlertCTA",
   },
-  AREnableFallbackToGeneratedAlertNames: {
-    description: "Enable fallback to generated alert names",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnableFallbackToGeneratedAlertNames",
-  },
   ARUseNewErrorMiddleware: {
     description: "Use updated error middleware",
     readyForRelease: true,
@@ -228,6 +222,12 @@ export const features: { [key: string]: FeatureDescriptor } = {
     description: "Enable filters in alerts screen",
     readyForRelease: false,
     showInDevMenu: true,
+  },
+  AREnableAlertDetailsInput: {
+    description: "Enable 'details' text input for alerts",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableAlertDetailsInput",
   },
 }
 
