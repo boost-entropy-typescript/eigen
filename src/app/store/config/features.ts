@@ -50,6 +50,7 @@ export const features: { [key: string]: FeatureDescriptor } = {
     readyForRelease: false,
     description: "Enable slideshow elements and route on Article screen",
     echoFlagKey: "AREnableArticleSlideShow",
+    showInDevMenu: true,
   },
   // TODO: need to refresh it before releasing to avoid leaking the feature in not ready releases, marked as ready since 15 months ago
   AREnableArtworksConnectionForAuction: {
@@ -207,7 +208,7 @@ export const features: { [key: string]: FeatureDescriptor } = {
   },
   AREnableLatestActivityRail: {
     description: "Enable Latest Activity Rail",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableLatestActivityRail",
   },
@@ -225,6 +226,12 @@ export const features: { [key: string]: FeatureDescriptor } = {
   },
   AREnableAlertsFilters: {
     description: "Enable filters in alerts screen",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableAlertsFilters",
+  },
+  AREnableAlertsFiltersSizeFiltering: {
+    description: "Enable size filtering in alerts filters screen",
     readyForRelease: false,
     showInDevMenu: true,
   },
