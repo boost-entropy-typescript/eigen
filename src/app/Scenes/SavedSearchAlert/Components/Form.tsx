@@ -96,11 +96,6 @@ export const Form: React.FC<FormProps> = ({
     isSaveAlertButtonDisabled = false
   }
 
-  // Disable button if notification toggles were not enabled
-  if (!values.push && !values.email) {
-    isSaveAlertButtonDisabled = true
-  }
-
   const handleUpdateEmailPreferencesPress = () => {
     if (onUpdateEmailPreferencesPress) {
       return onUpdateEmailPreferencesPress()
@@ -151,7 +146,7 @@ export const Form: React.FC<FormProps> = ({
           <SavedSearchNameInputQueryRenderer attributes={attributes} />
 
           <Box>
-            <Text variant="sm-display">Filters</Text>
+            <Text variant="sm-display">We'll send you alerts for</Text>
             <Flex flexDirection="row" flexWrap="wrap" mt={1} mx={-0.5}>
               {pills.map((pill, index) => (
                 <Pill
@@ -304,7 +299,7 @@ export const Form: React.FC<FormProps> = ({
 
         {!isEditMode && (
           <Text variant="xs" color="black60" textAlign="center" mt={2}>
-            Access all your saved alerts in your profile.
+            Access all your alerts in your profile.
           </Text>
         )}
       </Flex>
