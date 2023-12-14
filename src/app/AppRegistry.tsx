@@ -23,6 +23,7 @@ import { MyCollectionArtworkEditQueryRenderer } from "app/Scenes/MyCollection/Sc
 import { MyCollectionCollectedArtistsPrivacyQueryRenderer } from "app/Scenes/MyCollection/Screens/CollectedArtistsPrivacy/MyCollectionCollectedArtistsPrivacy"
 import { MyCollectionAddCollectedArtistsScreen } from "app/Scenes/MyCollection/Screens/MyCollectionAddCollectedArtists/MyCollectionAddCollectedArtists"
 import { NewWorksFromGalleriesYouFollowScreen } from "app/Scenes/NewWorksFromGalleriesYouFollow/NewWorksFromGalleriesYouFollow"
+import { PartnerOfferContainer } from "app/Scenes/PartnerOffer/PartnerOfferContainer"
 import { PriceDatabase } from "app/Scenes/PriceDatabase/PriceDatabase"
 import {
   RecentlyViewedScreen,
@@ -552,7 +553,9 @@ export const modules = defineModules({
   MyProfileSettings: reactModule(MyProfileSettings),
   MySellingProfile: reactModule(View),
   NewMap: reactModule(NewMapScreen, { fullBleed: true }),
-  NewWorksForYou: reactModule(NewWorksForYouQueryRenderer),
+  NewWorksForYou: reactModule(NewWorksForYouQueryRenderer, {
+    hidesBottomTabs: true,
+  }),
   MyProfilePaymentNewCreditCard: reactModule(MyProfilePaymentNewCreditCard, {
     hidesBackButton: true,
   }),
@@ -565,6 +568,10 @@ export const modules = defineModules({
     hidesBackButton: true,
   }),
   PartnerLocations: reactModule(PartnerLocations),
+  PartnerOfferContainer: reactModule(PartnerOfferContainer, {
+    hidesBottomTabs: true,
+    hidesBackButton: true,
+  }),
   PriceDatabase: reactModule(PriceDatabase, { hidesBackButton: true }),
   PrivacyRequest: reactModule(PrivacyRequest),
   PurchaseModal: reactModule(PurchaseModalQueryRenderer, {
