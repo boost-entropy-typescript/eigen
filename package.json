@@ -12,7 +12,7 @@
   ],
   "main": "index-common.js",
   "scripts": {
-    "android": "react-native run-android",
+    "android": "yarn jetifier && react-native run-android",
     "bundle:android": "yarn bundle:android:js && yarn bundle:android:hermes && yarn bundle:android:sourcemap",
     "bundle:android:js": "./scripts/hermes/hermes-android-bundle.sh",
     "bundle:android:sourcemap": "./scripts/hermes/hermes-android-sourcemap.sh",
@@ -115,7 +115,7 @@
     "@babel/plugin-transform-named-capturing-groups-regex": "Needed for compiling android with hermes enabled"
   },
   "dependencies": {
-    "@artsy/cohesion": "4.162.0",
+    "@artsy/cohesion": "4.163.0",
     "@artsy/palette-mobile": "13.0.28",
     "@artsy/to-title-case": "1.1.0",
     "@expo/react-native-action-sheet": "4.0.1",
