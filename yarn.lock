@@ -17,10 +17,10 @@
   dependencies:
     core-js "3"
 
-"@artsy/palette-mobile@13.1.14":
-  version "13.1.14"
-  resolved "https://registry.yarnpkg.com/@artsy/palette-mobile/-/palette-mobile-13.1.14.tgz#f98a002d2e201d2926e99703699fef241e997ea6"
-  integrity sha512-MTM3j8Zi6LaalNpTxIa7coPE03GnX/GOK+q3ohfaJUtqydsyc3dkyVHhfaPg8dqnSvWZSvUKielUXlCD6BldRg==
+"@artsy/palette-mobile@13.1.16":
+  version "13.1.16"
+  resolved "https://registry.yarnpkg.com/@artsy/palette-mobile/-/palette-mobile-13.1.16.tgz#5f4766eababca457c9983dde126a13ba3a127d04"
+  integrity sha512-ZB5En0bx7rJhImiaRb/RXhVW+AGkr94t7amiXtPrOsGqdBIBV2CODBXFP+x99LTY2l0xXA5aGN0bXEEA9IxvuA==
   dependencies:
     "@artsy/palette-tokens" "^5.0.0"
     "@shopify/flash-list" "^1.5.0"
@@ -4295,9 +4295,9 @@ ansi-fragments@^0.2.1:
     strip-ansi "^5.0.0"
 
 ansi-regex@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-4.1.0.tgz#8b9f8f08cf1acb843756a839ca8c7e3168c51997"
-  integrity sha512-1apePfXM1UOSqw0o9IiFAovVz9M5S1Dg+4TrDwfMewQ6p/rmMueb7tWZjQ1rx4Loy1ArBggoqGpfqqdI4rondg==
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-4.1.1.tgz#164daac87ab2d6f6db3a29875e2d1766582dabed"
+  integrity sha512-ILlv4k/3f6vfQ4OoP2AGvirOktlQ98ZEL1k9FaQjxa3L1abBgbuTDAdPOpvbGncC0BTVQrl+OM8xZGK6tWXt7g==
 
 ansi-regex@^5.0.0, ansi-regex@^5.0.1:
   version "5.0.1"
