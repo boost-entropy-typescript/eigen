@@ -262,6 +262,12 @@ export const features = {
     showInDevMenu: true,
     echoFlagKey: "AREnableArtworksFeedView",
   },
+  AREnableArtworkListOfferability: {
+    description: "Enable Parnter Offer v1.5, edit sharing artwork list with partners for offers",
+    readyForRelease: false,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableArtworkListOfferability",
+  },
 } satisfies { [key: string]: FeatureDescriptor }
 
 export interface DevToggleDescriptor {
@@ -278,6 +284,9 @@ export interface DevToggleDescriptor {
 export type DevToggleName = keyof typeof devToggles
 
 export const devToggles: { [key: string]: DevToggleDescriptor } = {
+  DTShowPlayground: {
+    description: "Show Playground",
+  },
   DTShowQuickAccessInfo: {
     description: "Quick Access Info",
   },
