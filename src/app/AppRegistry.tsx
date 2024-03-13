@@ -47,7 +47,7 @@ import { ArtistArticlesQueryRenderer } from "./Scenes/ArtistArticles/ArtistArtic
 import { ArtistSeriesQueryRenderer } from "./Scenes/ArtistSeries/ArtistSeries"
 import { ArtistSeriesFullArtistSeriesListQueryRenderer } from "./Scenes/ArtistSeries/ArtistSeriesFullArtistSeriesList"
 import { ArtistShows2QueryRenderer } from "./Scenes/ArtistShows/ArtistShows2"
-import { ArtworkPageableScreen, ArtworkScreenQuery } from "./Scenes/Artwork/Artwork"
+import { ArtworkScreen, ArtworkScreenQuery } from "./Scenes/Artwork/Artwork"
 import { CertificateOfAuthenticity } from "./Scenes/Artwork/Components/CertificateAuthenticity"
 import { UnlistedArtworksFAQScreen } from "./Scenes/Artwork/Components/UnlistedArtworksFAQScreen"
 import { ArtworkAttributionClassFAQQueryRenderer } from "./Scenes/ArtworkAttributionClassFAQ/ArtworkAttributionClassFAQ"
@@ -378,7 +378,7 @@ export const modules = defineModules({
     hidesBackButton: true,
   }),
   Artwork: reactModule(
-    ArtworkPageableScreen,
+    ArtworkScreen,
     {
       hidesBackButton: true,
       hidesBottomTabs: true,
@@ -624,7 +624,10 @@ export const modules = defineModules({
     SellWithArtsyHomeScreenQuery,
   ]),
   SalesNotRootTabView: reactModule(SellWithArtsy),
-  SavedSearchAlertsList: reactModule(SavedSearchAlertsListQueryRenderer),
+  SavedSearchAlertsList: reactModule(SavedSearchAlertsListQueryRenderer, {
+    fullBleed: true,
+    hidesBackButton: true,
+  }),
   Search: reactModule(SearchScreen, { isRootViewForTabName: "search" }, [SearchScreenQuery]),
   Show: reactModule(ShowQueryRenderer, { fullBleed: true }),
   ShowMoreInfo: reactModule(ShowMoreInfoQueryRenderer),

@@ -69,12 +69,6 @@ export const features = {
     readyForRelease: true,
     echoFlagKey: "ARImpressionsTrackingHomeRailViews",
   },
-  // Not yet released - don't cleanup waiting design feedback
-  AREnablePageableArtworkScreens: {
-    description: "Enable pageable artwork screens",
-    readyForRelease: false,
-    showInDevMenu: true,
-  },
   AREnableSWALandingPageMeetTheSpecialist: {
     description: "Enable MeetTheSpecialist on SWA Landing Page",
     readyForRelease: true,
@@ -267,6 +261,18 @@ export const features = {
     readyForRelease: false,
     showInDevMenu: true,
     echoFlagKey: "AREnableArtworkListOfferability",
+  },
+  ARUsePaletteImage: {
+    description: "Use Palette Image Component",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "ARUsePaletteImageComponent",
+  },
+  ARShowBlurhashImagePlaceholder: {
+    description: "Show blurhash image placeholder (works only when using Palette Image Component)",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "ARShowBlurhashImagePlaceholder",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
