@@ -47,7 +47,7 @@ export const features = {
     description: "Support dark mode",
   },
   AREnableArticleSlideShow: {
-    readyForRelease: false,
+    readyForRelease: true,
     description: "Enable slideshow elements and route on Article screen",
     echoFlagKey: "AREnableArticleSlideShow",
     showInDevMenu: true,
@@ -250,8 +250,9 @@ export const features = {
   },
   AREnableAlertBottomSheet: {
     description: "Enable tapping on alerts to show bottom sheet",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
+    echoFlagKey: "AREnableAlertBottomSheet",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
