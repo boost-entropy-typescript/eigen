@@ -107,7 +107,7 @@
     "@babel/plugin-transform-named-capturing-groups-regex": "Needed for compiling android with hermes enabled"
   },
   "dependencies": {
-    "@artsy/cohesion": "4.169.0",
+    "@artsy/cohesion": "4.170.0",
     "@artsy/palette-mobile": "13.1.26",
     "@artsy/to-title-case": "1.1.0",
     "@expo/react-native-action-sheet": "4.0.1",
@@ -167,7 +167,7 @@
     "react-native-get-random-values": "1.11.0",
     "react-native-haptic-feedback": "1.13.0",
     "react-native-hyperlink": "0.0.19",
-    "react-native-image-crop-picker": "0.38.1",
+    "react-native-image-crop-picker": "0.40.3",
     "react-native-in-app-review": "4.2.1",
     "react-native-keychain": "8.0.0",
     "react-native-linear-gradient": "2.6.2",
