@@ -1933,6 +1933,7 @@ type ArtistCounts {
     label: String
   ): FormattedNumber
   hasMakeOfferArtworks: Boolean
+  myCollectedArtworks: Int!
   partnerShows(
     # Returns a `String` when format is specified. e.g.`'0,0.0000''`
     format: String
@@ -15483,6 +15484,7 @@ type Query {
   artworksForUser(
     after: String
     before: String
+    excludeDislikedArtworks: Boolean = false
     first: Int
     includeBackfill: Boolean!
     last: Int
@@ -20381,6 +20383,7 @@ type Viewer {
   artworksForUser(
     after: String
     before: String
+    excludeDislikedArtworks: Boolean = false
     first: Int
     includeBackfill: Boolean!
     last: Int

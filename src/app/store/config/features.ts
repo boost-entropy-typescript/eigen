@@ -151,11 +151,6 @@ export const features = {
     readyForRelease: true,
     echoFlagKey: "AREnableLatestActivityRail",
   },
-  AREnableSingleActivityPanelScreen: {
-    description: "Enable Single Activity Panel screen",
-    readyForRelease: true,
-    echoFlagKey: "AREnableSingleActivityPanelScreen",
-  },
   AREnableAlertsFilters: {
     description: "Enable filters in alerts screen",
     readyForRelease: true,
@@ -214,12 +209,6 @@ export const features = {
     readyForRelease: true,
     echoFlagKey: "AREnableAlertsFiltersArtistSeriesFiltering",
   },
-  AREnableNewActivityPanelManagement: {
-    description: "Enable new activity panel management",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnableNewActivityPanelManagement",
-  },
   AREnableArtworksFeedView: {
     description: "Enable artworks feed view",
     readyForRelease: true,
@@ -256,11 +245,11 @@ export const features = {
     showInDevMenu: true,
     echoFlagKey: "AREnableNewTermsAndConditions",
   },
-  AREnablePartnerOfferV1Improvements: {
-    description: "Enable partner offer v1 improvements",
+  AREnablePartnerOfferOnArtworkScreen: {
+    description: "Enable partner offer on artwork screen",
     readyForRelease: false,
     showInDevMenu: true,
-    echoFlagKey: "AREnablePartnerOfferV1Improvements",
+    echoFlagKey: "AREnablePartnerOfferOnArtworkScreen",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
