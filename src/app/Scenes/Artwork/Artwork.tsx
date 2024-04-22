@@ -23,6 +23,7 @@ import {
   AuctionWebsocketChannelInfo,
   AuctionWebsocketContextProvider,
 } from "app/utils/Websockets/auctions/AuctionSocketContext"
+import { extractNodes } from "app/utils/extractNodes"
 import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
 import { ProvidePlaceholderContext } from "app/utils/placeholders"
 import { ProvideScreenTracking, Schema } from "app/utils/track"
@@ -437,7 +438,11 @@ export const Artwork: React.FC<ArtworkProps> = (props) => {
       />
 
       {!!(artworkAboveTheFold && me) && (
-        <ArtworkStickyBottomContent artwork={artworkAboveTheFold} me={me} />
+        <ArtworkStickyBottomContent
+          artwork={artworkAboveTheFold}
+          me={me}
+          partnerOffer={extractNodes(me.partnerOffersConnection)[0]}
+        />
       )}
 
       <QAInfo />
@@ -620,8 +625,16 @@ export const ArtworkContainer = createRefetchContainer(
       }
     `,
     me: graphql`
-      fragment Artwork_me on Me {
+      fragment Artwork_me on Me @argumentDefinitions(artworkID: { type: "String!" }) {
         ...ArtworkStickyBottomContent_me
+        partnerOffersConnection(artworkID: $artworkID, first: 1) {
+          edges {
+            node {
+              internalID
+              ...ArtworkStickyBottomContent_partnerOfferToCollector
+            }
+          }
+        }
       }
     `,
   },
@@ -642,7 +655,7 @@ export const ArtworkScreenQuery = graphql`
       ...Artwork_artworkAboveTheFold
     }
     me {
-      ...Artwork_me
+      ...Artwork_me @arguments(artworkID: $artworkID)
     }
   }
 `
