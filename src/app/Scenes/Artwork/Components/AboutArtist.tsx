@@ -18,9 +18,7 @@ export const AboutArtist: React.FC<AboutArtistProps> = ({ artwork }) => {
   const biographyBlurb =
     hasSingleArtist && artists[0]?.biographyBlurb?.text ? artists[0]?.biographyBlurb?.text : null
 
-  const partnerBiographyBlurb = artwork.artist?.partnerBiographyBlurb?.text
-
-  const text = partnerBiographyBlurb ?? biographyBlurb
+  const text = biographyBlurb
 
   const textLimit = truncatedTextLimit()
 
@@ -51,7 +49,7 @@ export const AboutArtist: React.FC<AboutArtistProps> = ({ artwork }) => {
           )}
         </Join>
       </Flex>
-      {!!hasSingleArtist && !!text && (
+      {!!hasSingleArtist && !!text && !artwork.isUnlisted && !artwork.displayArtistBio && (
         <Box mt={2} mb={artwork.isUnlisted ? 1 : 0}>
           <ReadMore
             content={text}
@@ -72,6 +70,7 @@ export const AboutArtist: React.FC<AboutArtistProps> = ({ artwork }) => {
 export const AboutArtistFragmentContainer = createFragmentContainer(AboutArtist, {
   artwork: graphql`
     fragment AboutArtist_artwork on Artwork {
+      displayArtistBio
       artists {
         id
         biographyBlurb {
