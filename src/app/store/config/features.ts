@@ -188,12 +188,7 @@ export const features = {
     readyForRelease: true,
     echoFlagKey: "AREnablePartnerOffersNotificationSwitch",
   },
-  AREnableNewWorksForYouScreenFeed: {
-    description: "Enable new works for you screen feed",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnableNewWorksForYouScreenFeed",
-  },
+
   AREnablePartnerOffer: {
     description: "Enable partner offer content in the app",
     readyForRelease: true,
@@ -261,6 +256,18 @@ export const features = {
     readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnablePartnerOfferOnArtworkScreen",
+  },
+  AREnableMyCollectionInterestedInSellingTooltip: {
+    description: "Enable My Collection 'Interested in Selling?' tooltip",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableMyCollectionInterestedInSellingTooltip",
+  },
+  ARSWAMakeAllDimensionsOptional: {
+    description: "Make all dimensions optional in SWA submit flow",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "ARSWAMakeAllDimensionsOptional",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
@@ -331,9 +338,6 @@ export const devToggles: { [key: string]: DevToggleDescriptor } = {
   },
   DTEnableNewImageLabel: {
     description: "Show a label on new OpaqueImageView",
-  },
-  DTForceShowNewWorksForYouScreenFeed: {
-    description: "Force show new works for you feed",
   },
 }
 

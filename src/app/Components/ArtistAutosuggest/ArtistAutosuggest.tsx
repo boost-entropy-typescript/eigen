@@ -55,12 +55,14 @@ export const ArtistAutosuggest: React.FC<ArtistAutosuggestProps> = ({
         icon={<SearchIcon width={18} height={18} />}
         onChangeText={onArtistSearchTextChange}
         value={artist}
+        autoCorrect={false}
         accessibilityLabel="Artist"
         onBlur={() => setFocused(false)}
         onFocus={() => setFocused(true)}
         enableClearButton
         testID="Submission_ArtistInput"
         error={!focused && artist && !isArtistSelected ? errors.artistId : undefined}
+        required
       />
 
       {!!focused && !isArtistSelected && artist?.length > 2 && (

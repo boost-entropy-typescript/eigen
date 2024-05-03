@@ -3,8 +3,10 @@ import {
   CreateSubmissionMutationInput,
 } from "__generated__/createConsignSubmissionMutation.graphql"
 import { UpdateSubmissionMutationInput } from "__generated__/updateConsignSubmissionMutation.graphql"
-import { ArtworkDetailsFormModel } from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/validation"
-import { ContactInformationFormModel as SWASubmissionContactInformationFormModel } from "app/Scenes/SellWithArtsy/SubmitArtwork/ContactInformation/validation"
+import {
+  ArtworkDetailsFormModel,
+  ContactInformationFormModel as SWASubmissionContactInformationFormModel,
+} from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/validation"
 import {
   createConsignSubmission,
   updateConsignSubmission,
@@ -25,33 +27,48 @@ export const createOrUpdateSubmission = async (
   const attributionClass =
     (values?.attributionClass?.replace(" ", "_").toUpperCase() as NewType) || null
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { artist, artistId, location, myCollectionArtworkID, source, ...restValues } = values
-
   const submissionValues: SubmissionInput = {
-    ...restValues,
-    artistID: artistId,
+    category: values.category,
+    medium: values.medium,
+    artistID: values.artistId,
     attributionClass,
     editionNumber: isRarityLimitedEdition ? values.editionNumber : "",
     editionSizeFormatted: isRarityLimitedEdition ? values.editionSizeFormatted : "",
-    locationCity: location?.city,
-    locationState: location?.state,
-    locationCountry: location?.country,
-    locationCountryCode: location?.countryCode,
-    locationPostalCode: location?.zipCode || null,
+    locationCity: values.location?.city,
+    locationState: values.location?.state,
+    locationCountry: values.location?.country,
+    locationCountryCode: values.location?.countryCode,
+    locationPostalCode: values.location?.zipCode || null,
     state: values.state || "DRAFT",
+    utmMedium: values.utmMedium,
+    utmSource: values.utmSource,
+    utmTerm: values.utmTerm,
+    depth: values.depth,
+    height: values.height,
+    width: values.width,
+    dimensionsMetric: values.dimensionsMetric,
+    userEmail: values.userEmail,
+    userName: values.userName,
+    userPhone: values.userPhone,
+    year: values.year,
+    provenance: values.provenance,
+    title: values.title,
   }
 
   if (submissionId) {
     return await updateConsignSubmission({
       id: submissionId,
       ...submissionValues,
-    } as UpdateSubmissionMutationInput)
+    })
   }
 
-  return await createConsignSubmission({
-    myCollectionArtworkID,
-    source: source || DEFAULT_SOURCE,
-    ...submissionValues,
-  } as CreateSubmissionMutationInput)
+  // ArtistID is required for creating a submission
+  if (values.artistId) {
+    return await createConsignSubmission({
+      myCollectionArtworkID: values.myCollectionArtworkID,
+      source: values.source || DEFAULT_SOURCE,
+      ...submissionValues,
+      artistID: values.artistId,
+    })
+  }
 }
