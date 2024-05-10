@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@5.2.0
   queue: eddiewebb/queue@2.2.1
   horizon: artsy/release@0.0.1
-  macos: circleci/macos@2.4.1
+  macos: circleci/macos@2.5.0
   android: circleci/android@2.5.0
 
 commands:
@@ -176,13 +176,22 @@ jobs:
       - run: ./scripts/detect-secrets/secrets-check-all
 
   deploy-nightly-beta:
-    executor:
-      name: node/default
-      tag: "20.9.0"
-    resource_class: small
+    environment:
+      BUNDLE_PATH: .vendor
+
+    macos:
+      xcode: 15.1
+      resource_class: macos.m1.medium.gen1
 
     steps:
       - checkout
+      - generate-checksums
+      - setup-awscli
+      - setup-env-file
+      - install-gems
+      - run:
+          name: Create next version if needed
+          command: ./scripts/deploys/create-next-version-if-needed
       - run:
           name: Deploy betas
           command: ./scripts/deploys/deploy-beta-both
