@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@5.2.0
   queue: eddiewebb/queue@2.2.1
   horizon: artsy/release@0.0.1
-  macos: circleci/macos@2.5.0
+  macos: circleci/macos@2.5.1
   android: circleci/android@2.5.0
 
 commands:
@@ -195,6 +195,9 @@ jobs:
       - run:
           name: Deploy betas
           command: ./scripts/deploys/deploy-beta-both
+      - run:
+          name: Upload builds to Maestro App Quality Copilot
+          command: ./scripts/deploys/upload-betas-maestro-copilot
 
   check-and-deploy:
     environment:

@@ -15,6 +15,7 @@ import { captureMessage } from "@sentry/react-native"
 import { ErrorView } from "app/Components/ErrorView/ErrorView"
 import { FancyModal } from "app/Components/FancyModal/FancyModal"
 import { FancyModalHeader } from "app/Components/FancyModal/FancyModalHeader"
+import { SubmitArtworkForm } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkForm"
 import { fetchUserContactInformation } from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/utils/fetchUserContactInformation"
 import {
   artworkDetailsCompletedEvent,
@@ -26,10 +27,10 @@ import { GlobalStore } from "app/store/GlobalStore"
 import { goBack } from "app/system/navigation/navigate"
 import { useReloadedDevNavigationState } from "app/system/navigation/useReloadedDevNavigationState"
 import { ArtsyKeyboardAvoidingView } from "app/utils/ArtsyKeyboardAvoidingView"
+import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
 import { refreshMyCollection } from "app/utils/refreshHelpers"
 import { ProvideScreenTrackingWithCohesionSchema } from "app/utils/track"
 import { screen } from "app/utils/track/helpers"
-import { isEqual } from "lodash"
 import React, { useEffect, useRef, useState } from "react"
 import { ScrollView } from "react-native"
 import { useTracking } from "react-tracking"
@@ -72,11 +73,9 @@ export const SubmitSWAArtworkFlow: React.FC<SubmitSWAArtworkFlowProps> = ({
   const { showActionSheetWithOptions } = useActionSheet()
   const { safeAreaInsets } = useScreenDimensions()
 
-  const {
-    submissionId: submissionID,
-    artworkDetails,
-    dirtyArtworkDetailsValues,
-  } = GlobalStore.useAppState((store) => store.artworkSubmission.submission)
+  const { submissionId: submissionID, artworkDetails } = GlobalStore.useAppState(
+    (store) => store.artworkSubmission.submission
+  )
 
   const { userID } = GlobalStore.useAppState((state) => state.auth)
   const [userEmail, setUserEmail] = useState("")
@@ -234,13 +233,11 @@ export const SubmitSWAArtworkFlow: React.FC<SubmitSWAArtworkFlowProps> = ({
   }
 
   const handleBackPress = async () => {
-    const isFormDirty = !isEqual(artworkDetailsFromValuesRef.current, dirtyArtworkDetailsValues)
-
     /*
     action sheet is displayed only on 1st screen (Artwork Details)
     since form data is saved on the server and a draft submission is created  after the first step
     */
-    if (activeStep === 0 && isFormDirty) {
+    if (activeStep === 0) {
       const leaveSubmission = await new Promise((resolve) =>
         showActionSheetWithOptions(
           {
@@ -333,9 +330,14 @@ export const SubmitArtwork = () => {
   const { isReady, initialState, saveSession } = useReloadedDevNavigationState(
     SUBMIT_ARTWORK_NAVIGATION_STACK_STATE_KEY
   )
+  const enableNewSubmissionFlow = useFeatureFlag("AREnableNewSubmissionFlow")
 
   if (!isReady) {
     return null
+  }
+
+  if (enableNewSubmissionFlow) {
+    return <SubmitArtworkForm />
   }
 
   return (
