@@ -1,6 +1,5 @@
-import { Flex, Text, Touchable } from "@artsy/palette-mobile"
+import { BackButton, Flex, Text, Touchable } from "@artsy/palette-mobile"
 import { SubmitArtworkFormStore } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkFormStore"
-import { SubmitArtworkProgressBar } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkProgressBar"
 import { useSubmissionContext } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/navigationHelpers"
 import { goBack } from "app/system/navigation/navigate"
 import { useIsKeyboardVisible } from "app/utils/hooks/useIsKeyboardVisible"
@@ -26,10 +25,17 @@ export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
   }, [currentStep])
 
-  if (!currentStep || currentStep === "StartFlow") {
+  if (!currentStep) {
     return null
   }
 
+  if (["StartFlow", "ArtistRejected"].includes(currentStep)) {
+    return (
+      <Flex py={1} px={2} flexDirection="row">
+        <BackButton showX style={{ zIndex: 100, overflow: "visible" }} onPress={goBack} />
+      </Flex>
+    )
+  }
   return (
     <Flex mx={2}>
       <MotiView
@@ -42,15 +48,19 @@ export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
         }}
       >
         <Flex flexDirection="row" justifyContent="space-between">
-          <Flex style={{ flexGrow: 1, alignItems: "flex-end" }}>
-            <Touchable onPress={handleSaveAndExitPress}>
-              <Text>{!hasCompletedForm ? "Save & " : ""}Exit</Text>
-            </Touchable>
-          </Flex>
+          {currentStep === "SelectArtist" && (
+            <BackButton showX style={{ zIndex: 100, overflow: "visible" }} onPress={goBack} />
+          )}
+
+          {currentStep !== "SelectArtist" && (
+            <Flex style={{ flexGrow: 1, alignItems: "flex-end" }}>
+              <Touchable onPress={handleSaveAndExitPress}>
+                <Text>{!hasCompletedForm ? "Save & " : ""}Exit</Text>
+              </Touchable>
+            </Flex>
+          )}
         </Flex>
       </MotiView>
-
-      <SubmitArtworkProgressBar />
     </Flex>
   )
 }
