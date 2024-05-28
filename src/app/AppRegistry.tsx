@@ -32,6 +32,7 @@ import { SavedArtworks } from "app/Scenes/SavedArtworks/SavedArtworks"
 import { AlertArtworks } from "app/Scenes/SavedSearchAlert/AlertArtworks"
 import { SearchScreen, SearchScreenQuery } from "app/Scenes/Search/Search"
 import { SubmitArtworkForm } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkForm"
+import { SubmitArtworkFormEdit } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkFormEdit"
 import { SimilarToRecentlyViewedScreen } from "app/Scenes/SimilarToRecentlyViewed/SimilarToRecentlyViewed"
 import { ArtsyKeyboardAvoidingViewContext } from "app/utils/ArtsyKeyboardAvoidingView"
 import { SafeAreaInsets, useScreenDimensions } from "app/utils/hooks"
@@ -654,8 +655,18 @@ export const modules = defineModules({
     ? reactModule(SubmitArtworkForm, {
         hidesBackButton: true,
         hidesBottomTabs: true,
+        screenOptions: {
+          gestureEnabled: false,
+        },
       })
     : reactModule(SubmitArtwork, { hidesBackButton: true, hidesBottomTabs: true }),
+  SubmitArtworkEdit: reactModule(SubmitArtworkFormEdit, {
+    hidesBackButton: true,
+    hidesBottomTabs: true,
+    screenOptions: {
+      gestureEnabled: false,
+    },
+  }),
   Tag: reactModule(TagQueryRenderer, { hidesBackButton: true, fullBleed: true }),
   UnlistedArtworksFAQScreen: reactModule(UnlistedArtworksFAQScreen),
   VanityURLEntity: reactModule(VanityURLEntityRenderer, { fullBleed: true }),

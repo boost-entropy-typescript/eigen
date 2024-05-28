@@ -54,8 +54,8 @@ const artworkFormPhotosSchema = Yup.object().shape({
     .min(__TEST__ ? 0 : 1)
     .of(
       Yup.object().shape({
-        id: Yup.string().required(),
-        geminiToken: Yup.string().required(),
+        id: Yup.string(),
+        geminiToken: Yup.string(),
         path: Yup.string().required(),
       })
     ),
@@ -84,7 +84,12 @@ const provenanceSchema = Yup.object().shape({
 const artworkDetailsValidationSchema = Yup.object().shape({
   category: Yup.string().required(),
   medium: Yup.string(),
-  year: Yup.string(),
+  year: Yup.string().when("isYearUnknown", {
+    is: false,
+    then: Yup.string().required(),
+    otherwise: Yup.string(),
+  }),
+  isYearUnknown: Yup.boolean(),
 })
 
 export interface Location {
@@ -97,7 +102,7 @@ export interface Location {
 
 export interface ArtworkDetailsFormModel {
   submissionId: string | null
-  artist: string | null
+  artist: string
   artistId: string
   artistSearchResult: AutosuggestResult | null
   attributionClass: ConsignmentAttributionClass | null
@@ -107,6 +112,7 @@ export interface ArtworkDetailsFormModel {
   editionNumber: string
   editionSizeFormatted: string
   height: string
+  isYearUnknown: boolean | null
   location: Location
   medium: string
   myCollectionArtworkID: string | null
@@ -143,6 +149,7 @@ export const artworkDetailsEmptyInitialValues: ArtworkDetailsFormModel = {
   editionNumber: "",
   editionSizeFormatted: "",
   height: "",
+  isYearUnknown: false,
   location: {
     city: "",
     state: "",

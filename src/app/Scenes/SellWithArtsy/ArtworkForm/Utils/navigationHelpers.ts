@@ -9,6 +9,7 @@ import {
 } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/constants"
 import { ArtworkDetailsFormModel } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/validation"
 import { createOrUpdateSubmission } from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/utils/createOrUpdateSubmission"
+import { GlobalStore } from "app/store/GlobalStore"
 import { goBack } from "app/system/navigation/navigate"
 import { useFormikContext } from "formik"
 import { Alert } from "react-native"
@@ -26,6 +27,7 @@ export const useSubmissionContext = () => {
   }) => {
     try {
       setIsLoading(true)
+
       const nextStep =
         props?.step || ARTWORK_FORM_STEPS[ARTWORK_FORM_STEPS.indexOf(currentStep as any) + 1]
 
@@ -36,7 +38,7 @@ export const useSubmissionContext = () => {
 
       const newValues = {
         ...values,
-        state: (currentStep === "PurchaseHistory"
+        state: (currentStep === "AddDimensions"
           ? "SUBMITTED"
           : undefined) as ArtworkDetailsFormModel["state"],
       }
@@ -46,6 +48,11 @@ export const useSubmissionContext = () => {
         if (!values.submissionId && submissionId) {
           setFieldValue("submissionId", submissionId)
         }
+      }
+
+      if (newValues.state === "SUBMITTED") {
+        // Reset saved draft if submission is successful
+        GlobalStore.actions.artworkSubmission.setDraft(null)
       }
 
       __unsafe__SubmissionArtworkFormNavigationRef.current?.navigate?.(nextStep)

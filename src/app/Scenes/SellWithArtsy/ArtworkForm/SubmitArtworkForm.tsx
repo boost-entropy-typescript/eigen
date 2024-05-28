@@ -1,6 +1,6 @@
-import { Flex, useSpace } from "@artsy/palette-mobile"
+import { Flex } from "@artsy/palette-mobile"
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
-import { createStackNavigator } from "@react-navigation/stack"
+import { TransitionPresets, createStackNavigator } from "@react-navigation/stack"
 import { SubmitArtworkAddDetails } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkAddDetails"
 import { SubmitArtworkAddDimensions } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkAddDimensions"
 import { SubmitArtworkAddPhotos } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkAddPhotos"
@@ -18,6 +18,7 @@ import { SelectArtworkMyCollectionArtwork } from "app/Scenes/SellWithArtsy/Artwo
 import { SubmitArtworkStartFlow } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkStartFlow"
 import { SubmitArtworkTopNavigation } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkTopNavigation"
 import { SubmitArtworkScreen } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/constants"
+import { getInitialNavigationState } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/getInitialNavigationState"
 import {
   ArtworkDetailsFormModel,
   artworkDetailsEmptyInitialValues,
@@ -54,7 +55,11 @@ export const SubmitArtworkForm: React.FC<SubmitArtworkProps> = (props) => {
         currentStep: initialScreen,
       }}
     >
-      <SubmitArtworkFormContent initialValues={props.initialValues} initialStep={initialScreen} />
+      <SubmitArtworkFormContent
+        initialValues={props.initialValues}
+        initialStep={initialScreen}
+        navigationState={props.navigationState}
+      />
     </SubmitArtworkFormStoreProvider>
   )
 }
@@ -64,7 +69,6 @@ const SubmitArtworkFormContent: React.FC<SubmitArtworkProps> = ({
   initialStep,
 }) => {
   const currentStep = SubmitArtworkFormStore.useStoreState((state) => state.currentStep)
-  const space = useSpace()
   const { bottom: bottomInset } = useSafeAreaInsets()
   const isKeyboardVisible = useIsKeyboardVisible(true)
 
@@ -115,10 +119,13 @@ const SubmitArtworkFormContent: React.FC<SubmitArtworkProps> = ({
           style={{
             flex: 1,
             paddingBottom: isKeyboardVisible ? 0 : bottomInset,
-            paddingHorizontal: space(2),
           }}
         >
-          <NavigationContainer independent ref={__unsafe__SubmissionArtworkFormNavigationRef}>
+          <NavigationContainer
+            independent
+            ref={__unsafe__SubmissionArtworkFormNavigationRef}
+            initialState={getInitialNavigationState(initialStep)}
+          >
             <Stack.Navigator
               // force it to not use react-native-screens, which is broken inside a react-native Modal for some reason
               detachInactiveScreens={false}
@@ -127,6 +134,21 @@ const SubmitArtworkFormContent: React.FC<SubmitArtworkProps> = ({
                 cardStyle: { backgroundColor: "white" },
                 keyboardHandlingEnabled: false,
                 gestureEnabled: false,
+                ...TransitionPresets.SlideFromRightIOS,
+                cardStyleInterpolator: ({ current, layouts }) => {
+                  return {
+                    cardStyle: {
+                      transform: [
+                        {
+                          translateX: current.progress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [layouts.screen.width, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  }
+                },
               }}
               initialRouteName={initialStep}
             >
