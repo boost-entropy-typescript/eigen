@@ -1,4 +1,4 @@
-import { Flex, Screen, Spacer, Text } from "@artsy/palette-mobile"
+import { Flex, Spacer, Text } from "@artsy/palette-mobile"
 import { AutosuggestResult } from "app/Components/AutosuggestResults/AutosuggestResults"
 import { AutosuggestResultsPlaceholder } from "app/Components/AutosuggestResults/AutosuggestResultsPlaceholder"
 import {
@@ -13,7 +13,7 @@ import { navigate } from "app/system/navigation/navigate"
 import { PlaceholderBox, PlaceholderText, ProvidePlaceholderContext } from "app/utils/placeholders"
 import { useFormikContext } from "formik"
 import { Suspense } from "react"
-import { Keyboard } from "react-native"
+import { TouchableOpacity } from "react-native"
 
 export const SubmitArtworkSelectArtist = () => {
   const { navigateToNextStep } = useSubmissionContext()
@@ -41,7 +41,6 @@ export const SubmitArtworkSelectArtist = () => {
     const isTargetSupply = artist.__typename === "Artist" && artist.targetSupply?.isTargetSupply
 
     if (!isTargetSupply) {
-      Keyboard.dismiss()
       navigateToNextStep({
         step: "ArtistRejected",
         skipMutation: true,
@@ -51,6 +50,7 @@ export const SubmitArtworkSelectArtist = () => {
     }
 
     const updatedValues = {
+      ...formik.values,
       artistId: result.internalID,
       artist: result.displayLabel || "",
       artistSearchResult: result,
@@ -74,7 +74,7 @@ export const SubmitArtworkSelectArtist = () => {
   }
 
   return (
-    <Screen.Body>
+    <Flex px={2}>
       <Flex pb={6}>
         <Text variant="lg" mb={2}>
           Add artist name
@@ -88,29 +88,33 @@ export const SubmitArtworkSelectArtist = () => {
             loading={isLoading}
             hideCollectedArtists
             Hint={
-              <Text variant="xs" color="black60" py={1}>
-                Currently, artists can not sell their own work on Artsy.{"\n"}
-                <Text
-                  underline
-                  variant="xs"
-                  color="black60"
-                  style={{
-                    zIndex: 1000,
-                  }}
-                  onPress={() => {
-                    navigate(
-                      "https://support.artsy.net/s/article/Im-an-artist-Can-I-submit-my-own-work-to-sell"
-                    )
-                  }}
-                >
-                  Learn more.
+              <Flex py={1}>
+                <Text variant="xs" color="black60">
+                  Currently, artists can not sell their own work on Artsy.
                 </Text>
-              </Text>
+                <TouchableOpacity>
+                  <Text
+                    underline
+                    variant="xs"
+                    color="black60"
+                    style={{
+                      zIndex: 1000,
+                    }}
+                    onPress={() => {
+                      navigate(
+                        "https://support.artsy.net/s/article/Im-an-artist-Can-I-submit-my-own-work-to-sell"
+                      )
+                    }}
+                  >
+                    Learn more.
+                  </Text>
+                </TouchableOpacity>
+              </Flex>
             }
           />
         </Suspense>
       </Flex>
-    </Screen.Body>
+    </Flex>
   )
 }
 
