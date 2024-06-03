@@ -1,18 +1,20 @@
 import { BackButton, Flex, Text, Touchable } from "@artsy/palette-mobile"
 import { SubmitArtworkFormStore } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkFormStore"
+import { SubmitArtworkProgressBar } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkProgressBar"
 import { ArtworkDetailsFormModel } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/validation"
 import { createOrUpdateSubmission } from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/utils/createOrUpdateSubmission"
 import { GlobalStore } from "app/store/GlobalStore"
 import { goBack } from "app/system/navigation/navigate"
 import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
 import { useFormikContext } from "formik"
-import { useEffect } from "react"
-import { Alert, LayoutAnimation } from "react-native"
+import { useEffect, useState } from "react"
+import { Alert, Keyboard, LayoutAnimation } from "react-native"
 
 export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
   const enableSaveAndExit = useFeatureFlag("AREnableSaveAndContinueSubmission")
   const currentStep = SubmitArtworkFormStore.useStoreState((state) => state.currentStep)
   const hasCompletedForm = currentStep === "CompleteYourSubmission"
+  const [backPressed, setBackPressed] = useState(false)
 
   const { values } = useFormikContext<ArtworkDetailsFormModel>()
 
@@ -72,6 +74,18 @@ export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
   }, [currentStep])
 
+  useEffect(() => {
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      if (backPressed) {
+        goBack()
+      }
+    })
+
+    return () => {
+      hideSubscription.remove()
+    }
+  }, [backPressed])
+
   if (!currentStep) {
     return null
   }
@@ -83,21 +97,31 @@ export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
       </Flex>
     )
   }
+
   return (
-    <Flex mx={2} height={40}>
+    <Flex mx={2} height={40} mb={2}>
       <Flex flexDirection="row" justifyContent="space-between">
         {currentStep === "SelectArtist" && (
-          <BackButton showX style={{ zIndex: 100, overflow: "visible" }} onPress={goBack} />
+          <BackButton
+            showX
+            style={{ zIndex: 100, overflow: "visible" }}
+            onPress={() => {
+              Keyboard.dismiss()
+              setBackPressed(true)
+            }}
+          />
         )}
 
         {currentStep !== "SelectArtist" && (
-          <Flex style={{ flexGrow: 1, alignItems: "flex-end" }}>
+          <Flex style={{ flexGrow: 1, alignItems: "flex-end" }} mb={0.5}>
             <Touchable onPress={handleSaveAndExitPress}>
               <Text>{!hasCompletedForm && !!enableSaveAndExit ? "Save & " : ""}Exit</Text>
             </Touchable>
           </Flex>
         )}
       </Flex>
+
+      <SubmitArtworkProgressBar />
     </Flex>
   )
 }
