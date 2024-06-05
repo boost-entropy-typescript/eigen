@@ -23,6 +23,7 @@ export const SubmitArtworkCompleteYourSubmission = () => {
             <Flex flex={1} pr={1}>
               <Text variant="lg-display">Thank you for submitting your artwork</Text>
             </Flex>
+
             <CheckCircleFillIcon
               height={ICON_WIDTH}
               width={ICON_WIDTH}
@@ -33,11 +34,9 @@ export const SubmitArtworkCompleteYourSubmission = () => {
           </Flex>
         </Flex>
 
-        <Spacer y={2} />
-
         <Text variant="xs">
-          We will email you within 3-5 days to confirm if your artwork has been accepted or not. In
-          the meantime your submission will appear in the feature, My Collection.
+          An Artsy Advisor will email you within 3-5 days to review your submission and discuss next
+          steps. In the meantime you can view your submission in My Collection.
         </Text>
 
         <Spacer y={2} />
