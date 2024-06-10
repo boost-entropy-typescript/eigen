@@ -2,6 +2,7 @@ import { Button, Flex, Spacer, Text, Touchable, useScreenDimensions } from "@art
 import { SubmitArtworkFormStore } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkFormStore"
 import { useSubmissionContext } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/navigationHelpers"
 import { ArtworkDetailsFormModel } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/validation"
+import { useSubmitArtworkTracking } from "app/Scenes/SellWithArtsy/Hooks/useSubmitArtworkTracking"
 import { Photo } from "app/Scenes/SellWithArtsy/SubmitArtwork/UploadPhotos/validation"
 import { dismissModal, navigate, popToRoot, switchTab } from "app/system/navigation/navigate"
 import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
@@ -10,22 +11,37 @@ import { useEffect } from "react"
 import { LayoutAnimation } from "react-native"
 
 export const SubmitArtworkBottomNavigation: React.FC<{}> = () => {
-  const { navigateToNextStep, navigateToPreviousStep, isLastStep } = useSubmissionContext()
-  const { isValid, values } = useFormikContext<ArtworkDetailsFormModel>()
+  const {
+    trackTappedSubmissionBack,
+    trackTappedSubmitAnotherWork,
+    trackTappedViewArtworkInMyCollection,
+  } = useSubmitArtworkTracking()
+  const { navigateToNextStep, navigateToPreviousStep, isFinalStep, isValid } =
+    useSubmissionContext()
+  const { values } = useFormikContext<ArtworkDetailsFormModel>()
+
+  const { trackTappedNewSubmission, trackTappedStartMyCollection, trackConsignmentSubmitted } =
+    useSubmitArtworkTracking()
+
   const isUploadingPhotos = values.photos.some((photo: Photo) => photo.loading)
   const allPhotosAreValid = values.photos.every(
     (photo: Photo) => !photo.error && !photo.errorMessage
   )
   const showStartFromMyCollection = useFeatureFlag("AREnableSubmitMyCollectionArtworkInSubmitFlow")
 
-  const { currentStep, isLoading } = SubmitArtworkFormStore.useStoreState((state) => state)
+  const { isLoading, currentStep } = SubmitArtworkFormStore.useStoreState((state) => state)
   const { width: screenWidth } = useScreenDimensions()
 
   const handleBackPress = () => {
+    trackTappedSubmissionBack(values.submissionId, currentStep)
     navigateToPreviousStep()
   }
 
   const handleNextPress = () => {
+    if (isFinalStep) {
+      trackConsignmentSubmitted(values.submissionId)
+    }
+
     navigateToNextStep()
   }
 
@@ -42,6 +58,7 @@ export const SubmitArtworkBottomNavigation: React.FC<{}> = () => {
       <Flex borderTopWidth={1} borderTopColor="black10" py={2} alignSelf="center" px={2}>
         <Button
           onPress={() => {
+            trackTappedNewSubmission()
             navigateToNextStep({
               step: "SelectArtist",
             })
@@ -53,6 +70,8 @@ export const SubmitArtworkBottomNavigation: React.FC<{}> = () => {
         {!!showStartFromMyCollection && (
           <Button
             onPress={() => {
+              trackTappedStartMyCollection()
+              // TODO: Navigate to My Collection artworks screen
               navigateToNextStep()
             }}
             block
@@ -80,8 +99,9 @@ export const SubmitArtworkBottomNavigation: React.FC<{}> = () => {
           <Button
             block
             onPress={() => {
-              navigate("/sell/submissions/new", {
-                replaceActiveModal: true,
+              trackTappedSubmitAnotherWork(values.submissionId)
+              dismissModal(() => {
+                navigate("/sell/submissions/new")
               })
             }}
           >
@@ -91,6 +111,7 @@ export const SubmitArtworkBottomNavigation: React.FC<{}> = () => {
           <Button
             block
             onPress={() => {
+              trackTappedViewArtworkInMyCollection(values.submissionId)
               switchTab("profile")
               dismissModal()
               requestAnimationFrame(() => {
@@ -117,6 +138,7 @@ export const SubmitArtworkBottomNavigation: React.FC<{}> = () => {
             onPress={() => {
               navigate("/my-collection/artworks/new", {
                 showInTabName: "profile",
+                replaceActiveModal: true,
               })
             }}
           >
@@ -153,7 +175,7 @@ export const SubmitArtworkBottomNavigation: React.FC<{}> = () => {
             disabled={!isValid || isLoading || isUploadingPhotos || !allPhotosAreValid}
             loading={isLoading || isUploadingPhotos}
           >
-            {isLastStep ? "Submit Artwork" : "Continue"}
+            {isFinalStep ? "Submit Artwork" : "Continue"}
           </Button>
         </Flex>
       </Flex>

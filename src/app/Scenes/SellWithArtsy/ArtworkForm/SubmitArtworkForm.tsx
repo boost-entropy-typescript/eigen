@@ -1,4 +1,4 @@
-import { Flex } from "@artsy/palette-mobile"
+import { Flex, Text, useScreenDimensions } from "@artsy/palette-mobile"
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
 import { createStackNavigator } from "@react-navigation/stack"
 import { SubmitArtworkAddDetails } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkAddDetails"
@@ -29,10 +29,12 @@ import { createOrUpdateSubmission } from "app/Scenes/SellWithArtsy/SubmitArtwork
 import { fetchUserContactInformation } from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/utils/fetchUserContactInformation"
 import { SubmitArtworkProps } from "app/Scenes/SellWithArtsy/SubmitArtwork/SubmitArtwork"
 import { ArtsyKeyboardAvoidingView } from "app/utils/ArtsyKeyboardAvoidingView"
+import { useDevToggle } from "app/utils/hooks/useDevToggle"
 import { useIsKeyboardVisible } from "app/utils/hooks/useIsKeyboardVisible"
 import { FormikProvider, useFormik } from "formik"
 import { useEffect } from "react"
 import { Keyboard } from "react-native"
+import { isTablet as getIsTablet } from "react-native-device-info"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export type SubmitArtworkStackNavigation = {
@@ -62,6 +64,7 @@ export const SubmitArtworkForm: React.FC<SubmitArtworkProps> = (props) => {
         initialValues={props.initialValues}
         initialStep={initialScreen}
         navigationState={props.navigationState}
+        hasStartedFlowFromMyCollection={props.hasStartedFlowFromMyCollection}
       />
     </SubmitArtworkFormStoreProvider>
   )
@@ -70,10 +73,12 @@ export const SubmitArtworkForm: React.FC<SubmitArtworkProps> = (props) => {
 const SubmitArtworkFormContent: React.FC<SubmitArtworkProps> = ({
   initialValues: injectedValuesProp,
   initialStep,
+  hasStartedFlowFromMyCollection,
 }) => {
   const currentStep = SubmitArtworkFormStore.useStoreState((state) => state.currentStep)
   const { bottom: bottomInset } = useSafeAreaInsets()
   const isKeyboardVisible = useIsKeyboardVisible(true)
+  const showDevHelpers = useDevToggle("DTShowSubmissionDevHelpers")
 
   const initialValues = {
     ...artworkDetailsEmptyInitialValues,
@@ -89,6 +94,7 @@ const SubmitArtworkFormContent: React.FC<SubmitArtworkProps> = ({
     initialValues: initialValues,
     onSubmit: handleSubmit,
     validationSchema: getCurrentValidationSchema,
+    validateOnChange: false,
   })
 
   useEffect(() => {
@@ -115,6 +121,9 @@ const SubmitArtworkFormContent: React.FC<SubmitArtworkProps> = ({
     Keyboard.dismiss()
   }, [currentStep])
 
+  const isTablet = getIsTablet()
+  const { width: screenWidth } = useScreenDimensions()
+
   return (
     <FormikProvider value={formik}>
       <ArtsyKeyboardAvoidingView>
@@ -125,91 +134,123 @@ const SubmitArtworkFormContent: React.FC<SubmitArtworkProps> = ({
             paddingBottom: isKeyboardVisible ? 0 : bottomInset,
           }}
         >
-          <NavigationContainer
-            independent
-            ref={__unsafe__SubmissionArtworkFormNavigationRef}
-            initialState={getInitialNavigationState(initialStep)}
-          >
-            <Stack.Navigator
-              // force it to not use react-native-screens, which is broken inside a react-native Modal for some reason
-              detachInactiveScreens={false}
-              screenOptions={{
-                headerShown: false,
-                cardStyle: { backgroundColor: "white" },
-                transitionSpec: {
-                  open: {
-                    animation: "timing",
-                    config: {
-                      duration: 300,
-                    },
-                  },
-                  close: {
-                    animation: "timing",
-                    config: {
-                      duration: 300,
-                    },
-                  },
-                },
-                cardStyleInterpolator: ({ current, next }) => {
-                  const opacity = current.progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 1],
-                  })
-
-                  const nextOpacity = next
-                    ? next.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 0.2], // Lower the opacity of the exiting screen
-                      })
-                    : 1
-
-                  return {
-                    cardStyle: {
-                      opacity: next ? nextOpacity : opacity,
-                      backgroundColor: "white",
-                    },
-                    overlayStyle: {
-                      opacity: current.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 0.5],
-                      }),
-                      backgroundColor: "white",
-                    },
-                  }
-                },
-              }}
-              initialRouteName={initialStep}
+          <Flex flex={1}>
+            <NavigationContainer
+              independent
+              ref={__unsafe__SubmissionArtworkFormNavigationRef}
+              initialState={getInitialNavigationState(
+                initialStep,
+                // If the user started the flow from my collection
+                // We don't want them to be able to go back to the start flow and select artist screens
+                hasStartedFlowFromMyCollection ? ["StartFlow", "SelectArtist"] : []
+              )}
             >
-              <Stack.Screen name="StartFlow" component={SubmitArtworkStartFlow} />
+              <Stack.Navigator
+                // force it to not use react-native-screens, which is broken inside a react-native Modal for some reason
+                detachInactiveScreens={false}
+                screenOptions={{
+                  headerShown: false,
+                  cardStyle: {
+                    backgroundColor: "white",
+                    ...(isTablet
+                      ? {
+                          paddingTop: 20,
+                          width: isTablet ? Math.min(800, screenWidth) : undefined,
+                          alignSelf: "center",
+                        }
+                      : {}),
+                  },
+                  transitionSpec: {
+                    open: {
+                      animation: "timing",
+                      config: {
+                        duration: 300,
+                      },
+                    },
+                    close: {
+                      animation: "timing",
+                      config: {
+                        duration: 300,
+                      },
+                    },
+                  },
+                  cardStyleInterpolator: ({ current, next }) => {
+                    const opacity = current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 1],
+                    })
 
-              <Stack.Screen
-                name="SelectArtworkMyCollectionArtwork"
-                component={SelectArtworkMyCollectionArtwork}
-              />
+                    const nextOpacity = next
+                      ? next.progress.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 0.2], // Lower the opacity of the exiting screen
+                        })
+                      : 1
 
-              <Stack.Screen name="AddPhoneNumber" component={SubmitArtworkAddPhoneNumber} />
-              <Stack.Screen name="SelectArtist" component={SubmitArtworkSelectArtist} />
-              <Stack.Screen name="ArtistRejected" component={SubmitArtworkArtistRejected} />
+                    return {
+                      cardStyle: {
+                        opacity: next ? nextOpacity : opacity,
+                        backgroundColor: "white",
+                      },
+                      overlayStyle: {
+                        opacity: current.progress.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 0.5],
+                        }),
+                        backgroundColor: "white",
+                      },
+                    }
+                  },
+                }}
+                initialRouteName={initialStep}
+              >
+                {!hasStartedFlowFromMyCollection && (
+                  <Stack.Screen name="StartFlow" component={SubmitArtworkStartFlow} />
+                )}
 
-              <Stack.Screen name="AddTitle" component={SubmitArtworkAddTitle} />
+                <Stack.Screen
+                  name="SelectArtworkMyCollectionArtwork"
+                  component={SelectArtworkMyCollectionArtwork}
+                />
 
-              <Stack.Screen name="AddPhotos" component={SubmitArtworkAddPhotos} />
+                {!hasStartedFlowFromMyCollection && (
+                  <Stack.Screen name="SelectArtist" component={SubmitArtworkSelectArtist} />
+                )}
 
-              <Stack.Screen name="AddDetails" component={SubmitArtworkAddDetails} />
+                <Stack.Screen name="ArtistRejected" component={SubmitArtworkArtistRejected} />
 
-              <Stack.Screen name="AddDimensions" component={SubmitArtworkAddDimensions} />
+                <Stack.Screen name="AddTitle" component={SubmitArtworkAddTitle} />
 
-              <Stack.Screen name="PurchaseHistory" component={SubmitArtworkPurchaseHistory} />
+                <Stack.Screen name="AddPhotos" component={SubmitArtworkAddPhotos} />
 
-              <Stack.Screen
-                name="CompleteYourSubmission"
-                component={SubmitArtworkCompleteYourSubmission}
-                // Do not allow the user to go back to the previous screen
-                options={{ gestureEnabled: false }}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-          <SubmitArtworkBottomNavigation />
+                <Stack.Screen name="AddDetails" component={SubmitArtworkAddDetails} />
+
+                <Stack.Screen name="AddDimensions" component={SubmitArtworkAddDimensions} />
+
+                <Stack.Screen name="PurchaseHistory" component={SubmitArtworkPurchaseHistory} />
+
+                <Stack.Screen name="AddPhoneNumber" component={SubmitArtworkAddPhoneNumber} />
+
+                <Stack.Screen
+                  name="CompleteYourSubmission"
+                  component={SubmitArtworkCompleteYourSubmission}
+                  // Do not allow the user to go back to the previous screen
+                  options={{ gestureEnabled: false }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+            {!!showDevHelpers && (
+              <Flex alignItems="center" borderWidth={1} borderColor="devpurple">
+                <Text color="black60" variant="xs">
+                  currentStep: {currentStep}
+                </Text>
+                <Text color="black60" variant="xs">
+                  getCurrentRoute: {getCurrentRoute()}
+                </Text>
+              </Flex>
+            )}
+            <SubmitArtworkBottomNavigation />
+          </Flex>
         </Flex>
       </ArtsyKeyboardAvoidingView>
     </FormikProvider>

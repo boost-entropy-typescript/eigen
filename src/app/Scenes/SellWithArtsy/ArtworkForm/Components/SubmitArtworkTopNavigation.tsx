@@ -2,6 +2,7 @@ import { BackButton, Flex, Text, Touchable } from "@artsy/palette-mobile"
 import { SubmitArtworkFormStore } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkFormStore"
 import { SubmitArtworkProgressBar } from "app/Scenes/SellWithArtsy/ArtworkForm/Components/SubmitArtworkProgressBar"
 import { ArtworkDetailsFormModel } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/validation"
+import { useSubmitArtworkTracking } from "app/Scenes/SellWithArtsy/Hooks/useSubmitArtworkTracking"
 import { createOrUpdateSubmission } from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/utils/createOrUpdateSubmission"
 import { GlobalStore } from "app/store/GlobalStore"
 import { goBack } from "app/system/navigation/navigate"
@@ -14,6 +15,7 @@ import { Alert, Keyboard, LayoutAnimation } from "react-native"
 const HEADER_HEIGHT = 50
 
 export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
+  const { trackTappedSubmissionSaveExit } = useSubmitArtworkTracking()
   const enableSaveAndExit = useFeatureFlag("AREnableSaveAndContinueSubmission")
   const currentStep = SubmitArtworkFormStore.useStoreState((state) => state.currentStep)
   const hasCompletedForm = currentStep === "CompleteYourSubmission"
@@ -56,6 +58,8 @@ export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
     }
 
     try {
+      trackTappedSubmissionSaveExit(values.submissionId, currentStep)
+
       const submissionId = await createOrUpdateSubmission(values, values.submissionId)
 
       if (submissionId) {
@@ -87,14 +91,22 @@ export const SubmitArtworkTopNavigation: React.FC<{}> = () => {
   const showProgressBar = !["StartFlow", "ArtistRejected"].includes(currentStep)
   const showSaveAndExit = !["StartFlow", "ArtistRejected", "SelectArtist"].includes(currentStep)
 
+  const handleBackPress = () => {
+    goBack()
+  }
+
   return (
-    <Flex mx={2} mb={1} height={HEADER_HEIGHT}>
+    <Flex mx={2} mb={2} height={HEADER_HEIGHT}>
       <Flex flexDirection="row" justifyContent="space-between" height={30} mb={1}>
         {!!showXButton && (
-          <BackButton showX style={{ zIndex: 100, overflow: "visible" }} onPress={goBack} />
+          <BackButton
+            showX
+            style={{ zIndex: 100, overflow: "visible" }}
+            onPress={() => handleBackPress()}
+          />
         )}
         {!!showSaveAndExit && (
-          <Flex style={{ flexGrow: 1, alignItems: "flex-end" }} mb={0.5}>
+          <Flex style={{ flexGrow: 1, alignItems: "flex-end" }}>
             <Touchable onPress={handleSaveAndExitPress}>
               <Text>{!hasCompletedForm && !!enableSaveAndExit ? "Save & " : ""}Exit</Text>
             </Touchable>

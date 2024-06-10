@@ -4,15 +4,22 @@ import {
   getCurrentRoute,
 } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkForm"
 import {
+  ARTWORK_FORM_FINAL_STEP,
   ARTWORK_FORM_STEPS,
   SubmitArtworkScreen,
 } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/constants"
 import { updateMyCollectionArtwork } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/updateMyCollectionArtwork"
-import { ArtworkDetailsFormModel } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/validation"
+import {
+  ArtworkDetailsFormModel,
+  getCurrentValidationSchema,
+} from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/validation"
 import { createOrUpdateSubmission } from "app/Scenes/SellWithArtsy/SubmitArtwork/ArtworkDetails/utils/createOrUpdateSubmission"
 import { GlobalStore } from "app/store/GlobalStore"
 import { goBack } from "app/system/navigation/navigate"
+import { useDevToggle } from "app/utils/hooks/useDevToggle"
+import { refreshMyCollection } from "app/utils/refreshHelpers"
 import { useFormikContext } from "formik"
+import { useMemo } from "react"
 import { Alert } from "react-native"
 
 export const useSubmissionContext = () => {
@@ -20,9 +27,19 @@ export const useSubmissionContext = () => {
   const setIsLoading = SubmitArtworkFormStore.useStoreActions((actions) => actions.setIsLoading)
   const { currentStep } = SubmitArtworkFormStore.useStoreState((state) => state)
 
+  const skipSubmissionCreation = useDevToggle("DTSkipSubmissionCreate")
+
   const { values, setFieldValue } = useFormikContext<ArtworkDetailsFormModel>()
 
-  const isLastStep = currentStep === ARTWORK_FORM_STEPS[ARTWORK_FORM_STEPS.length - 1]
+  const validationSchema = useMemo(() => {
+    return getCurrentValidationSchema(currentStep)
+  }, [currentStep])
+
+  const isValid = useMemo(() => {
+    return validationSchema.isValidSync(values)
+  }, [currentStep, values])
+
+  const isFinalStep = currentStep === ARTWORK_FORM_FINAL_STEP
 
   const navigateToNextStep = async (props?: {
     step?: SubmitArtworkScreen
@@ -42,31 +59,35 @@ export const useSubmissionContext = () => {
 
       const newValues = {
         ...values,
-        state: (isLastStep ? "SUBMITTED" : undefined) as ArtworkDetailsFormModel["state"],
+        state: (isFinalStep ? "SUBMITTED" : "DRAFT") as ArtworkDetailsFormModel["state"],
       }
 
-      if (!props?.skipMutation) {
-        try {
-          const submissionId = await createOrUpdateSubmission(newValues, values.submissionId)
+      if (!skipSubmissionCreation) {
+        if (!props?.skipMutation) {
+          try {
+            const submissionId = await createOrUpdateSubmission(newValues, values.submissionId)
 
-          if (!values.submissionId && submissionId) {
-            setFieldValue("submissionId", submissionId)
+            if (!values.submissionId && submissionId) {
+              setFieldValue("submissionId", submissionId)
+            }
+          } catch (error) {
+            console.error("Error creating or updating submission", error)
+            Alert.alert("Something went wrong. The submission could not be updated.")
+            return
           }
-        } catch (error) {
-          console.error("Error creating or updating submission", error)
-          Alert.alert("Something went wrong. The submission could not be updated.")
-          return
         }
-      }
 
-      if (newValues.state === "SUBMITTED") {
-        // Reset saved draft if submission is successful
-        GlobalStore.actions.artworkSubmission.setDraft(null)
-        // Refetch associated My Collection artwork to display the updated submission status on the artwork screen.
-        if (newValues.myCollectionArtworkID) {
-          await updateMyCollectionArtwork({
-            artworkID: newValues.myCollectionArtworkID,
-          })
+        if (newValues.state === "SUBMITTED") {
+          // Reset saved draft if submission is successful
+          GlobalStore.actions.artworkSubmission.setDraft(null)
+          // Refetch associated My Collection artwork to display the updated submission status on the artwork screen.
+          if (newValues.myCollectionArtworkID) {
+            await updateMyCollectionArtwork({
+              artworkID: newValues.myCollectionArtworkID,
+            })
+          }
+
+          refreshMyCollection()
         }
       }
 
@@ -82,7 +103,26 @@ export const useSubmissionContext = () => {
 
   const navigateToPreviousStep = () => {
     if (!__unsafe__SubmissionArtworkFormNavigationRef.current?.canGoBack()) {
-      return goBack()
+      Alert.alert(
+        "Are you sure you want to go back?",
+        "You will lose any unsaved changes.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+            isPreferred: true,
+          },
+          {
+            text: "Exit",
+            onPress: () => {
+              goBack()
+            },
+            style: "destructive",
+          },
+        ],
+        { cancelable: true }
+      )
+      return
     }
     // Order is important here to make sure getCurrentRoute returns the correct value
     __unsafe__SubmissionArtworkFormNavigationRef.current?.goBack?.()
@@ -93,5 +133,11 @@ export const useSubmissionContext = () => {
     }
   }
 
-  return { isLastStep, navigateToNextStep, navigateToPreviousStep }
+  return {
+    isValid: isValid || skipSubmissionCreation,
+    currentStep,
+    isFinalStep,
+    navigateToNextStep,
+    navigateToPreviousStep,
+  }
 }
