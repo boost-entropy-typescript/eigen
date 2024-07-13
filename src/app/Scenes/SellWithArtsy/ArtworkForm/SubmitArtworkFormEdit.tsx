@@ -1,8 +1,10 @@
 import { SubmitArtworkFormEditQuery } from "__generated__/SubmitArtworkFormEditQuery.graphql"
 import { LoadFailureView } from "app/Components/LoadFailureView"
-import { SubmitArtworkForm } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkForm"
+import {
+  SubmitArtworkForm,
+  SubmitArtworkProps,
+} from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkForm"
 import { getInitialSubmissionValues } from "app/Scenes/SellWithArtsy/ArtworkForm/Utils/getInitialSubmissionValues"
-import { SubmitArtworkProps } from "app/Scenes/SellWithArtsy/SubmitArtwork/SubmitArtwork"
 import { withSuspense } from "app/utils/hooks/withSuspense"
 import { graphql, useLazyLoadQuery } from "react-relay"
 
@@ -25,6 +27,7 @@ export const SubmitArtworkFormEdit: React.FC<SubmitArtworkProps> = withSuspense(
       initialValues={getInitialSubmissionValues(data.submission)}
       initialStep={props.initialStep}
       navigationState={props.navigationState}
+      hasStartedFlowFromMyCollection={props.hasStartedFlowFromMyCollection}
     />
   )
 })
@@ -61,6 +64,7 @@ const submitArtworkFormEditQuery = graphql`
       userName
       userPhone
       source
+      state
       sourceArtworkID
       assets {
         id

@@ -265,23 +265,10 @@ export const features = {
     showInDevMenu: true,
     echoFlagKey: "ARSWAMakeAllDimensionsOptional",
   },
-  AREnableNewSubmissionFlow: {
-    description: "Enable new submission flow",
-    readyForRelease: true,
+  AREnableSubmitArtworkTier2Information: {
+    description: "Enable submit artwork tier 2 information",
+    readyForRelease: false,
     showInDevMenu: true,
-    echoFlagKey: "AREnableNewSubmissionFlow",
-  },
-  AREnableSubmitMyCollectionArtworkInSubmitFlow: {
-    description: "Enable Start Submission from My Collection in submit artwork flow",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnableSubmitMyCollectionArtworkInSubmitFlowNew",
-  },
-  AREnableSaveAndContinueSubmission: {
-    description: "Enable save and continue submission flow",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnableSaveAndContinueSubmission",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
@@ -352,12 +339,6 @@ export const devToggles: { [key: string]: DevToggleDescriptor } = {
   },
   DTEnableNewImageLabel: {
     description: "Show a label on new OpaqueImageView",
-  },
-  DTSkipSubmissionCreate: {
-    description: "Skip submission creation",
-  },
-  DTShowSubmissionDevHelpers: {
-    description: "Show dev helpers in submission flow",
   },
 }
 

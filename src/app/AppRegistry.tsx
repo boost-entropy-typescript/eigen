@@ -17,6 +17,7 @@ import { NewsScreen, NewsScreenQuery } from "app/Scenes/Articles/News/News"
 import { BrowseSimilarWorksQueryRenderer } from "app/Scenes/Artwork/Components/BrowseSimilarWorks/BrowseSimilarWorks"
 import { ArtworkListScreen } from "app/Scenes/ArtworkList/ArtworkList"
 import { ArtworkRecommendationsScreen } from "app/Scenes/ArtworkRecommendations/ArtworkRecommendations"
+import { CompleteMyProfile } from "app/Scenes/CompleteMyProfile/CompleteMyProfile"
 import { GalleriesForYouScreen } from "app/Scenes/GalleriesForYou/GalleriesForYouScreen"
 import { HomeContainer } from "app/Scenes/Home/HomeContainer"
 import { AddMyCollectionArtist } from "app/Scenes/MyCollection/Screens/Artist/AddMyCollectionArtist"
@@ -127,7 +128,6 @@ import { EditSavedSearchAlertQueryRenderer } from "./Scenes/SavedSearchAlert/Edi
 import { SavedSearchAlertsListQueryRenderer } from "./Scenes/SavedSearchAlertsList/SavedSearchAlertsList"
 import { ConsignmentInquiryScreen } from "./Scenes/SellWithArtsy/ConsignmentInquiry/ConsignmentInquiryScreen"
 import { SellWithArtsyHomeScreenQuery } from "./Scenes/SellWithArtsy/SellWithArtsyHome"
-import { SubmitArtwork } from "./Scenes/SellWithArtsy/SubmitArtwork/SubmitArtwork"
 import { SellWithArtsy } from "./Scenes/SellWithArtsy/SubmitArtwork/UploadPhotos/utils"
 import { ShowMoreInfoQueryRenderer } from "./Scenes/Show/Screens/ShowMoreInfo"
 import { ShowQueryRenderer } from "./Scenes/Show/Show"
@@ -140,7 +140,7 @@ import {
   ViewingRoomsListScreen,
   viewingRoomsListScreenQuery,
 } from "./Scenes/ViewingRoom/ViewingRoomsList"
-import { GlobalStore, unsafe_getFeatureFlag } from "./store/GlobalStore"
+import { GlobalStore } from "./store/GlobalStore"
 import { propsStore } from "./store/PropsStore"
 import { DevMenu } from "./system/devTools/DevMenu/DevMenu"
 import { Schema, addTrackingProvider, screenTrack } from "./utils/track"
@@ -430,6 +430,10 @@ export const modules = defineModules({
     alwaysPresentModally: true,
     hasOwnModalCloseButton: true,
     fullBleed: true,
+    screenOptions: {
+      // Don't allow the screen to be swiped away by mistake
+      gestureEnabled: false,
+    },
   }),
   AuctionBidArtwork: reactModule(BidFlow, {
     alwaysPresentModally: true,
@@ -559,6 +563,11 @@ export const modules = defineModules({
     },
     [MyCollectionScreenQuery]
   ),
+  CompleteMyProfile: reactModule(CompleteMyProfile, {
+    fullBleed: true,
+    hidesBackButton: true,
+    hidesBottomTabs: true,
+  }),
   MyProfileEditForm: reactModule(MyProfileEditFormScreen),
   MyProfilePayment: reactModule(MyProfilePaymentQueryRenderer),
   MyProfileSettings: reactModule(MyProfileSettings),
@@ -652,17 +661,15 @@ export const modules = defineModules({
     hidesBackButton: true,
     fullBleed: true,
   }),
-  SubmitArtwork: unsafe_getFeatureFlag("AREnableNewSubmissionFlow")
-    ? reactModule(SubmitArtworkForm, {
-        hidesBackButton: true,
-        alwaysPresentModally: true,
-        modalPresentationStyle: "fullScreen",
-        hidesBottomTabs: true,
-        screenOptions: {
-          gestureEnabled: false,
-        },
-      })
-    : reactModule(SubmitArtwork, { hidesBackButton: true, hidesBottomTabs: true }),
+  SubmitArtwork: reactModule(SubmitArtworkForm, {
+    hidesBackButton: true,
+    alwaysPresentModally: true,
+    modalPresentationStyle: "fullScreen",
+    hidesBottomTabs: true,
+    screenOptions: {
+      gestureEnabled: false,
+    },
+  }),
   SubmitArtworkEdit: reactModule(SubmitArtworkFormEdit, {
     hidesBackButton: true,
     alwaysPresentModally: true,
