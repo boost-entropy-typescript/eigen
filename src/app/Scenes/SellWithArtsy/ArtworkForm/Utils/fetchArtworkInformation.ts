@@ -46,6 +46,17 @@ export const fetchArtworkInformation = async (artworkID: string) => {
             address
             address2
           }
+          isFramed
+          framedHeight
+          framedWidth
+          framedMetric
+          framedDepth
+          condition {
+            value
+          }
+          conditionDescription {
+            details
+          }
         }
       }
     `,

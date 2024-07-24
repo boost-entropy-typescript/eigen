@@ -2,6 +2,7 @@ import {
   ConsignmentSubmissionCategoryAggregation,
   ConsignmentSubmissionSource,
 } from "__generated__/createConsignSubmissionMutation.graphql"
+import { ArtworkConditionEnumType } from "__generated__/myCollectionCreateArtworkMutation.graphql"
 import {
   ConsignmentAttributionClass,
   ConsignmentSubmissionStateAggregation,
@@ -34,10 +35,32 @@ export const getCurrentValidationSchema = (_injectedStep?: keyof SubmitArtworkSt
       return dimensionsSchema
     case "ShippingLocation":
       return shippingLocationSchema
+    case "FrameInformation":
+      return frameInformationSchema
+    case "Condition":
+      return conditionSchema
     default:
       return Yup.object()
   }
 }
+
+const conditionSchema = Yup.object().shape({
+  condition: Yup.string()
+    .oneOf(
+      ["EXCELLENT", "FAIR", "GOOD", "VERY_GOOD"],
+      "Condition must be one of EXCELLENT, FAIR, GOOD, VERY_GOOD"
+    )
+    .nullable(),
+  conditionDescription: Yup.string().trim(),
+})
+
+const frameInformationSchema = Yup.object().shape({
+  isFramed: Yup.boolean().nullable(),
+  framedMetric: Yup.string().trim(),
+  framedWidth: Yup.string().trim(),
+  framedHeight: Yup.string().trim(),
+  framedDepth: Yup.string().trim(),
+})
 
 const shippingLocationSchema = Yup.object().shape({
   location: Yup.object().shape({
@@ -97,7 +120,7 @@ const artworkDetailsValidationSchema = Yup.object().shape({
   year: Yup.string(),
 })
 
-export interface ArtworkDetailsFormModel {
+export interface SubmissionModel {
   submissionId: string | null
   artist: string
   artistId: string
@@ -131,9 +154,21 @@ export interface ArtworkDetailsFormModel {
   userName: string
   userEmail: string
   userPhone: string
+
+  // Artwork
+  artwork: {
+    internalID: string | null | undefined
+    isFramed: boolean | null | undefined
+    framedMetric: string | null | undefined
+    framedWidth: string | null | undefined
+    framedHeight: string | null | undefined
+    framedDepth: string | null | undefined
+    condition: ArtworkConditionEnumType | null | undefined
+    conditionDescription: string | null | undefined
+  }
 }
 
-export const artworkDetailsEmptyInitialValues: ArtworkDetailsFormModel = {
+export const submissionModelInitialValues: SubmissionModel = {
   submissionId: null,
   artist: "",
   artistId: "",
@@ -173,4 +208,16 @@ export const artworkDetailsEmptyInitialValues: ArtworkDetailsFormModel = {
   userName: "",
   userEmail: "",
   userPhone: "",
+
+  // Artwork
+  artwork: {
+    internalID: null,
+    isFramed: null,
+    framedMetric: "in",
+    framedWidth: null,
+    framedHeight: null,
+    framedDepth: null,
+    condition: null,
+    conditionDescription: null,
+  },
 }

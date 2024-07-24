@@ -95,4 +95,17 @@ const mockedFetchedArtwork: NonNullable<FetchArtworkInformationResult> = {
 
   // Photos
   images: [],
+
+  // Artwork
+  isFramed: true,
+  framedMetric: "in",
+  framedWidth: "20",
+  framedHeight: "30",
+  framedDepth: "2",
+  condition: {
+    value: "FAIR",
+  },
+  conditionDescription: {
+    details: "Prett fair",
+  },
 }
