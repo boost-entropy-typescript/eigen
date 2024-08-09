@@ -10,10 +10,10 @@
     "@jridgewell/gen-mapping" "^0.3.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@artsy/cohesion@4.196.0":
-  version "4.196.0"
-  resolved "https://registry.yarnpkg.com/@artsy/cohesion/-/cohesion-4.196.0.tgz#d566782ddf27d5bbb0b0b3e619733b76277b03df"
-  integrity sha512-1f5R+4yoQYAij19kNeRsnfu/N6ZE3Afuk4iYDEgic4ysYPxhGtmG/iGRQTCMqRs3s9KSYLByKho5ItLQLuwclg==
+"@artsy/cohesion@4.198.0":
+  version "4.198.0"
+  resolved "https://registry.yarnpkg.com/@artsy/cohesion/-/cohesion-4.198.0.tgz#a04f61459ab146243fdd75a96c2bc25285b74cd9"
+  integrity sha512-mBpsr1y4qv9/A8L9/lu3MmHDmIW08TgsN10S+/CqPR2vva2m7n0pGCauo2nUy7CIyXBvcbb6XQyXfKX+6WmdzA==
   dependencies:
     core-js "3"
 
@@ -5657,6 +5657,11 @@ babel-plugin-transform-imports@2.0.0:
   dependencies:
     "@babel/types" "^7.4"
     is-valid-path "^0.1.1"
+
+babel-plugin-transform-remove-console@6.9.4:
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-remove-console/-/babel-plugin-transform-remove-console-6.9.4.tgz#b980360c067384e24b357a588d807d3c83527780"
+  integrity sha512-88blrUrMX3SPiGkT1GnvVY8E/7A+k6oj3MNvUtTIxJflFzXTw1bHkuJ/y039ouhFMp2prRn5cQGzokViYi1dsg==
 
 babel-preset-current-node-syntax@^1.0.0:
   version "1.0.1"
@@ -12689,10 +12694,10 @@ react-native-hyperlink@0.0.19:
     linkify-it "^2.2.0"
     mdurl "^1.0.0"
 
-react-native-image-crop-picker@0.40.3:
-  version "0.40.3"
-  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.40.3.tgz#a6b135cd1218a33ad126c1a148ec5a1bd01737ff"
-  integrity sha512-45PKcTnsnLS+E36YwoXutllQdRSOuOsMN0IRcAcwsFXOuAQIOtugXlAuGGL28JHKb/ATaSSPvqCSrdG65Jv3GA==
+react-native-image-crop-picker@0.41.2:
+  version "0.41.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.41.2.tgz#824fa8fee8391fbb3e0b5ae2973221a2dff0cafb"
+  integrity sha512-GcDu/adXU/1y/MrxsbOfqcGRGWC2pTttt5VGy/jyRJ6GXfoC29fTQf8SG5kGtc5schSR6K+mKYO4uW6eJPljlQ==
 
 react-native-in-app-review@4.3.3:
   version "4.3.3"

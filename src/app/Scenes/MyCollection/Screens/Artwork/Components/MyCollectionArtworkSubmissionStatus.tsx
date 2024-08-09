@@ -69,7 +69,7 @@ export const MyCollectionArtworkSubmissionStatus: React.FC<
               </Touchable>
             )}
 
-            {!!actionLabel && (
+            {!!actionLabel && !isListed && (
               <Touchable onPress={() => setIsSubmissionStatusModalVisible(true)}>
                 <Flex flexDirection="row" alignItems="center" alignContent="center">
                   <Text variant="sm-display" fontWeight="bold" color="orange100">
@@ -119,6 +119,8 @@ const submissionStateFragment = graphql`
       stateLabel
       actionLabel
       stateLabelColor
+      stateHelpMessage
+      buttonLabel
     }
     submissionId
     isListed
