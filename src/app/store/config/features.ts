@@ -183,11 +183,16 @@ export const features = {
     readyForRelease: true,
     echoFlagKey: "AREnablePartnerOffersNotificationSwitch",
   },
-
   AREnablePartnerOffer: {
     description: "Enable partner offer content in the app",
     readyForRelease: true,
     echoFlagKey: "AREnablePartnerOffer",
+  },
+  AREnableExpiredPartnerOffers: {
+    description: "Enable expired partner offers handling",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableExpiredPartnerOffers",
   },
   AREnableArtistSeriesSuggestions: {
     description: "Enable artist series suggestions",
@@ -267,8 +272,9 @@ export const features = {
   },
   AREnableSubmitArtworkTier2Information: {
     description: "Enable submit artwork tier 2 information",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
+    echoFlagKey: "AREnableSubmitArtworkTier2Information",
   },
   AREnableCollectorProfilePrompts: {
     readyForRelease: false,
@@ -278,7 +284,7 @@ export const features = {
   },
   AREnablePartnerOfferSignals: {
     description: "Enable partner offer signals",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnablePartnerOfferSignals",
   },
@@ -292,6 +298,12 @@ export const features = {
     description: "Use new home view",
     readyForRelease: false,
     showInDevMenu: true,
+  },
+  AREnableCollectionsWithoutHeaderImage: {
+    description: "Remove the header image from collections",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableCollectionsWithoutHeaderImage",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 

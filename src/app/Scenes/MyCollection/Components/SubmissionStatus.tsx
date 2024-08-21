@@ -13,13 +13,17 @@ export const SubmissionStatus: React.FC<SubmissionStatusProps> = ({ artwork }) =
 
   if (!consignmentSubmission) return null
 
-  const { stateLabelColor, stateLabel, actionLabel } = consignmentSubmission
+  const { stateLabelColor, stateLabel, actionLabel, state } = consignmentSubmission
+
+  if (["REJECTED"].includes(state)) return null
 
   return (
-    <Flex flexDirection="column">
-      <Text variant="xs" fontWeight="bold" color={stateLabelColor ?? "black100"}>
-        {artworkData.isListed ? "Listed" : stateLabel}
-      </Text>
+    <Flex flexDirection="column" testID="Submission-status-component">
+      {!!(stateLabel || isListed) && (
+        <Text variant="xs" fontWeight="bold" color={stateLabelColor ?? "black100"}>
+          {artworkData.isListed ? "Listed" : stateLabel}
+        </Text>
+      )}
 
       {!!actionLabel && !isListed && (
         <Flex flexDirection="row" alignItems="center" testID="action-label">
