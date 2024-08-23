@@ -230,6 +230,7 @@ type Alert {
   additionalGeneNames: [String]
   artistIDs: [String]
   artistSeriesIDs: [String]
+  artistSeriesNames: [String]
   artists: [Artist!]!
   artistsConnection(after: String, before: String, first: Int, last: Int): ArtistConnection!
 
@@ -1466,6 +1467,20 @@ type ArticleUnpublishedArtworkArtist {
 type ArticleUnpublishedArtworkPartner {
   name: String
   slug: String
+}
+
+# An articles rail section in the home view
+type ArticlesRailHomeViewSection implements GenericHomeViewSection & Node {
+  articlesConnection(after: String, before: String, first: Int, last: Int): ArticleConnection
+
+  # The component that is prescribed for this section
+  component: HomeViewComponent
+
+  # A globally unique ID.
+  id: ID!
+
+  # A type-specific ID likely used as a database ID.
+  internalID: ID!
 }
 
 type Artist implements EntityWithFilterArtworksConnectionInterface & Node & Searchable {
@@ -9605,7 +9620,7 @@ type FairSponsoredContent {
 type FairsRailHomeViewSection implements GenericHomeViewSection & Node {
   # The component that is prescribed for this section
   component: HomeViewComponent
-  fairsConnection(after: String, before: String, first: Int, last: Int): FairConnection!
+  fairsConnection(after: String, before: String, first: Int, last: Int): FairConnection
 
   # A globally unique ID.
   id: ID!
@@ -10860,10 +10875,12 @@ enum HomeViewComponentBackgroundImageURLVersion {
 }
 
 union HomeViewSection =
-    ArtistsRailHomeViewSection
+    ArticlesRailHomeViewSection
+  | ArtistsRailHomeViewSection
   | ArtworksRailHomeViewSection
   | FairsRailHomeViewSection
   | HeroUnitsHomeViewSection
+  | MarketingCollectionsRailHomeViewSection
 
 # A connection to a list of items.
 type HomeViewSectionConnection {
@@ -11814,6 +11831,26 @@ type MarketingCollectionCategory {
   name: String!
 }
 
+# A connection to a list of items.
+type MarketingCollectionConnection {
+  # A list of edges.
+  edges: [MarketingCollectionEdge]
+  pageCursors: PageCursors!
+
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+# An edge in a connection.
+type MarketingCollectionEdge {
+  # A cursor for use in pagination
+  cursor: String!
+
+  # The item at the end of the edge
+  node: MarketingCollection
+}
+
 type MarketingCollectionGroup {
   groupType: MarketingCollectionGroupTypeEnum!
   internalID: ID!
@@ -11839,6 +11876,24 @@ type MarketingCollectionQuery {
   internalID: ID
   keyword: String
   tagID: String
+}
+
+# A marketing collections rail section in the home view
+type MarketingCollectionsRailHomeViewSection implements GenericHomeViewSection & Node {
+  # The component that is prescribed for this section
+  component: HomeViewComponent
+
+  # A globally unique ID.
+  id: ID!
+
+  # A type-specific ID likely used as a database ID.
+  internalID: ID!
+  marketingCollectionsConnection(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): MarketingCollectionConnection
 }
 
 union Match =
@@ -13962,6 +14017,7 @@ type Partner implements Node {
     artistID: String
     before: String
     first: Int
+    id: String
     last: Int
     page: Int
     size: Int
@@ -14322,7 +14378,12 @@ type PartnerAlertHitsConnection {
 # An edge in a connection.
 type PartnerAlertHitsEdge {
   artwork: Artwork
-  createdAt: String
+  createdAt(
+    format: String
+
+    # A tz database time zone, otherwise falls back to "X-TIMEZONE" header. See http://www.iana.org/time-zones, https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    timezone: String
+  ): String
 
   # A cursor for use in pagination
   cursor: String!

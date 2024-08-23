@@ -71,6 +71,10 @@ const sectionsFragment = graphql`
               }
               ...GenericHomeViewSection_section
             }
+            ... on ArticlesRailHomeViewSection {
+              internalID
+              ...ArticlesRailHomeViewSection_section
+            }
             ... on ArtworksRailHomeViewSection {
               internalID
               ...ArtworksRailHomeViewSection_section
@@ -83,6 +87,14 @@ const sectionsFragment = graphql`
             ... on HeroUnitsHomeViewSection {
               internalID
               ...HeroUnitsRailHomeViewSection_section
+            }
+            ... on FairsRailHomeViewSection {
+              internalID
+              ...FairsRailHomeViewSection_section
+            }
+            ... on MarketingCollectionsRailHomeViewSection {
+              internalID
+              ...MarketingCollectionsRailHomeViewSection_section
             }
           }
         }
