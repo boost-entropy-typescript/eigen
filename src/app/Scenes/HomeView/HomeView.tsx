@@ -78,6 +78,7 @@ const sectionsFragment = graphql`
             ... on ArticlesRailHomeViewSection {
               internalID
               ...ArticlesRailHomeViewSection_section
+              ...ArticlesCardsHomeViewSection_section
             }
             ... on ArtworksRailHomeViewSection {
               internalID
@@ -87,6 +88,10 @@ const sectionsFragment = graphql`
             ... on ArtistsRailHomeViewSection {
               internalID
               ...ArtistsRailHomeViewSection_section
+            }
+            ... on AuctionResultsRailHomeViewSection {
+              internalID
+              ...AuctionResultsRailHomeViewSection_section
             }
             ... on HeroUnitsHomeViewSection {
               internalID
@@ -107,6 +112,10 @@ const sectionsFragment = graphql`
             ... on ViewingRoomsRailHomeViewSection {
               internalID
               ...ViewingRoomsRailHomeViewSection_section
+            }
+            ... on SalesRailHomeViewSection {
+              internalID
+              ...SalesRailHomeViewSection_section
             }
           }
         }
