@@ -247,7 +247,7 @@ export const features = {
     echoFlagKey: "AREnableSubmitArtworkTier2Information",
   },
   AREnableCollectorProfilePrompts: {
-    readyForRelease: false,
+    readyForRelease: true,
     description: "Enable prompts to update collector profile",
     showInDevMenu: true,
     echoFlagKey: "AREnableCollectorProfilePrompts",
@@ -260,7 +260,7 @@ export const features = {
   },
   AREnableAuctionImprovementsSignals: {
     description: "Enable new auction lot signals",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableAuctionImprovementsSignals",
   },
