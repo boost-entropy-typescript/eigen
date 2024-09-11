@@ -10,17 +10,17 @@
     "@jridgewell/gen-mapping" "^0.3.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@artsy/cohesion@4.202.0":
-  version "4.202.0"
-  resolved "https://registry.yarnpkg.com/@artsy/cohesion/-/cohesion-4.202.0.tgz#0a130dfc864bc8cbaa6a1ea406b6d0ab32d243df"
-  integrity sha512-QQr6lI1L1VV5c8SpAVRvH9qyf7Fz+ColweJ/Nu6fSFBSo1h1Q1Dl3hb8Dszos94F6q2E8ewpzs6n56uUB30QDA==
+"@artsy/cohesion@4.203.0":
+  version "4.203.0"
+  resolved "https://registry.yarnpkg.com/@artsy/cohesion/-/cohesion-4.203.0.tgz#3de943028459e5a7a2f672bc93bca3954aa3e4cd"
+  integrity sha512-ifSyvELlUdpp8a4OnCLf7TPK3tAjyBU7HtnrVccpV8p6lDM/QcikG71pIB+L/qwRsAquensLAN1W4D7zrK236A==
   dependencies:
     core-js "3"
 
-"@artsy/palette-mobile@13.2.26":
-  version "13.2.26"
-  resolved "https://registry.yarnpkg.com/@artsy/palette-mobile/-/palette-mobile-13.2.26.tgz#aa0fcd88a5cc1210d045b20af7c173867c680b08"
-  integrity sha512-/L/msxY1c7vE/URjUwPF+59soJYKj7dVDgDbNf4MLapDVfB/JfvLf+ezFVEZkvcHmqUvDTRLR7SirpfWeO1s7Q==
+"@artsy/palette-mobile@13.2.28":
+  version "13.2.28"
+  resolved "https://registry.yarnpkg.com/@artsy/palette-mobile/-/palette-mobile-13.2.28.tgz#2e14ec08f2d40b2aa285d230dbccb77830cfcae7"
+  integrity sha512-9rGRzsS00bNXBOJqIdX/1nw3Tjcst1ro61dYa3gK0w/O49x2xKRegxlRGeFG7ZjEdCxHqJ9OxD4IzRV/eVn+IQ==
   dependencies:
     "@artsy/palette-tokens" "^6.0.3"
     "@shopify/flash-list" "^1.6.4"
@@ -12750,10 +12750,10 @@ react-native-reanimated-zoom@0.3.3:
   resolved "https://registry.yarnpkg.com/react-native-reanimated-zoom/-/react-native-reanimated-zoom-0.3.3.tgz#99161310c398b2d4220e75ce1d9b76eb075bf3f6"
   integrity sha512-naeMV19218OsVOAw7jq45mZGxcSgvcn5xAJlXep27R0IBo/fqpLlLuXKK2nyCXyLzuIPwgqS3O+LUMcTd2L5Gg==
 
-react-native-reanimated@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.3.0.tgz#80f9d58e28fddf62fe4c1bc792337b8ab57936ab"
-  integrity sha512-LzfpPZ1qXBGy5BcUHqw3pBC0qSd22qXS3t8hWSbozXNrBkzMhhOrcILE/nEg/PHpNNp1xvGOW8NwpAMF006roQ==
+react-native-reanimated@3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.6.3.tgz#859cf2320e37c80e3a21e19db24f82c34d6d3ded"
+  integrity sha512-2KkkPozoIvDbJcHuf8qeyoLROXQxizSi+2CTCkuNVkVZOxxY4B0Omvgq61aOQhSZUh/649x1YHoAaTyGMGDJUw==
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"

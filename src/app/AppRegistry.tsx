@@ -22,6 +22,7 @@ import { CompleteMyProfile } from "app/Scenes/CompleteMyProfile/CompleteMyProfil
 import { GalleriesForYouScreen } from "app/Scenes/GalleriesForYou/GalleriesForYouScreen"
 import { HomeContainer } from "app/Scenes/Home/HomeContainer"
 import { HomeViewScreen } from "app/Scenes/HomeView/HomeView"
+import { HomeViewSectionScreenQueryRenderer } from "app/Scenes/HomeViewSectionScreen/HomeViewSectionScreen"
 import { AddMyCollectionArtist } from "app/Scenes/MyCollection/Screens/Artist/AddMyCollectionArtist"
 import { MyCollectionArtworkEditQueryRenderer } from "app/Scenes/MyCollection/Screens/ArtworkForm/Screens/MyCollectionArtworkEdit"
 import { MyCollectionCollectedArtistsPrivacyQueryRenderer } from "app/Scenes/MyCollection/Screens/CollectedArtistsPrivacy/MyCollectionCollectedArtistsPrivacy"
@@ -141,7 +142,7 @@ import {
   ViewingRoomsListScreen,
   viewingRoomsListScreenQuery,
 } from "./Scenes/ViewingRoom/ViewingRoomsList"
-import { GlobalStore, unsafe_getFeatureFlag } from "./store/GlobalStore"
+import { GlobalStore } from "./store/GlobalStore"
 import { propsStore } from "./store/PropsStore"
 import { DevMenu } from "./system/devTools/DevMenu/DevMenu"
 import { Schema, screenTrack } from "./utils/track"
@@ -489,9 +490,12 @@ export const modules = defineModules({
   }),
   Home: reactModule(HomeContainer, {
     isRootViewForTabName: "home",
-    fullBleed: unsafe_getFeatureFlag("ARUseNewHomeView") ? true : false,
   }),
   HomeView: reactModule(HomeViewScreen, { hidesBackButton: true }),
+  HomeViewSectionScreen: reactModule(HomeViewSectionScreenQueryRenderer, {
+    hidesBackButton: true,
+    fullBleed: true,
+  }),
   Inbox: reactModule(InboxQueryRenderer, { isRootViewForTabName: "inbox" }, [InboxScreenQuery]),
   Inquiry: reactModule(Inquiry, { alwaysPresentModally: true, hasOwnModalCloseButton: true }),
   LiveAuction: reactModule(LiveAuctionView, {
