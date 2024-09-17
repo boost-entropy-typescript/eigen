@@ -34,6 +34,7 @@ describe("HomeViewSectionSales", () => {
           title: "Auctions",
           behaviors: {
             viewAll: {
+              buttonText: null,
               href: "/auctions",
             },
           },
@@ -105,7 +106,7 @@ describe("HomeViewSectionSales", () => {
         [
           {
             "action": "tappedAuctionGroup",
-            "context_module": "sales",
+            "context_module": "<mock-value-for-field-"contextModule">",
             "context_screen_owner_type": "home",
             "destination_screen_owner_id": "sale-2-id",
             "destination_screen_owner_slug": "sale-2-slug",

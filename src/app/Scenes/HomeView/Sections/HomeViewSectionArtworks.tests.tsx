@@ -64,6 +64,7 @@ describe("HomeViewSectionArtworks", () => {
                 slug: "artwork-2-slug",
                 title: "Artwork 2",
                 href: "/artwork-2-href",
+                collectorSignals: { primaryLabel: "PARTNER_OFFER", auction: null },
               },
             },
           ],
@@ -81,16 +82,14 @@ describe("HomeViewSectionArtworks", () => {
         [
           {
             "action": "tappedArtworkGroup",
-            "context_module": "newWorksForYou",
+            "context_module": "<mock-value-for-field-"contextModule">",
             "context_screen_owner_type": "home",
             "destination_screen_owner_id": "artwork-2-id",
             "destination_screen_owner_slug": "artwork-2-slug",
             "destination_screen_owner_type": "artwork",
             "horizontal_slide_position": 1,
             "module_height": "single",
-            "signal_bid_count": 42,
             "signal_label": "Limited-Time Offer",
-            "signal_lot_watcher_count": 42,
             "type": "thumbnail",
           },
         ]

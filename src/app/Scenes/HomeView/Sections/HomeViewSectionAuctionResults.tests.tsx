@@ -82,7 +82,7 @@ describe("HomeViewSectionAuctionResults", () => {
         [
           {
             "action": "tappedAuctionResultGroup",
-            "context_module": "latestAuctionResults",
+            "context_module": "<mock-value-for-field-"contextModule">",
             "context_screen_owner_type": "home",
             "destination_screen_owner_id": "auction-result-2-id",
             "destination_screen_owner_slug": "auction-result-2-slug",
@@ -122,8 +122,8 @@ describe("HomeViewSectionAuctionResults", () => {
       }),
     })
 
-    expect(screen.getByText("Browse All Results")).toBeOnTheScreen()
-    fireEvent.press(screen.getByText("Browse All Results"))
+    expect(screen.getByText("View All")).toBeOnTheScreen()
+    fireEvent.press(screen.getByText("View All"))
 
     expect(navigate).toHaveBeenCalledWith("/auction-results-for-artists-you-follow-view-all-href")
   })
