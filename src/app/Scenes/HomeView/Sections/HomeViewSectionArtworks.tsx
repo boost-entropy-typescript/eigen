@@ -4,7 +4,7 @@ import { ArtworkRail_artworks$data } from "__generated__/ArtworkRail_artworks.gr
 import { HomeViewSectionArtworksQuery } from "__generated__/HomeViewSectionArtworksQuery.graphql"
 import { HomeViewSectionArtworks_section$key } from "__generated__/HomeViewSectionArtworks_section.graphql"
 import { ARTWORK_RAIL_IMAGE_WIDTH, ArtworkRail } from "app/Components/ArtworkRail/ArtworkRail"
-import { ARTWORK_RAIL_CARD_IMAGE_HEIGHT } from "app/Components/ArtworkRail/ArtworkRailCard"
+import { ARTWORK_RAIL_CARD_IMAGE_HEIGHT } from "app/Components/ArtworkRail/LegacyArtworkRailCardImage"
 import { SectionTitle } from "app/Components/SectionTitle"
 import { HOME_VIEW_SECTIONS_SEPARATOR_HEIGHT } from "app/Scenes/HomeView/HomeView"
 import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
@@ -59,8 +59,7 @@ export const HomeViewSectionArtworks: React.FC<HomeViewSectionArtworksProps> = (
     } else {
       tracking.tappedArtworkGroupViewAll(
         section.contextModule as ContextModule,
-        "homeViewSection" as ScreenOwnerType,
-        section.internalID
+        section.ownerType as ScreenOwnerType
       )
 
       navigate(`/home-view/sections/${section.internalID}`, {
@@ -106,6 +105,7 @@ const fragment = graphql`
         }
       }
     }
+    ownerType
 
     artworksConnection(first: 10) {
       edges {
