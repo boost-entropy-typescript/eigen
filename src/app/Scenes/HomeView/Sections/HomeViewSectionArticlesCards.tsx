@@ -47,8 +47,15 @@ export const HomeViewSectionArticlesCards: React.FC<HomeViewSectionArticlesCards
 
   const space = useSpace()
 
-  const onItemPress = (article: ArticleType) => {
+  const onItemPress = (article: ArticleType, index: number) => {
     if (article.href) {
+      tracking.tappedArticleGroup(
+        article.internalID,
+        article.slug,
+        section.contextModule as ContextModule,
+        index
+      )
+
       navigate(article.href)
     }
   }
@@ -73,7 +80,7 @@ export const HomeViewSectionArticlesCards: React.FC<HomeViewSectionArticlesCards
         </Flex>
         {articles.map((article, index) => (
           <Flex key={index} gap={space(2)}>
-            <Touchable onPress={() => onItemPress(article)}>
+            <Touchable onPress={() => onItemPress(article, index)}>
               <Flex flexDirection="row" alignItems="center">
                 <Text variant="sm-display" numberOfLines={3}>
                   {article.title}
@@ -124,8 +131,10 @@ const fragment = graphql`
     cardArticlesConnection: articlesConnection(first: 3) {
       edges {
         node {
-          title
           href
+          internalID
+          slug
+          title
         }
       }
     }
@@ -162,7 +171,7 @@ const HomeViewSectionArticlesCardsPlaceholder: React.FC<FlexProps> = (flexProps)
 }
 
 const homeViewSectionArticlesCardsQuery = graphql`
-  query HomeViewSectionArticlesCardsQuery($id: String!) {
+  query HomeViewSectionArticlesCardsQuery($id: String!) @cacheable {
     homeView {
       section(id: $id) {
         ...HomeViewSectionArticlesCards_section
@@ -177,6 +186,11 @@ export const HomeViewSectionArticlesCardsQueryRenderer: React.FC<SectionSharedPr
       homeViewSectionArticlesCardsQuery,
       {
         id: sectionID,
+      },
+      {
+        networkCacheConfig: {
+          force: false,
+        },
       }
     )
 
