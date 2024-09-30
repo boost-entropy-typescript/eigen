@@ -8,7 +8,6 @@ import {
   WorksForYouScreenQuery,
 } from "app/Components/Containers/WorksForYou"
 import { FadeIn } from "app/Components/FadeIn"
-import { ArtsyNativeModule } from "app/NativeModules/ArtsyNativeModule"
 import { ActivityItemScreenQueryRenderer } from "app/Scenes/Activity/ActivityItemScreen"
 import { ArtQuiz } from "app/Scenes/ArtQuiz/ArtQuiz"
 import { ArtQuizResults } from "app/Scenes/ArtQuiz/ArtQuizResults/ArtQuizResults"
@@ -37,7 +36,7 @@ import { SavedArtworks } from "app/Scenes/SavedArtworks/SavedArtworks"
 import { AlertArtworks } from "app/Scenes/SavedSearchAlert/AlertArtworks"
 import { SearchScreen, SearchScreenQuery } from "app/Scenes/Search/Search"
 import { SubmitArtworkForm } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkForm"
-import { SubmitArtworkFormEdit } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkFormEdit"
+import { SubmitArtworkFormEditContainer } from "app/Scenes/SellWithArtsy/ArtworkForm/SubmitArtworkFormEdit"
 import { SimilarToRecentlyViewedScreen } from "app/Scenes/SimilarToRecentlyViewed/SimilarToRecentlyViewed"
 import { ArtsyKeyboardAvoidingViewContext } from "app/utils/ArtsyKeyboardAvoidingView"
 import { SafeAreaInsets, useScreenDimensions } from "app/utils/hooks"
@@ -143,7 +142,7 @@ import {
   ViewingRoomsListScreen,
   viewingRoomsListScreenQuery,
 } from "./Scenes/ViewingRoom/ViewingRoomsList"
-import { GlobalStore, unsafe_getFeatureFlag } from "./store/GlobalStore"
+import { GlobalStore } from "./store/GlobalStore"
 import { propsStore } from "./store/PropsStore"
 import { DevMenu } from "./system/devTools/DevMenu/DevMenu"
 import { Schema, screenTrack } from "./utils/track"
@@ -499,8 +498,7 @@ export const modules = defineModules({
       screenOptions: {
         statusBarTranslucent: true,
       },
-      fullBleed:
-        ArtsyNativeModule.isBetaOrDev && !unsafe_getFeatureFlag("ARPreferLegacyHomeScreen"),
+      fullBleed: true,
     },
     [homeViewScreenQuery]
   ),
@@ -688,7 +686,7 @@ export const modules = defineModules({
       gestureEnabled: false,
     },
   }),
-  SubmitArtworkEdit: reactModule(SubmitArtworkFormEdit, {
+  SubmitArtworkEdit: reactModule(SubmitArtworkFormEditContainer, {
     hidesBackButton: true,
     alwaysPresentModally: true,
     modalPresentationStyle: "fullScreen",
