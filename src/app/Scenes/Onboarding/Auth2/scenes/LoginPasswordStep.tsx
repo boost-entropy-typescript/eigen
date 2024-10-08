@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   Input,
+  LinkText,
   Spacer,
   Text,
   Touchable,
@@ -30,7 +31,7 @@ export const LoginPasswordStep: React.FC = () => {
   return (
     <Formik<LoginPasswordStepFormValues>
       initialValues={{ password: "" }}
-      validateOnChange={false}
+      validateOnChange={true}
       validationSchema={Yup.object().shape({
         password: Yup.string().required("Password field is required"),
       })}
@@ -62,17 +63,18 @@ export const LoginPasswordStep: React.FC = () => {
           })
         }
 
-        if (res === "auth_blocked") {
-          showBlockedAuthError("sign in")
-          return
-        }
-
-        if (res !== "success" && res !== "otp_missing" && res !== "on_demand_otp_missing") {
-          setErrors({ password: "Incorrect email or password" }) // pragma: allowlist secret
-        }
-
-        if (res === "success") {
-          resetForm()
+        switch (true) {
+          case res === "auth_blocked": {
+            showBlockedAuthError("sign in")
+            break
+          }
+          case res !== "success" && res !== "otp_missing" && res !== "on_demand_otp_missing": {
+            setErrors({ password: "Incorrect email or password" }) // pragma: allowlist secret
+            break
+          }
+          default: {
+            resetForm()
+          }
         }
       }}
     >
@@ -97,6 +99,7 @@ const LoginPasswordStepForm: React.FC = () => {
   } = useFormikContext<LoginPasswordStepFormValues>()
 
   const navigation = useAuthNavigation()
+  const screen = useAuthScreen()
   const passwordRef = useRef<Input>(null)
   const { color } = useTheme()
 
@@ -106,8 +109,8 @@ const LoginPasswordStepForm: React.FC = () => {
   })
 
   const handleBackButtonPress = () => {
-    navigation.goBack()
     resetForm()
+    navigation.goBack()
   }
 
   return (
@@ -158,6 +161,28 @@ const LoginPasswordStepForm: React.FC = () => {
       <Button block width="100%" onPress={handleSubmit} disabled={!isValid} loading={isSubmitting}>
         Continue
       </Button>
+
+      {!!screen.params?.showSignUpLink && (
+        <>
+          <Spacer y={1} />
+
+          <Text variant="xs" color="black60" textAlign="center">
+            Don't have an account?{" "}
+            <LinkText
+              variant="xs"
+              onPress={() => {
+                navigation.navigate({
+                  name: "SignUpPasswordStep",
+                  params: { email: screen.params?.email, showLoginLink: true },
+                })
+                resetForm()
+              }}
+            >
+              Sign up.
+            </LinkText>
+          </Text>
+        </>
+      )}
 
       <Spacer y={2} />
 
