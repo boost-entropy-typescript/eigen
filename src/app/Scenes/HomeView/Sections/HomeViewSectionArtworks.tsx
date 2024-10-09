@@ -24,7 +24,7 @@ import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
 import { extractNodes } from "app/utils/extractNodes"
 import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
-import { withSuspense } from "app/utils/hooks/withSuspense"
+import { NoFallback, withSuspense } from "app/utils/hooks/withSuspense"
 import { useMemoizedRandom } from "app/utils/placeholders"
 import { times } from "lodash"
 import { graphql, useFragment, useLazyLoadQuery } from "react-relay"
@@ -158,7 +158,7 @@ const HomeViewSectionArtworksPlaceholder: React.FC<FlexProps> = (flexProps) => {
     <Skeleton>
       <Flex {...flexProps}>
         <Flex mx={2}>
-          <SkeletonText variant="lg-display">Arwtworks Rail</SkeletonText>
+          <SkeletonText variant="sm-display">Arwtworks Rail</SkeletonText>
           <Spacer y={2} />
 
           <Flex flexDirection="row">
@@ -176,11 +176,15 @@ const HomeViewSectionArtworksPlaceholder: React.FC<FlexProps> = (flexProps) => {
                       width={ARTWORK_RAIL_IMAGE_WIDTH}
                     />
                   )}
-                  <Spacer y={2} />
-                  <SkeletonText>Andy Warhol</SkeletonText>
-                  <SkeletonText>A creative name for a work</SkeletonText>
-                  <SkeletonText>Gallery or Partner</SkeletonText>
-                  <SkeletonText>1000 €</SkeletonText>
+                  <Spacer y={1} />
+
+                  <Join separator={<Spacer y={0.5} />}>
+                    <SkeletonBox height={15} width={60} />
+                    <SkeletonBox height={15} width={100} />
+                    <SkeletonBox height={15} width={120} />
+                    <SkeletonBox height={15} width={80} />
+                    <SkeletonBox height={15} width={110} />
+                  </Join>
                 </Flex>
               ))}
             </Join>
@@ -191,8 +195,8 @@ const HomeViewSectionArtworksPlaceholder: React.FC<FlexProps> = (flexProps) => {
   )
 }
 
-export const HomeViewSectionArtworksQueryRenderer: React.FC<SectionSharedProps> = withSuspense(
-  ({ sectionID, index, ...flexProps }) => {
+export const HomeViewSectionArtworksQueryRenderer: React.FC<SectionSharedProps> = withSuspense({
+  Component: ({ sectionID, index, ...flexProps }) => {
     const data = useLazyLoadQuery<HomeViewSectionArtworksQuery>(homeViewSectionArtworksQuery, {
       id: sectionID,
     })
@@ -203,5 +207,6 @@ export const HomeViewSectionArtworksQueryRenderer: React.FC<SectionSharedProps> 
 
     return <HomeViewSectionArtworks section={data.homeView.section} index={index} {...flexProps} />
   },
-  HomeViewSectionArtworksPlaceholder
-)
+  LoadingFallback: HomeViewSectionArtworksPlaceholder,
+  ErrorFallback: NoFallback,
+})

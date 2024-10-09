@@ -19,7 +19,7 @@ import {
 import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
 import { extractNodes } from "app/utils/extractNodes"
-import { withSuspense } from "app/utils/hooks/withSuspense"
+import { NoFallback, withSuspense } from "app/utils/hooks/withSuspense"
 import { useMemoizedRandom } from "app/utils/placeholders"
 import { times } from "lodash"
 import { FlatList } from "react-native"
@@ -166,40 +166,34 @@ const HomeViewSectionActivityPlaceholder: React.FC<FlexProps> = (flexProps) => {
   const randomValue = useMemoizedRandom()
 
   return (
-    <Flex {...flexProps}>
-      <Flex ml={2} mr={2}>
-        <SkeletonText variant="lg-display">Latest Activity</SkeletonText>
-        <Spacer y={2} />
-        <Flex flexDirection="row">
-          <Join separator={<Spacer x="15px" />}>
-            {times(3 + randomValue * 10).map((index) => (
-              <Flex key={index} flexDirection="row">
-                <SkeletonBox
-                  height={ACTIVITY_RAIL_ARTWORK_IMAGE_SIZE}
-                  width={ACTIVITY_RAIL_ARTWORK_IMAGE_SIZE}
-                />
-                <Flex ml={1} maxWidth={ACTIVITY_RAIL_ITEM_WIDTH}>
-                  <SkeletonText variant="xs" numberOfLines={1}>
-                    6 new works by Andy Warhol
-                  </SkeletonText>
-                  <SkeletonText variant="xs" numberOfLines={1}>
-                    2021-01-01
-                  </SkeletonText>
-                  <SkeletonText variant="xs" numberOfLines={1}>
-                    Follow - 6 days ago
-                  </SkeletonText>
-                </Flex>
+    <Flex {...flexProps} mx={2}>
+      <SkeletonText variant="sm-display">Latest Activity</SkeletonText>
+      <Spacer y={2} />
+
+      <Flex flexDirection="row">
+        <Join separator={<Spacer x={2} />}>
+          {times(3 + randomValue * 10).map((index) => (
+            <Flex key={index} flexDirection="row" alignItems="center">
+              <SkeletonBox
+                mr={1}
+                height={ACTIVITY_RAIL_ARTWORK_IMAGE_SIZE}
+                width={ACTIVITY_RAIL_ARTWORK_IMAGE_SIZE}
+              />
+              <Flex maxWidth={ACTIVITY_RAIL_ITEM_WIDTH}>
+                <SkeletonBox width={140} height={15} mb={0.5} />
+                <SkeletonBox width={60} height={15} mb={0.5} />
+                <SkeletonBox width={100} height={15} />
               </Flex>
-            ))}
-          </Join>
-        </Flex>
+            </Flex>
+          ))}
+        </Join>
       </Flex>
     </Flex>
   )
 }
 
-export const HomeViewSectionActivityQueryRenderer: React.FC<SectionSharedProps> = withSuspense(
-  ({ sectionID, index, ...flexProps }) => {
+export const HomeViewSectionActivityQueryRenderer: React.FC<SectionSharedProps> = withSuspense({
+  Component: ({ sectionID, index, ...flexProps }) => {
     const data = useLazyLoadQuery<HomeViewSectionActivityQuery>(homeViewSectionActivityQuery, {
       id: sectionID,
     })
@@ -210,5 +204,6 @@ export const HomeViewSectionActivityQueryRenderer: React.FC<SectionSharedProps> 
 
     return <HomeViewSectionActivity section={data.homeView.section} index={index} {...flexProps} />
   },
-  HomeViewSectionActivityPlaceholder
-)
+  LoadingFallback: HomeViewSectionActivityPlaceholder,
+  ErrorFallback: NoFallback,
+})

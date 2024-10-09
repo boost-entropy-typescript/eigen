@@ -1,13 +1,5 @@
 import { ContextModule, ScreenOwnerType } from "@artsy/cohesion"
-import {
-  Flex,
-  FlexProps,
-  Join,
-  Skeleton,
-  SkeletonBox,
-  SkeletonText,
-  Spacer,
-} from "@artsy/palette-mobile"
+import { Flex, FlexProps, Join, Skeleton, SkeletonBox, Spacer } from "@artsy/palette-mobile"
 import { HomeViewSectionFairsQuery } from "__generated__/HomeViewSectionFairsQuery.graphql"
 import { HomeViewSectionFairs_section$key } from "__generated__/HomeViewSectionFairs_section.graphql"
 import { CardRailCard, CardRailMetadataContainer } from "app/Components/Home/CardRailCard"
@@ -24,7 +16,7 @@ import {
 import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
 import { extractNodes } from "app/utils/extractNodes"
-import { withSuspense } from "app/utils/hooks/withSuspense"
+import { NoFallback, withSuspense } from "app/utils/hooks/withSuspense"
 import { useMemoizedRandom } from "app/utils/placeholders"
 import { times } from "lodash"
 import { graphql, useFragment, useLazyLoadQuery } from "react-relay"
@@ -143,8 +135,8 @@ const HomeViewSectionFairsPlaceholder: React.FC<FlexProps> = (flexProps) => {
     <Skeleton>
       <Flex {...flexProps}>
         <Flex mx={2}>
-          <SkeletonText>Featured Fairs</SkeletonText>
-          <SkeletonText>See Wroks in Top Art Fairs</SkeletonText>
+          <SkeletonBox width={100} height={18} mb={0.5} />
+          <SkeletonBox width={200} height={18} />
           <Spacer y={1} />
 
           <Flex flexDirection="row">
@@ -171,8 +163,10 @@ const HomeViewSectionFairsPlaceholder: React.FC<FlexProps> = (flexProps) => {
                         />
                       </Flex>
                     </Flex>
+
                     <CardRailMetadataContainer>
-                      <SkeletonText numberOfLines={1}>Art on Paper 2024, New York</SkeletonText>
+                      <SkeletonBox width={180} height={18} mb={0.5} />
+                      <SkeletonBox width={130} height={18} />
                     </CardRailMetadataContainer>
                   </Flex>
                 </CardRailCard>
@@ -195,8 +189,8 @@ const homeViewSectionFairsQuery = graphql`
   }
 `
 
-export const HomeViewSectionFairsQueryRenderer: React.FC<SectionSharedProps> = withSuspense(
-  ({ sectionID, index, ...flexProps }) => {
+export const HomeViewSectionFairsQueryRenderer: React.FC<SectionSharedProps> = withSuspense({
+  Component: ({ sectionID, index, ...flexProps }) => {
     const data = useLazyLoadQuery<HomeViewSectionFairsQuery>(
       homeViewSectionFairsQuery,
       {
@@ -215,5 +209,6 @@ export const HomeViewSectionFairsQueryRenderer: React.FC<SectionSharedProps> = w
 
     return <HomeViewSectionFairs section={data.homeView.section} index={index} {...flexProps} />
   },
-  HomeViewSectionFairsPlaceholder
-)
+  LoadingFallback: HomeViewSectionFairsPlaceholder,
+  ErrorFallback: NoFallback,
+})

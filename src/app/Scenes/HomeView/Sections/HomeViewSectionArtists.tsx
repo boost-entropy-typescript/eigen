@@ -28,7 +28,7 @@ import {
 import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
 import { extractNodes } from "app/utils/extractNodes"
-import { withSuspense } from "app/utils/hooks/withSuspense"
+import { NoFallback, withSuspense } from "app/utils/hooks/withSuspense"
 import { useMemoizedRandom } from "app/utils/placeholders"
 import { ExtractNodeType } from "app/utils/relayHelpers"
 import { times } from "lodash"
@@ -224,8 +224,7 @@ const HomeViewSectionArtistsPlaceholder: React.FC<FlexProps> = (flexProps) => {
     <Skeleton>
       <Flex {...flexProps}>
         <Flex mx={2}>
-          <SkeletonText variant="lg-display">Recommended Artists</SkeletonText>
-
+          <SkeletonText variant="sm-display">Recommended Artists</SkeletonText>
           <Spacer y={2} />
 
           <Flex flexDirection="row">
@@ -238,8 +237,11 @@ const HomeViewSectionArtistsPlaceholder: React.FC<FlexProps> = (flexProps) => {
                     width={ARTIST_CARD_WIDTH}
                   />
                   <Spacer y={1} />
-                  <SkeletonText>Andy Warhol</SkeletonText>
-                  <SkeletonText>Nationality, b 1023</SkeletonText>
+
+                  <SkeletonText variant="xs" mb={0.5}>
+                    Andy Warhol
+                  </SkeletonText>
+                  <SkeletonText variant="xs">Nationality, b 1023</SkeletonText>
                 </Flex>
               ))}
             </Join>
@@ -250,8 +252,8 @@ const HomeViewSectionArtistsPlaceholder: React.FC<FlexProps> = (flexProps) => {
   )
 }
 
-export const HomeViewSectionArtistsQueryRenderer: React.FC<SectionSharedProps> = withSuspense(
-  ({ sectionID, index, ...flexProps }) => {
+export const HomeViewSectionArtistsQueryRenderer: React.FC<SectionSharedProps> = withSuspense({
+  Component: ({ sectionID, index, ...flexProps }) => {
     const data = useLazyLoadQuery<HomeViewSectionArtistsMainQuery>(homeViewSectionArtistsQuery, {
       id: sectionID,
     })
@@ -268,5 +270,6 @@ export const HomeViewSectionArtistsQueryRenderer: React.FC<SectionSharedProps> =
       />
     )
   },
-  HomeViewSectionArtistsPlaceholder
-)
+  LoadingFallback: HomeViewSectionArtistsPlaceholder,
+  ErrorFallback: NoFallback,
+})

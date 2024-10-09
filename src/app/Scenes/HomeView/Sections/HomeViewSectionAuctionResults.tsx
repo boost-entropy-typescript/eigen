@@ -26,7 +26,7 @@ import {
 import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
 import { extractNodes } from "app/utils/extractNodes"
-import { withSuspense } from "app/utils/hooks/withSuspense"
+import { NoFallback, withSuspense } from "app/utils/hooks/withSuspense"
 import { useMemoizedRandom } from "app/utils/placeholders"
 import { times } from "lodash"
 import { Dimensions, FlatList } from "react-native"
@@ -154,9 +154,9 @@ const HomeViewSectionAuctionResultsPlaceholder: React.FC<FlexProps> = (flexProps
     <Skeleton>
       <Flex {...flexProps}>
         <Flex mx={2}>
-          <SkeletonText variant="lg-display">List of Auction Results</SkeletonText>
+          <SkeletonText variant="sm-display">List of Auction Results</SkeletonText>
 
-          <Spacer y={1} />
+          <Spacer y={2} />
 
           <Flex flexDirection="row">
             <Join separator={<Spacer x="15px" />}>
@@ -173,18 +173,22 @@ const HomeViewSectionAuctionResultsPlaceholder: React.FC<FlexProps> = (flexProps
                     width={AUCTION_RESULT_CARD_IMAGE_WIDTH}
                   />
                   <Spacer x={1} />
-                  <Flex>
-                    <SkeletonText variant="xs">Katherine Bernhardt</SkeletonText>
-                    <SkeletonText variant="xs">Shower Power</SkeletonText>
-                    <SkeletonText variant="xs" numberOfLines={2}>
-                      Unique lithograph in colors, on somerset tub sized paper, the full sheet.
-                    </SkeletonText>
-                    <SkeletonText variant="xs" numberOfLines={1} mt={1}>
-                      Set 11, 2024 - Phillips
-                    </SkeletonText>
-                    <SkeletonText variant="xs" numberOfLines={1}>
-                      $10,000
-                    </SkeletonText>
+                  <Flex justifyContent="space-between">
+                    <Flex>
+                      <Join separator={<Spacer y={0.5} />}>
+                        <SkeletonBox width={70} height={15} />
+                        <SkeletonBox width={150} height={15} />
+                        <SkeletonBox width={120} height={15} />
+                        <SkeletonBox width={200} height={15} />
+                      </Join>
+                    </Flex>
+
+                    <Flex>
+                      <Join separator={<Spacer y={0.5} />}>
+                        <SkeletonBox width={120} height={15} />
+                        <SkeletonBox width={80} height={15} />
+                      </Join>
+                    </Flex>
                   </Flex>
                 </Flex>
               ))}
@@ -207,19 +211,27 @@ const homeViewSectionAuctionResultsQuery = graphql`
 `
 
 export const HomeViewSectionAuctionResultsQueryRenderer: React.FC<SectionSharedProps> =
-  withSuspense(({ sectionID, index, ...flexProps }) => {
-    const data = useLazyLoadQuery<HomeViewSectionAuctionResultsQuery>(
-      homeViewSectionAuctionResultsQuery,
-      {
-        id: sectionID,
+  withSuspense({
+    Component: ({ sectionID, index, ...flexProps }) => {
+      const data = useLazyLoadQuery<HomeViewSectionAuctionResultsQuery>(
+        homeViewSectionAuctionResultsQuery,
+        {
+          id: sectionID,
+        }
+      )
+
+      if (!data.homeView.section) {
+        return null
       }
-    )
 
-    if (!data.homeView.section) {
-      return null
-    }
-
-    return (
-      <HomeViewSectionAuctionResults section={data.homeView.section} index={index} {...flexProps} />
-    )
-  }, HomeViewSectionAuctionResultsPlaceholder)
+      return (
+        <HomeViewSectionAuctionResults
+          section={data.homeView.section}
+          index={index}
+          {...flexProps}
+        />
+      )
+    },
+    LoadingFallback: HomeViewSectionAuctionResultsPlaceholder,
+    ErrorFallback: NoFallback,
+  })

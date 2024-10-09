@@ -17,7 +17,7 @@ import { HOME_VIEW_SECTIONS_SEPARATOR_HEIGHT } from "app/Scenes/HomeView/HomeVie
 import { SectionSharedProps } from "app/Scenes/HomeView/Sections/Section"
 import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
-import { withSuspense } from "app/utils/hooks/withSuspense"
+import { NoFallback, withSuspense } from "app/utils/hooks/withSuspense"
 import { useMemoizedRandom } from "app/utils/placeholders"
 import { times } from "lodash"
 import { graphql, useFragment, useLazyLoadQuery } from "react-relay"
@@ -110,7 +110,7 @@ const HomeViewSectionArticlesPlaceholder: React.FC<FlexProps> = (flexProps) => {
     <Skeleton>
       <Flex {...flexProps}>
         <Flex mx={2} my={HOME_VIEW_SECTIONS_SEPARATOR_HEIGHT}>
-          <SkeletonText variant="lg-display">Artsy Editorial</SkeletonText>
+          <SkeletonText variant="sm-display">Artsy Editorial</SkeletonText>
 
           <Spacer y={2} />
 
@@ -124,14 +124,17 @@ const HomeViewSectionArticlesPlaceholder: React.FC<FlexProps> = (flexProps) => {
                     width={ARTICLE_CARD_IMAGE_WIDTH}
                   />
                   <Spacer y={1} />
-                  <SkeletonText variant="xs">Art Market</SkeletonText>
-                  <SkeletonText variant="lg-display" numberOfLines={3}>
+                  <SkeletonText variant="xs" mb={0.5}>
+                    Art Market
+                  </SkeletonText>
+                  <SkeletonText variant="lg-display" mb={0.5}>
                     10 Shows we suggest you don't miss during Berlin Art Week
                   </SkeletonText>
-                  <SkeletonText variant="xs" numberOfLines={1} mt={0.5}>
+
+                  <SkeletonText variant="xs" numberOfLines={1} mb={0.5}>
                     Article Author
                   </SkeletonText>
-                  <SkeletonText variant="xs" numberOfLines={1} mt={0.5}>
+                  <SkeletonText variant="xs" numberOfLines={1}>
                     Sep 10, 2024
                   </SkeletonText>
                 </Flex>
@@ -144,8 +147,8 @@ const HomeViewSectionArticlesPlaceholder: React.FC<FlexProps> = (flexProps) => {
   )
 }
 
-export const HomeViewSectionArticlesQueryRenderer: React.FC<SectionSharedProps> = withSuspense(
-  ({ sectionID, index, ...flexProps }) => {
+export const HomeViewSectionArticlesQueryRenderer: React.FC<SectionSharedProps> = withSuspense({
+  Component: ({ sectionID, index, ...flexProps }) => {
     const data = useLazyLoadQuery<HomeViewSectionArticlesQuery>(
       homeViewSectionArticlesQuery,
       {
@@ -164,5 +167,6 @@ export const HomeViewSectionArticlesQueryRenderer: React.FC<SectionSharedProps> 
 
     return <HomeViewSectionArticles section={data.homeView.section} index={index} {...flexProps} />
   },
-  HomeViewSectionArticlesPlaceholder
-)
+  LoadingFallback: HomeViewSectionArticlesPlaceholder,
+  ErrorFallback: NoFallback,
+})
