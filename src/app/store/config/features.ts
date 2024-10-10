@@ -260,11 +260,6 @@ export const features = {
     showInDevMenu: true,
     echoFlagKey: "AREnableAuctionImprovementsSignals",
   },
-  ARPreferLegacyHomeScreen: {
-    description: "Prefer legacy home screen",
-    readyForRelease: false,
-    showInDevMenu: true,
-  },
   AREnableCollectionsWithoutHeaderImage: {
     description: "Remove the header image from collections",
     readyForRelease: true,
@@ -287,11 +282,34 @@ export const features = {
     description: "Use Metaphysics CDN (requires app restart)",
     readyForRelease: false,
     showInDevMenu: true,
+    echoFlagKey: "ARUseMetaphysicsCDN",
+  },
+  AREnableCacheableDirective: {
+    description: "Enable @cacheable Directive",
+    readyForRelease: false,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableCacheableDirective",
   },
   AREnableSignupLoginFusion: {
     description: "Enable the fused signup and login flow",
     readyForRelease: false,
     showInDevMenu: true,
+  },
+  AREnableMarketingCollectionsCategories: {
+    description: "Enable marketing collections categories elements in the home view",
+    readyForRelease: false,
+    showInDevMenu: true,
+  },
+  ARPreferLegacyHomeScreen: {
+    description: "Prefer legacy home screen",
+    readyForRelease: false,
+    showInDevMenu: true,
+  },
+  AREnableDynamicHomeView: {
+    description: "Enable new home screen",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableDynamicHomeView",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
@@ -383,6 +401,10 @@ export const devToggles: { [key: string]: DevToggleDescriptor } = {
   },
   DTEnableNewImageLabel: {
     description: "Show a label on new OpaqueImageView",
+  },
+  DTDisableNavigationStateRehydration: {
+    description:
+      "Disable navigation state rehydration. This change only affects DEV builds. In release builds, navigation state is never rehydrated.",
   },
 }
 
