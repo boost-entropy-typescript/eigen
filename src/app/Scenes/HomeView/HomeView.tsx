@@ -7,7 +7,7 @@ import { HomeViewSectionsConnection_viewer$key } from "__generated__/HomeViewSec
 import { SearchQuery } from "__generated__/SearchQuery.graphql"
 import { useDismissSavedArtwork } from "app/Components/ProgressiveOnboarding/useDismissSavedArtwork"
 import { useEnableProgressiveOnboarding } from "app/Components/ProgressiveOnboarding/useEnableProgressiveOnboarding"
-import { RetryErrorBoundary } from "app/Components/RetryErrorBoundary"
+import { RetryErrorBoundary, useRetryErrorBoundaryContext } from "app/Components/RetryErrorBoundary"
 import { EmailConfirmationBannerFragmentContainer } from "app/Scenes/Home/Components/EmailConfirmationBanner"
 import { HomeHeader } from "app/Scenes/HomeView/Components/HomeHeader"
 import { HomeViewStoreProvider } from "app/Scenes/HomeView/HomeViewContext"
@@ -26,9 +26,6 @@ import { FlatList, RefreshControl } from "react-native"
 import { fetchQuery, graphql, useLazyLoadQuery, usePaginationFragment } from "react-relay"
 
 export const NUMBER_OF_SECTIONS_TO_LOAD = 10
-// Hard coding the value here because 30px is not a valid value for the spacing unit
-// and we need it to be consistent with 60px spacing between sections
-export const HOME_VIEW_SECTIONS_SEPARATOR_HEIGHT = "30px"
 
 export const homeViewScreenQueryVariables = () => ({
   count: NUMBER_OF_SECTIONS_TO_LOAD,
@@ -38,6 +35,8 @@ export const HomeView: React.FC = () => {
   const flashlistRef = useBottomTabsScrollToTop("home")
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  const { fetchKey } = useRetryErrorBoundaryContext()
+
   const queryData = useLazyLoadQuery<HomeViewQuery>(
     homeViewScreenQuery,
     homeViewScreenQueryVariables(),
@@ -45,6 +44,7 @@ export const HomeView: React.FC = () => {
       networkCacheConfig: {
         force: false,
       },
+      fetchKey,
     }
   )
 
@@ -134,7 +134,7 @@ export const HomeView: React.FC = () => {
           data={sections}
           keyExtractor={(item) => item.internalID}
           renderItem={({ item, index }) => {
-            return <Section section={item} my={HOME_VIEW_SECTIONS_SEPARATOR_HEIGHT} index={index} />
+            return <Section section={item} my={2} index={index} />
           }}
           onEndReached={() => loadNext(NUMBER_OF_SECTIONS_TO_LOAD)}
           ListHeaderComponent={HomeHeader}

@@ -280,7 +280,7 @@ export const features = {
   },
   ARUseMetaphysicsCDN: {
     description: "Use Metaphysics CDN (requires app restart)",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "ARUseMetaphysicsCDN",
   },
@@ -310,6 +310,11 @@ export const features = {
     readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableDynamicHomeView",
+  },
+  AREnableHomeVieTasksSection: {
+    description: "Enable the Home view tasks section",
+    readyForRelease: false,
+    showInDevMenu: true,
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
