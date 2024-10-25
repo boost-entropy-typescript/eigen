@@ -16500,6 +16500,7 @@ type Query {
     first: Int
     last: Int
     limit: Int
+    offset: Int
     sort: DiscoverArtworksSort
     userId: String
   ): ArtworkConnection
@@ -17385,8 +17386,10 @@ type RecordArtworkViewPayload {
 }
 
 enum ReferenceTypes {
-  DISLIKED_ARTWORKS
   LIKED_ARTWORKS
+
+  # Artworks that the user has seen and not "liked". Should not be considered a negative signal.
+  SEEN_ARTWORKS
 }
 
 enum RelatedArtistsKind {
@@ -21108,6 +21111,7 @@ type Viewer {
     first: Int
     last: Int
     limit: Int
+    offset: Int
     sort: DiscoverArtworksSort
     userId: String
   ): ArtworkConnection
