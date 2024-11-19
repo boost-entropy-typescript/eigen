@@ -38,38 +38,6 @@ When we upgrade to a version of `@segment/analytics-react-native` that includes 
 
 When updating to rn-0.69.10 we had to patch this due to kotlin version missmatch.
 
-## react-native patch
-
-### react-native prop-types patch
-
-#### When can we remove this:
-
-When we upgrade our deps to a version of react-native that includes removal of deprecated PropTypes.
-
-#### Explanation/Context:
-
-When updating to rn-0.69.10 we had to patch this due to deprecation of PropTypes. For this reason we also installed `deprecated-react-native-prop-types` to avoid errors and we patched the `react-native` package to use the deprecated PropTypes coming from the `deprecated-react-native-prop-types` package.
-
-### react-native jest/setup.js patch
-
-#### When can we remove this:
-
-When we upgrade react-native to 75 according to this https://github.com/facebook/react-native/issues/41907#issuecomment-2293385777 & https://github.com/facebook/react-native/pull/43497/files#diff-feb65a029adc6c226f7d3bfdc5238d2c8f31c4da1fea238705b2012f35178af6
-
-#### Explanation/Context:
-
-When updating to rn-0.73.9 we had to patch this due to some changes on the setup jest files making our tests fail due to a missconfiguration on the image jest setup.
-
-## deprecated-react-native-prop-types dependency
-
-#### When can we remove this:
-
-When we upgrade our deps to a version of react-native that includes removal of deprecated PropTypes.
-
-#### Explanation/Context:
-
-When updating to rn-0.69.10 we had to patch this due to deprecation of PropTypes. For this reason we also installed `deprecated-react-native-prop-types` to avoid errors and we patched the `react-native` package to use the deprecated PropTypes coming from the `deprecated-react-native-prop-types` package.
-
 ## react-native-image-crop-picker getRootVC patch
 
 #### When can we remove this:
@@ -81,39 +49,6 @@ Remove when we stop swizzling UIWindow via ARWindow or react-native-image-crop-p
 https://github.com/ivpusic/react-native-image-crop-picker/pull/1354
 
 We do some swizzling in our AppDelegate that causes [[UIApplication sharedApplication] delegate] window] to return nil, this is used by image-crop-picker to find the currently presented viewController to present the picker onto. This patch looks for our custom window subclass (ARWindow) instead and uses that to find the presented viewController. Note we cannot reliably use the lastWindow rather than checking for our custom subclass because in some circumstances this is not our window but an apple window for example UIInputWindow used for managing the keyboard.
-
-## react-native-mapbox-gl/maps - postinstall script
-
-#### When can we remove this:
-
-When react-native-mapbox adds the events framework as dependency, tried removed in 8.4.0 and was getting a crash on startup do to missing framework.
-
-#### Explanation/Context:
-
-We had issues with our archive becoming invalid and failing to export when we updated mapbox and cocoapods
-
-- mapbox released a beta version that fixed the issue for our setup
-- See issues here: https://github.com/CocoaPods/CocoaPods/issues/10385, https://github.com/react-native-mapbox-gl/maps/issues/1097
-
-## react-native-mapbox-gl/maps - generic types patch
-
-#### When can we remove this:
-
-When react-native-mapbox/maps fixes the type issue here.
-
-#### Explanation/Context:
-
-Typescript complains about some invalid type definitions for generic values. Next time we update mapbox we should try removing the patch, run yarn type-check and if it succeeds you can get rid of the patch.
-
-## react-native-mapbox-gl/maps - MGLGlyphsRasterizationMode
-
-#### When can we remove this:
-
-We should try removing it next time we update our mapbox dependencies (at time of writing 8.4.0). If you remove the plist value and open a map (City guide) and don't see a warning about falling back to a local rasterization you should be good to go.
-
-#### Explanation/Context:
-
-There is an issue here that explains the issue and suggests setting explicity in plist: https://github.com/mapbox/mapbox-gl-native-ios/issues/589
 
 ## exporting MockResolverContext (@types/relay-test-utils patch-package)
 
@@ -336,19 +271,6 @@ When we upgrade to 6.0.14 or higher, should do shortly but requires fixing a fai
 React native removed removeEventListener which this library uses and causes jest tests to fail with type errors. This commit fixes the issue:
 https://github.com/react-navigation/react-navigation/commit/6e9da7304127a7c33cda2da2fa9ea1740ef56604
 
-## Patch-package for react-native-device-info
-
-#### When we can remove this:
-
-When this discussion is settled and we update to a compliant release with either a privacy manifest or this code removed:
-https://github.com/react-native-device-info/react-native-device-info/issues/1622
-
-#### Explanation/Context
-
-Apples has started requiring apps and 3rd party libraries declare in a privacy manifest why they use some apis, and only certain reasons are allowed.
-Device info uses disk space apis that are not justified by these reasons currently.
-https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api?language=objc
-
 ## Git link in podfile for SwiftyJSON
 
 #### When we can remove this:
@@ -411,3 +333,14 @@ https://github.com/fastlane/fastlane/pull/22025
 We want to be able to promote past android builds to prod because we are creating betas often and a release candidate may not be
 the latest. The developer APIs for google play only return the latest release and fastlane verifies that a release exists before allowing
 promotion. We added custom logic to work around this.
+
+## react-native-gesture-handler/ReanimatedSwipeable patch
+
+#### When we can remove this:
+
+When this pr is released in a new version of react-native-gesture-handler and we upgrade to it:
+https://github.com/software-mansion/react-native-gesture-handler/pull/3149
+
+#### Explanation/Context:
+
+We want to be able to open the swipeable view using the `openRight` function, but it doesn't seem to be working as expected. This patch is a workaround to make it work.

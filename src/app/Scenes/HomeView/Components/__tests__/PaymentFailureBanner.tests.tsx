@@ -1,13 +1,13 @@
 import { fireEvent, screen } from "@testing-library/react-native"
 import { PaymentFailureBanner } from "app/Scenes/HomeView/Components/PaymentFailureBanner"
-import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
+import { useHomeViewTracking } from "app/Scenes/HomeView/hooks/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
 import { setupTestWrapper } from "app/utils/tests/setupTestWrapper"
 import { graphql } from "react-relay"
 
 const mockUseIsFocusedMock = jest.fn()
 
-jest.mock("app/Scenes/HomeView/useHomeViewTracking", () => ({
+jest.mock("app/Scenes/HomeView/hooks/useHomeViewTracking", () => ({
   useHomeViewTracking: jest.fn(),
 }))
 
@@ -94,7 +94,7 @@ describe("PaymentFailureBanner", () => {
     expect(text).toBeTruthy()
 
     fireEvent.press(link)
-    expect(navigate).toHaveBeenCalledWith("settings/purchases")
+    expect(navigate).toHaveBeenCalledWith("orders")
   })
 
   it("does not render the banner when there are no payment failures", () => {

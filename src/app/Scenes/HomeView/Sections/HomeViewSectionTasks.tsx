@@ -1,15 +1,20 @@
 import { ContextModule } from "@artsy/cohesion"
 import { Flex, FlexProps, Skeleton, SkeletonBox, SkeletonText, Spacer } from "@artsy/palette-mobile"
+import { useIsFocused } from "@react-navigation/native"
 import { HomeViewSectionTasksQuery } from "__generated__/HomeViewSectionTasksQuery.graphql"
 import { HomeViewSectionTasks_section$key } from "__generated__/HomeViewSectionTasks_section.graphql"
 import { SectionTitle } from "app/Components/SectionTitle"
 import { Task } from "app/Components/Tasks/Task"
 import { HomeViewSectionSentinel } from "app/Scenes/HomeView/Components/HomeViewSectionSentinel"
 import { SectionSharedProps } from "app/Scenes/HomeView/Sections/Section"
+import { GlobalStore } from "app/store/GlobalStore"
 import { extractNodes } from "app/utils/extractNodes"
 import { NoFallback, withSuspense } from "app/utils/hooks/withSuspense"
-import { useState } from "react"
-import { LayoutAnimation } from "react-native"
+import { AnimatePresence, MotiView } from "moti"
+import { useEffect, useRef, useState } from "react"
+import { InteractionManager } from "react-native"
+import { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable"
+import { Easing } from "react-native-reanimated"
 import { graphql, useFragment, useLazyLoadQuery } from "react-relay"
 
 interface HomeViewSectionTasksProps extends FlexProps {
@@ -22,40 +27,76 @@ export const HomeViewSectionTasks: React.FC<HomeViewSectionTasksProps> = ({
   index,
   ...flexProps
 }) => {
+  const swipeableRef = useRef<SwipeableMethods>(null)
+  const [displayTask, setDisplayTask] = useState(true)
   const section = useFragment(tasksFragment, sectionProp)
-
   const tasks = extractNodes(section.tasksConnection)
+  const isFocused = useIsFocused()
+
+  const { isDismissed } = GlobalStore.useAppState((state) => state.progressiveOnboarding)
+  const { dismiss } = GlobalStore.actions.progressiveOnboarding
 
   // In the future, we may want to show multiple tasks
   const task = tasks?.[0]
 
-  const [displayTask, setDisplayTask] = useState(true)
+  // adding the find-saved-artwork onboarding key to prevent overlap
+  const shouldStartOnboardingAnimation =
+    isFocused &&
+    !isDismissed("act-now-tasks").status &&
+    !!isDismissed("find-saved-artwork").status &&
+    !!swipeableRef.current &&
+    !!task
 
-  const handleClearTask = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+  useEffect(() => {
+    if (shouldStartOnboardingAnimation) {
+      InteractionManager.runAfterInteractions(() => {
+        if (swipeableRef.current) {
+          swipeableRef.current.openRight()
+        }
+      }).then(() => {
+        setTimeout(() => {
+          if (swipeableRef.current) {
+            swipeableRef.current.close()
+            dismiss("act-now-tasks")
+          }
+        }, 2000)
+      })
+    }
+  }, [shouldStartOnboardingAnimation])
 
-    setDisplayTask(false)
-  }
-
-  if (!task || !displayTask) {
+  if (!task) {
     return null
   }
 
+  const handleClearTask = () => {
+    setDisplayTask(false)
+  }
+
   return (
-    <Flex {...flexProps}>
-      <Flex mx={2}>
-        <SectionTitle title={section.component?.title} />
-      </Flex>
+    <AnimatePresence>
+      {!!displayTask && (
+        <MotiView
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          exitTransition={{ type: "timing", easing: Easing.inOut(Easing.ease) }}
+        >
+          <Flex {...flexProps}>
+            <Flex mx={2}>
+              <SectionTitle title={section.component?.title} />
+            </Flex>
 
-      <Flex mr={2}>
-        <Task task={task} onClearTask={handleClearTask} />
-      </Flex>
+            <Flex mr={2}>
+              <Task ref={swipeableRef} task={task} onClearTask={handleClearTask} />
+            </Flex>
 
-      <HomeViewSectionSentinel
-        contextModule={section.contextModule as ContextModule}
-        index={index}
-      />
-    </Flex>
+            <HomeViewSectionSentinel
+              contextModule={section.contextModule as ContextModule}
+              index={index}
+            />
+          </Flex>
+        </MotiView>
+      )}
+    </AnimatePresence>
   )
 }
 

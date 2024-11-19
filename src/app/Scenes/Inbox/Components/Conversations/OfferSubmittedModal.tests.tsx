@@ -1,11 +1,13 @@
-import { act, fireEvent } from "@testing-library/react-native"
-import { goBack, navigate } from "app/system/navigation/navigate"
+import { act, fireEvent, screen } from "@testing-library/react-native"
+import { goBack, switchTab } from "app/system/navigation/navigate"
+import { flushPromiseQueue } from "app/utils/tests/flushPromiseQueue"
 import { renderWithWrappers } from "app/utils/tests/renderWithWrappers"
 import { OfferSubmittedModal } from "./OfferSubmittedModal"
 
 jest.mock("app/system/navigation/navigate", () => ({
   navigate: jest.fn(),
   goBack: jest.fn(),
+  switchTab: jest.fn(),
 }))
 
 let callback: undefined | (([...args]: any) => void)
@@ -22,21 +24,26 @@ describe("OfferSubmittedModal", () => {
   })
 
   it("renders", () => {
-    const { getByText } = renderWithWrappers(<OfferSubmittedModal />)
+    renderWithWrappers(<OfferSubmittedModal />)
     act(() => callback?.({ orderCode: "1234", message: "Test message" }))
 
-    expect(getByText("Thank you, your offer has been submitted")).toBeTruthy()
-    expect(getByText("Negotiation with the gallery will continue in the Inbox.")).toBeTruthy()
-    expect(getByText("Offer #1234")).toBeTruthy()
-    expect(getByText("Test message")).toBeTruthy()
+    expect(screen.getByText("Thank you, your offer has been submitted")).toBeTruthy()
+    expect(
+      screen.getByText("Negotiation with the gallery will continue in the Inbox.")
+    ).toBeTruthy()
+    expect(screen.getByText("Offer #1234")).toBeTruthy()
+    expect(screen.getByText("Test message")).toBeTruthy()
     expect(goBack).toHaveBeenCalledTimes(1)
   })
 
-  it("onGoToInbox", () => {
-    const { getAllByText } = renderWithWrappers(<OfferSubmittedModal />)
+  it("onGoToInbox", async () => {
+    renderWithWrappers(<OfferSubmittedModal />)
     act(() => callback?.({ orderCode: "1234", message: "Test message" }))
 
-    fireEvent.press(getAllByText("Go to inbox")[0])
-    expect(navigate).toHaveBeenCalledWith("inbox")
+    fireEvent.press(screen.getAllByText("Go to inbox")[0])
+
+    // Wait for modal dismissal
+    await flushPromiseQueue()
+    expect(switchTab).toHaveBeenCalledWith("inbox")
   })
 })

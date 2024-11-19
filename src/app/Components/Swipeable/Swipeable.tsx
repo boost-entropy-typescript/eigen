@@ -2,8 +2,9 @@ import { Color, Flex, Touchable, useColor } from "@artsy/palette-mobile"
 import { forwardRef, useRef } from "react"
 import ReanimatedSwipeable, {
   SwipeableMethods,
-  SwipeableRef,
+  SwipeableProps,
 } from "react-native-gesture-handler/ReanimatedSwipeable"
+import ReactNativeHapticFeedback from "react-native-haptic-feedback"
 import Animated, {
   runOnJS,
   SharedValue,
@@ -14,13 +15,11 @@ import Animated, {
 const FRICTION = 1.2
 const SWIPE_TO_INTERACT_THRESHOLD = 80
 
-export interface SwipeableProps {
-  children: React.ReactNode
+export interface SwipeableComponentProps extends SwipeableProps {
   actionOnPress?: () => void
   actionOnSwipe?: () => void
   actionComponent: React.ReactNode
   actionBackground?: Color
-  swipeableProps?: SwipeableProps
   enabled?: boolean
   /**
    * The width of the action component. We need to set it to make the swipeable animation.\
@@ -29,7 +28,7 @@ export interface SwipeableProps {
   actionComponentWidth: number
 }
 
-export const Swipeable = forwardRef((props: SwipeableProps, swipeableRef: SwipeableRef) => {
+export const Swipeable = forwardRef<SwipeableMethods, SwipeableComponentProps>((props, ref) => {
   const {
     children,
     actionOnPress,
@@ -38,7 +37,7 @@ export const Swipeable = forwardRef((props: SwipeableProps, swipeableRef: Swipea
     actionComponentWidth,
     actionBackground = "red100",
     enabled = true,
-    swipeableProps,
+    ...restProps
   } = props
 
   const color = useColor()
@@ -48,6 +47,7 @@ export const Swipeable = forwardRef((props: SwipeableProps, swipeableRef: Swipea
 
   const handleSwipeToInteract = () => {
     hasSwiped.current = true
+    ReactNativeHapticFeedback.trigger("impactLight")
     actionOnSwipe?.()
   }
 
@@ -67,8 +67,6 @@ export const Swipeable = forwardRef((props: SwipeableProps, swipeableRef: Swipea
       if (!actionOnSwipe || hasSwiped.current || !width.value) return style
 
       if (width.value + dragX.value * FRICTION <= SWIPE_TO_INTERACT_THRESHOLD) {
-        // TODO: Add haptic feedback
-
         runOnJS(handleSwipeToInteract)()
       }
 
@@ -111,11 +109,11 @@ export const Swipeable = forwardRef((props: SwipeableProps, swipeableRef: Swipea
     >
       <ReanimatedSwipeable
         testID="swipeable-component"
-        ref={swipeableRef}
+        ref={ref}
         enabled={enabled}
         renderRightActions={RightActions}
         friction={FRICTION}
-        {...swipeableProps}
+        {...restProps}
       >
         {children}
       </ReanimatedSwipeable>

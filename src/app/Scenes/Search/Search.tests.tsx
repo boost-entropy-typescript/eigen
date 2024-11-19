@@ -11,13 +11,13 @@ jest.mock("lodash/throttle", () => (fn: any) => {
 
 describe("Search", () => {
   const { renderWithRelay } = setupTestWrapper({
-    Component: () => <SearchScreen />,
+    Component: () => <SearchScreen route={{} as any} navigation={{} as any} />,
   })
 
   it("should render a text input with placeholder and no pills", async () => {
     const { env } = renderWithRelay()
 
-    const searchInput = screen.getByPlaceholderText("Search artists, artworks, galleries, etc")
+    const searchInput = screen.getByPlaceholderText("Search artists, artworks, etc")
 
     expect(searchInput).toBeTruthy()
 
@@ -43,7 +43,7 @@ describe("Search", () => {
   it("Top pill should be selected by default", async () => {
     const { env } = renderWithRelay()
 
-    const searchInput = screen.getByPlaceholderText("Search artists, artworks, galleries, etc")
+    const searchInput = screen.getByPlaceholderText("Search artists, artworks, etc")
 
     fireEvent.changeText(searchInput, "text")
 
@@ -56,7 +56,7 @@ describe("Search", () => {
   it("when clear button is pressed", async () => {
     const { env } = renderWithRelay()
 
-    const searchInput = screen.getByPlaceholderText("Search artists, artworks, galleries, etc")
+    const searchInput = screen.getByPlaceholderText("Search artists, artworks, etc")
 
     fireEvent(searchInput, "changeText", "prev value")
 
@@ -77,7 +77,7 @@ describe("Search", () => {
   it("when cancel button is pressed", async () => {
     const { env } = renderWithRelay()
 
-    const searchInput = screen.getByPlaceholderText("Search artists, artworks, galleries, etc")
+    const searchInput = screen.getByPlaceholderText("Search artists, artworks, etc")
 
     fireEvent(searchInput, "changeText", "prev value")
     // needed to resolve the relay operation triggered for the text change
@@ -98,7 +98,7 @@ describe("Search", () => {
   it("should render all the default pills", async () => {
     const { env } = renderWithRelay()
 
-    const searchInput = screen.getByPlaceholderText("Search artists, artworks, galleries, etc")
+    const searchInput = screen.getByPlaceholderText("Search artists, artworks, etc")
 
     fireEvent(searchInput, "changeText", "Ba")
 

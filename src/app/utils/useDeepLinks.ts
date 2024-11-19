@@ -8,19 +8,29 @@ import { useTracking } from "react-tracking"
 export function useDeepLinks() {
   const isLoggedIn = GlobalStore.useAppState((state) => !!state.auth.userAccessToken)
   const isHydrated = GlobalStore.useAppState((state) => state.sessionState.isHydrated)
+  const isNavigationReady = GlobalStore.useAppState((state) => state.sessionState.isNavigationReady)
+
   const launchURL = useRef<string | null>(null)
 
   const { trackEvent } = useTracking()
 
   useEffect(() => {
+    if (!isNavigationReady) {
+      return
+    }
+
     Linking.getInitialURL().then((url) => {
       if (url) {
         handleDeepLink(url)
       }
     })
-  }, [])
+  }, [isNavigationReady])
 
   useEffect(() => {
+    if (!isNavigationReady) {
+      return
+    }
+
     const subscription = Linking.addListener("url", ({ url }) => {
       handleDeepLink(url)
     })
@@ -28,7 +38,7 @@ export function useDeepLinks() {
     return () => {
       subscription.remove()
     }
-  }, [isHydrated, isLoggedIn])
+  }, [isHydrated, isLoggedIn, isNavigationReady])
 
   const handleDeepLink = async (url: string) => {
     let targetURL
@@ -58,7 +68,7 @@ export function useDeepLinks() {
 
     // If the state is hydrated and the user is logged in
     // We navigate them to the the deep link
-    if (isHydrated && isLoggedIn) {
+    if (isHydrated && isLoggedIn && isNavigationReady) {
       // and we track the deep link
       navigate(deepLinkUrl)
       return
@@ -70,13 +80,13 @@ export function useDeepLinks() {
   }
 
   useEffect(() => {
-    if (isLoggedIn && launchURL.current) {
+    if (isLoggedIn && launchURL.current && isNavigationReady) {
       // Navigate to the saved launch url
       navigate(launchURL.current)
       // Reset the launchURL
       launchURL.current = null
     }
-  }, [isLoggedIn, isHydrated, launchURL.current])
+  }, [isLoggedIn, isHydrated, launchURL.current, isNavigationReady])
 }
 
 const tracks = {

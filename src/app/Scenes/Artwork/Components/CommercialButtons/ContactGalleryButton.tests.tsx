@@ -1,17 +1,12 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react-native"
 import { ContactGalleryButtonTestsQuery } from "__generated__/ContactGalleryButtonTestsQuery.graphql"
 import { ContactGalleryButton } from "app/Scenes/Artwork/Components/CommercialButtons/ContactGalleryButton"
-import { __globalStoreTestUtils__ } from "app/store/GlobalStore"
 import { mockTrackEvent } from "app/utils/tests/globallyMockedStuff"
 import { setupTestWrapper } from "app/utils/tests/setupTestWrapper"
 import { Suspense } from "react"
 import { graphql } from "react-relay"
 
 describe("ContactGalleryButton", () => {
-  beforeEach(() => {
-    __globalStoreTestUtils__?.injectFeatureFlags({ AREnableCollectorProfilePrompts: true })
-  })
-
   it("opens the inquiry modal when the 'contact gallery' button is pressed", async () => {
     renderWithRelay()
 
@@ -66,8 +61,6 @@ describe("ContactGalleryButton", () => {
   })
 
   it("tracks an event when the 'contact gallery' button is pressed on an artwork with auction signals", async () => {
-    __globalStoreTestUtils__?.injectFeatureFlags({ AREnableAuctionImprovementsSignals: true })
-
     renderWithRelay({
       Artwork: () => ({
         internalID: "artwork-id",

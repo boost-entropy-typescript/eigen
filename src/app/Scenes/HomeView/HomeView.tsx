@@ -1,5 +1,6 @@
 import { ContextModule, OwnerType } from "@artsy/cohesion"
 import { Flex, Screen, Spinner } from "@artsy/palette-mobile"
+import { PortalHost } from "@gorhom/portal"
 import { useFocusEffect } from "@react-navigation/native"
 import { HomeViewFetchMeQuery } from "__generated__/HomeViewFetchMeQuery.graphql"
 import { HomeViewQuery } from "__generated__/HomeViewQuery.graphql"
@@ -10,18 +11,21 @@ import { useEnableProgressiveOnboarding } from "app/Components/ProgressiveOnboar
 import { RetryErrorBoundary, useRetryErrorBoundaryContext } from "app/Components/RetryErrorBoundary"
 import { EmailConfirmationBannerFragmentContainer } from "app/Scenes/Home/Components/EmailConfirmationBanner"
 import { HomeHeader } from "app/Scenes/HomeView/Components/HomeHeader"
-import { HomeViewStoreProvider } from "app/Scenes/HomeView/HomeViewContext"
+import { HomeViewStore, HomeViewStoreProvider } from "app/Scenes/HomeView/HomeViewContext"
 import { Section } from "app/Scenes/HomeView/Sections/Section"
-import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
+import { useHomeViewExperimentTracking } from "app/Scenes/HomeView/hooks/useHomeViewExperimentTracking"
+import { useHomeViewTracking } from "app/Scenes/HomeView/hooks/useHomeViewTracking"
 import { searchQueryDefaultVariables } from "app/Scenes/Search/Search"
 import { getRelayEnvironment } from "app/system/relay/defaultEnvironment"
 import { useBottomTabsScrollToTop } from "app/utils/bottomTabsHelper"
+import { useExperimentVariant } from "app/utils/experiments/hooks"
 import { extractNodes } from "app/utils/extractNodes"
+import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
 import { ProvidePlaceholderContext } from "app/utils/placeholders"
 import { usePrefetch } from "app/utils/queryPrefetching"
 import { requestPushNotificationsPermission } from "app/utils/requestPushNotificationsPermission"
 import { useMaybePromptForReview } from "app/utils/useMaybePromptForReview"
-import { Suspense, useCallback, useEffect, useState } from "react"
+import { RefObject, Suspense, useCallback, useEffect, useState } from "react"
 import { FlatList, RefreshControl } from "react-native"
 import { fetchQuery, graphql, useLazyLoadQuery, usePaginationFragment } from "react-relay"
 
@@ -32,6 +36,7 @@ export const homeViewScreenQueryVariables = () => ({
 })
 
 export const HomeView: React.FC = () => {
+  const enableNewSearchModal = useFeatureFlag("AREnableNewSearchModal")
   const flashlistRef = useBottomTabsScrollToTop("home")
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -48,6 +53,16 @@ export const HomeView: React.FC = () => {
     }
   )
 
+  const trackedSectionTypes = HomeViewStore.useStoreState((state) => state.trackedSectionTypes)
+
+  const { trackExperiment } = useExperimentVariant("onyx_artwork-card-save-and-follow-cta-redesign")
+
+  useEffect(() => {
+    if (trackedSectionTypes.includes("HomeViewSectionArtworks")) {
+      trackExperiment()
+    }
+  }, [trackedSectionTypes.includes("HomeViewSectionArtworks")])
+
   const { data, loadNext, hasNext } = usePaginationFragment<
     HomeViewQuery,
     HomeViewSectionsConnection_viewer$key
@@ -59,6 +74,7 @@ export const HomeView: React.FC = () => {
   useEnableProgressiveOnboarding()
   const prefetchUrl = usePrefetch()
   const tracking = useHomeViewTracking()
+  useHomeViewExperimentTracking(queryData.homeView?.experiments)
 
   useMaybePromptForReview({ contextModule: ContextModule.tabBar, contextOwnerType: OwnerType.home })
 
@@ -126,12 +142,22 @@ export const HomeView: React.FC = () => {
     })
   }
 
+  const stickyHeaderProps = enableNewSearchModal
+    ? {
+        stickyHeaderHiddenOnScroll: true,
+        stickyHeaderIndices: [0],
+      }
+    : {}
+
   return (
     <Screen safeArea={true}>
       <Screen.Body fullwidth>
         <FlatList
+          automaticallyAdjustKeyboardInsets
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          ref={flashlistRef}
+          ref={flashlistRef as RefObject<FlatList>}
           data={sections}
           keyExtractor={(item) => item.internalID}
           renderItem={({ item, index }) => {
@@ -148,6 +174,7 @@ export const HomeView: React.FC = () => {
           }
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
           onEndReachedThreshold={2}
+          {...stickyHeaderProps}
         />
         {!!data?.me && <EmailConfirmationBannerFragmentContainer me={data.me} />}
       </Screen.Body>
@@ -172,10 +199,11 @@ const HomeViewScreenPlaceholder: React.FC = () => {
 export const HomeViewScreen: React.FC = () => {
   return (
     <HomeViewStoreProvider>
-      <RetryErrorBoundary>
+      <RetryErrorBoundary trackErrorBoundary={false}>
         <Suspense fallback={<HomeViewScreenPlaceholder />}>
           <HomeView />
         </Suspense>
+        <PortalHost name="SearchOverlay" />
       </RetryErrorBoundary>
     </HomeViewStoreProvider>
   )
@@ -209,7 +237,14 @@ const sectionsFragment = graphql`
 `
 
 export const homeViewScreenQuery = graphql`
-  query HomeViewQuery($count: Int!, $cursor: String) @cacheable {
+  query HomeViewQuery($count: Int!, $cursor: String) {
+    homeView {
+      experiments {
+        name
+        variant
+        enabled
+      }
+    }
     viewer {
       ...HomeViewSectionsConnection_viewer @arguments(count: $count, cursor: $cursor)
     }

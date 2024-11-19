@@ -3,7 +3,7 @@ import { useIsFocused } from "@react-navigation/native"
 import { PaymentFailureBannerQuery } from "__generated__/PaymentFailureBannerQuery.graphql"
 import { PaymentFailureBannerRefetchQuery } from "__generated__/PaymentFailureBannerRefetchQuery.graphql"
 import { PaymentFailureBanner_Fragment$key } from "__generated__/PaymentFailureBanner_Fragment.graphql"
-import { useHomeViewTracking } from "app/Scenes/HomeView/useHomeViewTracking"
+import { useHomeViewTracking } from "app/Scenes/HomeView/hooks/useHomeViewTracking"
 import { navigate } from "app/system/navigation/navigate"
 import { extractNodes } from "app/utils/extractNodes"
 import { useCallback, useEffect } from "react"
@@ -65,9 +65,7 @@ export const PaymentFailureBanner: React.FC = () => {
     tracking.tappedChangePaymentMethod(failedPayments)
 
     const route =
-      failedPayments.length === 1
-        ? `orders/${failedPayments[0].internalID}/payment/new`
-        : `settings/purchases`
+      failedPayments.length === 1 ? `orders/${failedPayments[0].internalID}/payment/new` : `orders`
 
     navigate(route)
   }, [failedPayments, tracking])
