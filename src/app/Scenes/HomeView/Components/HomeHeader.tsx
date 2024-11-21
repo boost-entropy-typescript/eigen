@@ -1,3 +1,4 @@
+import { OwnerType } from "@artsy/cohesion"
 import { ArtsyLogoBlackIcon, Box, Flex } from "@artsy/palette-mobile"
 import { GlobalSearchInput } from "app/Components/GlobalSearchInput/GlobalSearchInput"
 import { PaymentFailureBanner } from "app/Scenes/HomeView/Components/PaymentFailureBanner"
@@ -21,16 +22,16 @@ export const HomeHeader: React.FC = () => {
             <PaymentFailureBanner />
           </Suspense>
         )}
-        <Flex py={2}>
+        <Flex pb={1} pt={2}>
           <Flex
             flexDirection="row"
             px={2}
-            gap={2}
+            gap={1}
             justifyContent="space-around"
             alignItems="center"
           >
             <Flex flex={1}>
-              <GlobalSearchInput />
+              <GlobalSearchInput ownerType={OwnerType.home} />
             </Flex>
             <Flex alignItems="flex-end">
               <ActivityIndicator hasUnseenNotifications={hasUnseenNotifications} />
