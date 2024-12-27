@@ -28,16 +28,6 @@ There was a case where echo returns 401 when a user asks for the latest echo opt
 
 After a few months we should be safe to return to the old name if we want. If we decide to do that, we should make sure to remove the old file that might have been sitting on users' phones.
 
-## @segment+analytics-react-native-appboy patch
-
-### When can we remove this:
-
-When we upgrade to a version of `@segment/analytics-react-native` that includes an updated kotlin version compatible with the version of kotlin we need for React Native.
-
-### Explanation/Context:
-
-When updating to rn-0.69.10 we had to patch this due to kotlin version missmatch.
-
 ## react-native-image-crop-picker getRootVC patch
 
 #### When can we remove this:
@@ -50,16 +40,6 @@ https://github.com/ivpusic/react-native-image-crop-picker/pull/1354
 
 We do some swizzling in our AppDelegate that causes [[UIApplication sharedApplication] delegate] window] to return nil, this is used by image-crop-picker to find the currently presented viewController to present the picker onto. This patch looks for our custom window subclass (ARWindow) instead and uses that to find the presented viewController. Note we cannot reliably use the lastWindow rather than checking for our custom subclass because in some circumstances this is not our window but an apple window for example UIInputWindow used for managing the keyboard.
 
-## exporting MockResolverContext (@types/relay-test-utils patch-package)
-
-#### When can we remove this:
-
-Not really needed to be removed, unless it causes problems.
-
-#### Explanation/Context:
-
-We use this type in out code for our tests and the `resolveMostRecentRelayOperation`, so we exported it.
-
 ## Delay modal display after LoadingModal is dismissed
 
 #### When can we remove this:
@@ -68,37 +48,9 @@ Doesn't really need to be removed but can be if view hierarchy issue is fixed in
 
 #### Explanation/Context:
 
-We have a modal for showing a loading state and a onDismiss call that optionally displays an alert message, on iOS 14 we came across an issue where the alert was not displaying because when onDismiss was called the LoadingModal was still in the view heirarchy. The delay is a workaround.
+We have a modal for showing a loading state and a onDismiss call that optionally displays an alert message, on iOS 14 we came across an issue where the alert was not displaying because when onDismiss was called the LoadingModal was still in the view hierarchy. The delay is a workaround.
 
-## @react-navigation/core patch-package
-
-#### When can we remove this:
-
-react-navigation has a bug with nested independent `NavigationContainer` instances. https://github.com/react-navigation/react-navigation/issues/8611
-
-#### Explanation/Context:
-
-Our patch alleviates the issue in our case, but would not work as an upstream PR.
-
-To remove this hack we can do one of two things:
-
-- Stop using nested navigation containers.
-- Fix `@react-navigation/core` properly upstream.
-
-## relay-compiler
-
-#### When can we remove this:
-
-We can remove these hacks when they don't matter anymore. Neither are likely to be fixed by facebook.
-
-#### Explanation/Context:
-
-There are two hacks here:
-
-- We hack the output of the compiler to provide clickable links for error messages. Relay assumes that you put your `__generated__` folder in the root of your project, but we put it in `src`.
-- We make sure that files which do not change are not overwritten. This prevents excessive reloading by metro.
-
-# android Input placeholder measuring hack
+## android Input placeholder measuring hack
 
 #### When can we remove this:
 
@@ -110,7 +62,7 @@ As you can see in the PR and issue, android doesn't use ellipsis on the placehol
 
 We added a workaround on Input, to accept an array of placeholders, from longest to shortest, so that android can measure which one fits in the TextInput as placeholder, and it uses that. When android can handle a long placeholder and use ellipsis or if we don't use long placeholders anymore, this can go.
 
-# `react-native-screens` fragment crash on open from background on Android
+## `react-native-screens` fragment crash on open from background on Android
 
 #### When can we remove this:
 
@@ -135,7 +87,7 @@ I wasn't the one to add this file, so I don't have all the context, but I do kno
 
 The latest change I did was add the `ThemeContext` in there, because the version of styled-components we use has that, but the types are not exposing that, so I had to manually add it there.
 
-# `react-native-push-notification` Requiring unknown module on ios
+## `react-native-push-notification` Requiring unknown module on ios
 
 #### When can we remove this:
 
@@ -147,7 +99,7 @@ This is happening because react-native-push-notification requires @react-native-
 adding this dependency at this time because it is unnecessary and we do not use react-native-push-notification on iOS. Also,
 we do not want unnecessary conflicts between our native push notification implementation and @react-native-community/push-notification-ios's.
 
-# `PropsStore` pass functions as props inside navigate() on iOS
+## `PropsStore` pass functions as props inside navigate() on iOS
 
 #### When can we remove this:
 
@@ -161,7 +113,7 @@ See what can be converted: https://github.com/facebook/react-native/blob/main/Re
 
 PropsStore allows us to temporarily hold on the props and reinject them back into the destination view or module.
 
-# `ORStackView` patch (add UIKit import)
+## `ORStackView` patch (add UIKit import)
 
 #### When can we remove this:
 
@@ -171,7 +123,7 @@ Once we remove ORStackView or the upstream repo adds the import. May want to pro
 
 The Pod does not compile when imported as is without hack due to missing symbols from UIKit.
 
-# `Map` manual prop update in `PageWrapper`
+## `Map` manual prop update in `PageWrapper`
 
 #### When can we remove this:
 
@@ -183,7 +135,7 @@ If it is still an issue with old native navigation gone this can either be remov
 City Guide is a mixture of native components and react components, prop updates from the native side are not updating the component on the react native side without this manual check and update. See the PR here for the change in the AppRegistry:
 https://github.com/artsy/eigen/pull/6348
 
-# `React-Native-Image-Crop-Picker` App restarting when photo is taken. Fix is in `ArtsyNativeModule.clearCache`.
+## `React-Native-Image-Crop-Picker` App restarting when photo is taken. Fix is in `ArtsyNativeModule.clearCache`.
 
 #### When can we remove this:
 
@@ -226,16 +178,6 @@ Once we can figure out how to mock `global.setImmediate` with `global.setTimeout
 
 After upgrading to Jest 29, our use of jest.useFakeTimers() became somewhat funky. In most cases passing `legacyFakeTimers: true` to the function fixes it, but in other cases it breaks @jest/fake-timers at this line. Not sure why. To elaborate more, when jest runs tests it errors out saying that `setImmediate` isn't a function (this was removed from Jest 28); however, when trying to mock it with `global.setImmediate = global.setTimeout` it doesn't work. So ran a patch and replaced it manually in the code, which appears harmless since `setImmediate` is the same as `setTimeout(..., 0)`.
 
-## Providers.tsx LegacyTheme
-
-#### When can we remove this:
-
-Once we have removed the `palette` directory from eigen.
-
-#### Explanation/Context:
-
-Look at the tech plan here: https://www.notion.so/artsy/palette-mobile-in-eigen-c5e3396302734f0a921aed3978f5dbeb
-
 ## Patch-package for sift-react-native
 
 #### When can we remove this:
@@ -248,17 +190,6 @@ patch.
 
 This package includes a `setPageName` method on `SiftReactNative`, but no corresponding type.
 I patched it to add the type.
-
-## Patch-package for @braze/react-native-sdk
-
-#### When can we remove this:
-
-When we upgrade @braze/react-native-sdk to version >= 8.3.0.
-
-#### Explanation/Context:
-
-We had to patch Braze in order to proceed with the react native upgrade to 0.73.9. The patch was needed to support kotlin jvm target 17 and
-in order to also make targetCompatibility and sourceCompatibility compatible with the JAVA 17 which is the standard for newer rn versions starting 0.73.
 
 ## Patch-package for @react-navigation/native
 
@@ -354,3 +285,14 @@ After updates to both/either react native react-native-collapsible-tab-view. Rem
 #### Explanation/Context:
 
 After upgrading to react native 0.75 screens like my collection using this library stopped rendering on Android. This was fixed with a patch that added some style changes to the components from the package.
+
+## patch-pacakge for react-native-reanimated
+
+#### When can we remove this:
+
+When we can update the reanimated flatlist CellRendererComponent or it's style, or when this PR gets merged:
+https://github.com/software-mansion/react-native-reanimated/pull/6573
+
+#### Explanation/Context:
+
+In the HomeView Tasks, we want to update the FlatList's `CellRendererComponent` to update the `zIndex` of the rendered elements so they can be on top of each other, and to animate them we need to use Reanimated's FlatList, but it doesn't support updating the `CellRendererComponent` prop since they have their own implementation, so we added this patch to update the style of the component in Reanimated's FlatList.
