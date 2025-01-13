@@ -31,7 +31,7 @@ import { PartnerOffer } from "app/Scenes/Activity/components/PartnerOfferCreated
 import { ArtworkItemCTAs } from "app/Scenes/Artwork/Components/ArtworkItemCTAs"
 import { useGetNewSaveAndFollowOnArtworkCardExperimentVariant } from "app/Scenes/Artwork/utils/useGetNewSaveAndFollowOnArtworkCardExperimentVariant"
 import { GlobalStore } from "app/store/GlobalStore"
-import { navigate } from "app/system/navigation/navigate"
+import { RouterLink } from "app/system/navigation/RouterLink"
 import { ElementInView } from "app/utils/ElementInView"
 import { useArtworkBidding } from "app/utils/Websockets/auctions/useArtworkBidding"
 import { getArtworkSignalTrackingFields } from "app/utils/getArtworkSignalTrackingFields"
@@ -134,7 +134,6 @@ export const Artwork: React.FC<ArtworkProps> = ({
     "AREnableNewSaveAndFollowOnArtworkCard"
   )
   const enableViewPortPrefetching = useFeatureFlag("AREnableViewPortPrefetching")
-
   const {
     enabled,
     enableShowOldSaveCTA,
@@ -225,15 +224,9 @@ export const Artwork: React.FC<ArtworkProps> = ({
 
     addArtworkToRecentSearches()
     trackArtworkTap()
-
-    if (artwork.href) {
-      if (partnerOffer && !!hasEnded) {
-        navigate?.(artwork.href, { passProps: { artworkOfferExpired: true } })
-      } else {
-        navigate?.(artwork.href)
-      }
-    }
   }
+
+  const navigationProps = partnerOffer && !!hasEnded ? { artworkOfferExpired: true } : undefined
 
   const trackArtworkTap = () => {
     // Unless you explicitly pass in a tracking function or provide a contextScreenOwnerType, we won't track
@@ -307,11 +300,13 @@ export const Artwork: React.FC<ArtworkProps> = ({
           artwork={artwork}
           hideCreateAlertOnArtworkPreview={hideCreateAlertOnArtworkPreview}
         >
-          <Touchable
+          <RouterLink
             haptic
             underlayColor={color("white100")}
             activeOpacity={0.8}
             onPress={handleTap}
+            navigationProps={navigationProps}
+            to={artwork.href}
             testID={`artworkGridItem-${artwork.title}`}
           >
             <View ref={itemRef}>
@@ -471,7 +466,7 @@ export const Artwork: React.FC<ArtworkProps> = ({
                 />
               </Flex>
             </View>
-          </Touchable>
+          </RouterLink>
         </ContextMenuArtwork>
 
         <CreateArtworkAlertModal
