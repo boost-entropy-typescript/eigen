@@ -154,7 +154,7 @@ export const features = {
   },
   AREnableProgressiveOnboardingAlerts: {
     description: "Enable progressive onboarding alerts",
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableProgressiveOnboardingAlerts",
   },
@@ -262,6 +262,12 @@ export const features = {
     readyForRelease: false,
     showInDevMenu: true,
     echoFlagKey: "AREnableArtworkCardContextMenuAndroid",
+  },
+  AREnableLongPressContextMenuOnboarding: {
+    description: "Enable long press context menu onboarding",
+    readyForRelease: true,
+    showInDevMenu: true,
+    echoFlagKey: "AREnableLongPressContextMenuOnboarding",
   },
 } satisfies { [key: string]: FeatureDescriptor }
 
