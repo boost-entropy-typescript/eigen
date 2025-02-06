@@ -1,7 +1,7 @@
 {
   "name": "eigen",
   "version": "1.21.52",
-  "native-code-version": 44,
+  "license": "MIT",
   "description": "Artsy mobile app.",
   "engines": {
     "node": "20.x",
@@ -91,7 +91,6 @@
     "react-native"
   ],
   "contributors": "See docs/thanks.md",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/artsy/eigen/issues"
   },
@@ -108,7 +107,7 @@
   },
   "dependencies": {
     "@artsy/cohesion": "4.231.0",
-    "@artsy/palette-mobile": "14.0.16",
+    "@artsy/palette-mobile": "14.0.17",
     "@artsy/to-title-case": "1.1.0",
     "@braze/react-native-sdk": "13.1.1",
     "@expo/react-native-action-sheet": "4.0.1",
