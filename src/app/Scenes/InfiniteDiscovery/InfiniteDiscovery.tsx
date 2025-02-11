@@ -9,6 +9,7 @@ import {
 } from "@artsy/palette-mobile"
 import { FancySwiper, FancySwiperArtworkCard } from "app/Components/FancySwiper/FancySwiper"
 import { useToast } from "app/Components/Toast/toastHook"
+import { ICON_HIT_SLOP } from "app/Components/constants"
 import { InfiniteDiscoveryArtworkCard } from "app/Scenes/InfiniteDiscovery/Components/InfiniteDiscoveryArtworkCard"
 import { InfiniteDiscoveryBottomSheet } from "app/Scenes/InfiniteDiscovery/Components/InfiniteDiscoveryBottomSheet"
 import { GlobalStore } from "app/store/GlobalStore"
@@ -38,7 +39,7 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
   const REFETCH_BUFFER = 3
   const toast = useToast()
 
-  const { addDiscoveredArtworkIds } = GlobalStore.actions.infiniteDiscovery
+  const { addDisoveredArtworkId } = GlobalStore.actions.infiniteDiscovery
 
   const savedArtworksCount = GlobalStore.useAppState(
     (state) => state.infiniteDiscovery.savedArtworksCount
@@ -56,10 +57,6 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
    */
   useEffect(() => {
     const newArtworks = extractNodes(data.discoverArtworks)
-
-    // record the artworks that have been served to the user so that they are not served again
-    // TODO: do this for the first batch of artworks as well
-    addDiscoveredArtworkIds(newArtworks.map((artwork) => artwork.internalID))
 
     setArtworks((previousArtworks) => previousArtworks.concat(newArtworks))
   }, [data, extractNodes, setArtworks])
@@ -80,8 +77,11 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
   }
 
   const handleCardSwiped = () => {
+    const dismissedArtworkId = artworkCards[index].artworkId
+
     if (index < artworks.length - 1) {
       setIndex(index + 1)
+      addDisoveredArtworkId(dismissedArtworkId)
     }
 
     // fetch more artworks when the user is about to reach the end of the list
@@ -114,13 +114,23 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
           <Screen.Header
             title="Discovery"
             leftElements={
-              <Touchable onPress={handleBackPressed} testID="back-icon">
+              <Touchable
+                onPress={handleBackPressed}
+                testID="back-icon"
+                hitSlop={ICON_HIT_SLOP}
+                haptic
+              >
                 <ArrowBackIcon />
               </Touchable>
             }
             hideLeftElements={index === 0}
             rightElements={
-              <Touchable onPress={handleExitPressed} testID="close-icon">
+              <Touchable
+                onPress={handleExitPressed}
+                testID="close-icon"
+                hitSlop={ICON_HIT_SLOP}
+                haptic
+              >
                 <CloseIcon fill="black100" />
               </Touchable>
             }
