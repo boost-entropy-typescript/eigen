@@ -2901,6 +2901,7 @@ type ArtworkImport implements Node {
 
   # A type-specific ID likely used as a database ID.
   internalID: ID!
+  rawDataMapping: JSON!
   rowsConnection(
     after: String
     before: String
@@ -17039,6 +17040,9 @@ type Query {
     # The slug or ID of the Feature
     id: ID
   ): Feature
+
+  # A list of currently running featured fairs, backfilled with past fairs. Fairs are sorted by start date in descending order.
+  featuredFairs(includeBackfill: Boolean = true, size: Int): [Fair]
   featuredLinksConnection(
     after: String
     before: String
@@ -21729,6 +21733,9 @@ type Viewer {
     # The slug or ID of the Feature
     id: ID
   ): Feature
+
+  # A list of currently running featured fairs, backfilled with past fairs. Fairs are sorted by start date in descending order.
+  featuredFairs(includeBackfill: Boolean = true, size: Int): [Fair]
   featuredLinksConnection(
     after: String
     before: String
