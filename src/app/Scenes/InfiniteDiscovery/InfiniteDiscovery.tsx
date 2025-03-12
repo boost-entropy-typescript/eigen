@@ -7,6 +7,7 @@ import {
   Spacer,
   Spinner,
   Touchable,
+  Text,
 } from "@artsy/palette-mobile"
 import { captureMessage } from "@sentry/react-native"
 import { useToast } from "app/Components/Toast/toastHook"
@@ -80,13 +81,14 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
   useEffect(() => {
     if (!topArtworkId && artworks.length > 0) {
       // TODO: beware! the artworks are being displayed in reverse order
-      setTopArtworkId(artworks[artworks.length - 1].internalID)
+      const topArtwork = artworks[artworks.length - 1]
+      setTopArtworkId(topArtwork.internalID)
 
       // send the first seen artwork to the server
       commitMutation({
         variables: {
           input: {
-            artworkId: artworks[0].internalID,
+            artworkId: topArtwork.internalID,
           },
         },
         onError: (error) => {
@@ -195,7 +197,7 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
   const handleExitPressed = () => {
     if (savedArtworksCount > 0) {
       toast.show(
-        `${savedArtworksCount} ${pluralize("artwork", savedArtworksCount)} saved`,
+        `Nice! You saved ${savedArtworksCount} ${pluralize("artwork", savedArtworksCount)}.`,
         "bottom",
         {
           onPress: () => {
@@ -203,7 +205,15 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
             navigate("/favorites/saves")
           },
           backgroundColor: "green100",
-          description: "Tap here to navigate to your Saves area in your profile.",
+          description: (
+            <Text
+              variant="xs"
+              style={{ color: "white", textDecorationLine: "underline" }}
+              onPress={() => navigate("/favorites/saves")}
+            >
+              Tap to see all of your saved artworks.
+            </Text>
+          ),
         }
       )
     }
@@ -225,7 +235,7 @@ export const InfiniteDiscovery: React.FC<InfiniteDiscoveryProps> = ({
       <Screen.Body fullwidth style={{ marginTop: insets.top }}>
         <Flex zIndex={-100}>
           <Screen.Header
-            title="Discovery"
+            title="Discover Daily"
             leftElements={
               <Touchable
                 onPress={handleBackPressed}
@@ -284,6 +294,10 @@ const InfiniteDiscoverySpinner: React.FC = () => (
   </Screen>
 )
 
+export const infiniteDiscoveryVariables = {
+  excludeArtworkIds: [],
+}
+
 export const InfiniteDiscoveryQueryRenderer: React.FC = () => {
   const [queryRef, loadQuery] = useQueryLoader<InfiniteDiscoveryQuery>(infiniteDiscoveryQuery)
 
@@ -296,7 +310,9 @@ export const InfiniteDiscoveryQueryRenderer: React.FC = () => {
   // This fetches the first batch of artworks
   useEffect(() => {
     if (!queryRef) {
-      loadQuery({ excludeArtworkIds: [] })
+      loadQuery(infiniteDiscoveryVariables, {
+        fetchPolicy: "network-only",
+      })
     }
   }, [loadQuery, queryRef])
 
