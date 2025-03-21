@@ -12183,6 +12183,26 @@ type Image {
   width: Int
 }
 
+# A connection to a list of items.
+type ImageConnection {
+  # A list of edges.
+  edges: [ImageEdge]
+  pageCursors: PageCursors!
+
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+# An edge in a connection.
+type ImageEdge {
+  # A cursor for use in pagination
+  cursor: String!
+
+  # The item at the end of the edge
+  node: Image
+}
+
 type ImageURLs {
   normalized: String
 }
@@ -19181,6 +19201,9 @@ type Show implements EntityWithFilterArtworksConnectionInterface & Node {
   # The Artists presenting in this show
   artists: [Artist]
 
+  # Connection of Artists included in the show
+  artistsConnection(after: String, before: String, first: Int, last: Int): ArtistConnection
+
   # Artists in the show grouped by last name
   artistsGroupedByName: [ArtistGroup]
 
@@ -19238,6 +19261,9 @@ type Show implements EntityWithFilterArtworksConnectionInterface & Node {
 
   # Events from the partner that runs this show
   events: [ShowEventType]
+
+  # Connection of events attached to the show
+  eventsConnection(after: String, before: String, first: Int, last: Int): ShowEventConnection
 
   # A formatted description of the start to end dates
   exhibitionPeriod(
@@ -19350,6 +19376,7 @@ type Show implements EntityWithFilterArtworksConnectionInterface & Node {
     # Number of images to return
     size: Int
   ): [Image]
+  imagesConnection(after: String, before: String, first: Int, last: Int): ImageConnection
 
   # A type-specific ID likely used as a database ID.
   internalID: ID!
@@ -19479,6 +19506,26 @@ type ShowEdge {
 
   # The item at the end of the edge
   node: Show
+}
+
+# A connection to a list of items.
+type ShowEventConnection {
+  # A list of edges.
+  edges: [ShowEventEdge]
+  pageCursors: PageCursors!
+
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+# An edge in a connection.
+type ShowEventEdge {
+  # A cursor for use in pagination
+  cursor: String!
+
+  # The item at the end of the edge
+  node: ShowEventType
 }
 
 type ShowEventType {
