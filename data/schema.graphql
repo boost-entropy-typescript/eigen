@@ -2550,6 +2550,9 @@ type Artwork implements Node & Searchable & Sellable {
   # Artwork meets minimum metadata criteria to have an alert created from it
   isEligibleToCreateAlert: Boolean!
   isEmbeddableVideo: Boolean
+
+  # Is this work has shipping fee set to fixed amount?
+  isFixedShippingFeeOnly: Boolean
   isForSale: Boolean
   isFramed: Boolean
   isHangable: Boolean
@@ -13903,8 +13906,14 @@ type MetaphysicsService {
 }
 
 type Money {
+  # A pre-formatted price.
+  amount: String
+
   # The ISO-4217 alphabetic currency code, as per https://en.wikipedia.org/wiki/ISO_4217
   currencyCode: String!
+
+  # The symbol used for the currency
+  currencyPrefix: String
 
   # A pre-formatted price.
   display: String
@@ -15084,6 +15093,9 @@ type Order {
 
   # Source of the order
   source: OrderSourceEnum!
+
+  # The total amount for tax
+  taxTotal: Money
 }
 
 enum OrderModeEnum {
