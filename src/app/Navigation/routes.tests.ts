@@ -699,7 +699,7 @@ describe("artsy.net routes", () => {
     `)
   })
 
-  it("routes to Favorites", () => {
+  it("routes to Favorites ", () => {
     expect(matchRoute("/favorites")).toMatchInlineSnapshot(`
       {
         "module": "Favorites",
