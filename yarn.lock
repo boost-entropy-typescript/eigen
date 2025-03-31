@@ -3070,10 +3070,10 @@
   resolved "https://registry.yarnpkg.com/@ptomasroos/react-native-multi-slider/-/react-native-multi-slider-2.2.2.tgz#35a97fb8c355627c6a2ded010b360ac5728b44ad"
   integrity sha512-HWyCnRD3Z3SbHK2FLWYmBBqd1B4iXipeKv1+AK0FoY/CElEDTEixHE8hN60TsqxalPrznn798LE2Q4tHuCiyaA==
 
-"@react-native-async-storage/async-storage@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-2.0.0.tgz#22373f7f83132547701637fc574ddb83b83b384e"
-  integrity sha512-af6H9JjfL6G/PktBfUivvexoiFKQTJGQCtSWxMdivLzNIY94mu9DdiY0JqCSg/LyPCLGKhHPUlRQhNvpu3/KVA==
+"@react-native-async-storage/async-storage@2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-2.1.2.tgz#8aae432adfc20800308e2ef3ce380864f0f9def8"
+  integrity sha512-dvlNq4AlGWC+ehtH12p65+17V0Dx7IecOWl6WanF2ja38O1Dcjjvn7jVzkUHJ5oWkQBlyASurTPlTHgKXyYiow==
   dependencies:
     merge-options "^3.0.4"
 
@@ -13450,10 +13450,10 @@ react-native-shake@5.5.2:
   resolved "https://registry.yarnpkg.com/react-native-shake/-/react-native-shake-5.5.2.tgz#1e73cfb3dcefc9980f604d08a87cdc6ba3f3a479"
   integrity sha512-GWQc/2h33u3ma2bBUEFG4sEQXfSmu2azEF1bUaqu+d0TeAT3vvmxpw3u6k7Z9XiZk4uRJ+NCVifx4JTHF5n67g==
 
-react-native-share@11.1.0:
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-11.1.0.tgz#cd24b1f2de0bb701aa7e1a4ff81e68308f0a42b2"
-  integrity sha512-kcpBR90d5//xc8H84HnX6YFeOk4A34mtHz4UEpb7Twbu049KafJwsp4KVVr/SrJwy8W0/Rbe880En9Hq0REamw==
+react-native-share@12.0.9:
+  version "12.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-12.0.9.tgz#771640136114de6179aa42269a9e45135ac1a9cf"
+  integrity sha512-vSuz/9aF+/AZS3I5NC19MrB56h1Yivk2Yz8lf2d8Szv3KuRw2BnDI/AfCTjMWByJLVYr6xgzfkTkAfvbDGzxLQ==
 
 react-native-svg@15.10.1:
   version "15.10.1"
