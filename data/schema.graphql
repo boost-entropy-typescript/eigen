@@ -7989,12 +7989,15 @@ type Contact {
   # A globally unique ID.
   id: ID!
 
-  # A type-specific ID.
+  # A type-specific ID likely used as a database ID.
   internalID: ID!
   location: Location
   name: String
   phone: String
   position: String
+
+  # A slug ID.
+  slug: ID!
 }
 
 # A connection to a list of items.
@@ -8947,6 +8950,9 @@ input CreatePartnerShowEventMutationInput {
 
   # The start time of the event.
   startAt: String!
+
+  # The time zone of the event.
+  timeZone: String
 }
 
 type CreatePartnerShowEventMutationPayload {
@@ -9652,6 +9658,31 @@ union DeletePageResponseOrError = DeletePageFailure | DeletePageSuccess
 
 type DeletePageSuccess {
   page: Page
+}
+
+type DeletePartnerContactFailure {
+  mutationError: GravityMutationError
+}
+
+input DeletePartnerContactMutationInput {
+  clientMutationId: String
+
+  # ID of the contact to delete
+  contactId: String!
+
+  # ID of the partner
+  partnerId: String!
+}
+
+type DeletePartnerContactMutationPayload {
+  clientMutationId: String
+  partnerContactOrError: DeletePartnerContactOrError
+}
+
+union DeletePartnerContactOrError = DeletePartnerContactFailure | DeletePartnerContactSuccess
+
+type DeletePartnerContactSuccess {
+  partnerContact: Contact
 }
 
 type DeletePartnerShowDocumentFailure {
@@ -14760,6 +14791,11 @@ type Mutation {
   # Deletes a page.
   deletePage(input: DeletePageMutationInput!): DeletePageMutationPayload
 
+  # Deletes a contact for a partner
+  deletePartnerContact(
+    input: DeletePartnerContactMutationInput!
+  ): DeletePartnerContactMutationPayload
+
   # Deletes a partner show.
   deletePartnerShow(input: DeletePartnerShowMutationInput!): DeletePartnerShowMutationPayload
 
@@ -15045,6 +15081,9 @@ type Mutation {
 
   # Updates a page.
   updatePage(input: UpdatePageMutationInput!): UpdatePageMutationPayload
+
+  # Updates an existing contact for a partner
+  updatePartnerContact(input: UpdatePartnerContactInput!): UpdatePartnerContactPayload
 
   # Updates a partner show.
   updatePartnerShow(input: UpdatePartnerShowMutationInput!): UpdatePartnerShowMutationPayload
@@ -20101,7 +20140,13 @@ type Show implements EntityWithFilterArtworksConnectionInterface & Node {
   # Is it a fair booth or a show?
   type: String
   viewingRoomIDs: [String!]!
-  viewingRoomsConnection: ViewingRoomsConnection
+  viewingRoomsConnection(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    statuses: [ViewingRoomStatusEnum!]
+  ): ViewingRoomsConnection
 }
 
 type ShowArtworkGrid implements ArtworkContextGrid {
@@ -20182,6 +20227,9 @@ type ShowEventType {
     format: ExhibitionPeriodFormat = LONG
   ): String
 
+  # A formatted description of the time zone
+  formattedTimeZone: String
+
   # A globally unique ID.
   id: ID!
 
@@ -20193,6 +20241,7 @@ type ShowEventType {
     # A tz database time zone, otherwise falls back to "X-TIMEZONE" header. See http://www.iana.org/time-zones, https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
     timezone: String
   ): String
+  timeZone: String
   title: String
 }
 
@@ -21376,6 +21425,48 @@ type UpdatePageSuccess {
   page: Page
 }
 
+type UpdatePartnerContactFailure {
+  mutationError: GravityMutationError
+}
+
+input UpdatePartnerContactInput {
+  # If true, send all user inquiries and order notifications to this contact.
+  canContact: Boolean
+  clientMutationId: String
+
+  # ID of the contact to update
+  contactId: String!
+
+  # Email address of the contact
+  email: String
+
+  # ID of the contact's partner location
+  locationId: String
+
+  # Contact's name
+  name: String
+
+  # ID of the partner
+  partnerId: String!
+
+  # Phone number of the contact
+  phone: String
+
+  # Contact's position at the partner
+  position: String
+}
+
+union UpdatePartnerContactOrError = UpdatePartnerContactFailure | UpdatePartnerContactSuccess
+
+type UpdatePartnerContactPayload {
+  clientMutationId: String
+  partnerContactOrError: UpdatePartnerContactOrError
+}
+
+type UpdatePartnerContactSuccess {
+  partnerContact: Contact
+}
+
 type UpdatePartnerShowDocumentFailure {
   mutationError: GravityMutationError
 }
@@ -21442,6 +21533,9 @@ input UpdatePartnerShowEventMutationInput {
 
   # The start time of the event.
   startAt: String
+
+  # The time zone of the event.
+  timeZone: String
 }
 
 type UpdatePartnerShowEventMutationPayload {
