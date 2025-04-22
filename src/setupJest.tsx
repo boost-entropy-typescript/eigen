@@ -565,8 +565,6 @@ jest.mock("app/system/navigation/navigate", () => ({
   goBack: jest.fn(),
   dismissModal: jest.fn(),
   popToRoot: jest.fn(),
-  navigateToEntity: jest.fn(),
-  navigateToPartner: jest.fn(),
   switchTab: jest.fn(),
   navigationEvents: new (require("events").EventEmitter)(),
   EntityType: { partner: "partner", fair: "fair" },
@@ -617,11 +615,6 @@ jest.mock("react-native-collapsible-tab-view", () => {
 
 jest.mock("prettier", () => ({
   format: jest.fn((content) => content), // just return content as-is for tests
-}))
-
-jest.mock("react-native-code-push", () => ({
-  checkForUpdate: jest.fn(),
-  sync: jest.fn(),
 }))
 
 jest.mock("@react-native-community/geolocation", () => ({
