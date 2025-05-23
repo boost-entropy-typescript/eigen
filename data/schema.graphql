@@ -8631,6 +8631,7 @@ type CreateArtworkImportFailure {
 }
 
 input CreateArtworkImportInput {
+  async: Boolean
   clientMutationId: String
   fileName: String
   parseWithAI: Boolean
@@ -8648,6 +8649,7 @@ union CreateArtworkImportResponseOrError = CreateArtworkImportFailure | CreateAr
 
 type CreateArtworkImportSuccess {
   artworkImport: ArtworkImport
+  queued: Boolean
 }
 
 input CreateArtworkMutationInput {
@@ -16139,6 +16141,9 @@ type Order {
 
   # The total amount for tax
   taxTotal: Money
+
+  # The total list price of items (accounting for limited partner offer if applicable)
+  totalListPrice: Money
 }
 
 enum OrderCreditCardWalletTypeEnum {
