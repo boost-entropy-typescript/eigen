@@ -103,7 +103,7 @@
   "dependencies": {
     "@artsy/cohesion": "4.267.0",
     "@artsy/icons": "3.39.0",
-    "@artsy/palette-mobile": "17.14.0",
+    "@artsy/palette-mobile": "17.15.0",
     "@artsy/to-title-case": "1.1.0",
     "@braze/react-native-sdk": "13.1.1",
     "@expo/react-native-action-sheet": "4.0.1",
@@ -178,7 +178,7 @@
     "react-native-reanimated": "3.16.7",
     "react-native-reanimated-zoom": "0.3.3",
     "react-native-render-html": "6.3.4",
-    "react-native-safe-area-context": "5.3.0",
+    "react-native-safe-area-context": "5.4.1",
     "react-native-screens": "4.10.0",
     "react-native-shake": "5.5.2",
     "react-native-share": "12.0.9",
