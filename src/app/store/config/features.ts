@@ -66,11 +66,6 @@ export const features = {
     readyForRelease: true,
     echoFlagKey: "AREnableNewAuctionsRailCard",
   },
-  AREnableShowsForYouLocation: {
-    description: "Enable Shows For You Location",
-    readyForRelease: true,
-    echoFlagKey: "AREnableShowsForYouLocation",
-  },
   AREnableAdditionalSiftAndroidTracking: {
     description: "Send additional events to Sift on Android",
     readyForRelease: true,
@@ -86,21 +81,11 @@ export const features = {
     readyForRelease: true,
     echoFlagKey: "ARShowCreateAlertInArtistArtworksListFooter",
   },
-  AREnableAlertsFilters: {
-    description: "Enable filters in alerts screen",
-    readyForRelease: true,
-    echoFlagKey: "AREnableAlertsFilters",
-  },
   AREnableAlertsFiltersSizeFiltering: {
     description: "Enable size filtering in alerts filters screen",
     readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableAlertsFiltersSizeFiltering",
-  },
-  AREnableArtistSeriesFilter: {
-    description: "Enable artist series filter on Artist screen",
-    readyForRelease: true,
-    echoFlagKey: "AREnableArtistSeriesFilter",
   },
   AREnablePartnerOffersNotificationSwitch: {
     description: "Enable partner offers notification switch",
@@ -160,12 +145,6 @@ export const features = {
     showInDevMenu: true,
     echoFlagKey: "AREnablePaymentFailureBanner",
   },
-  AREnableAvailabilityFilter: {
-    description: "Enable availability filter",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnableAvailabilityFilter",
-  },
   AREnableViewPortPrefetching: {
     description: "Enable viewport prefetching",
     readyForRelease: true,
@@ -177,12 +156,6 @@ export const features = {
     readyForRelease: true,
     showInDevMenu: true,
     echoFlagKey: "AREnableArtworkCardContextMenuIOS",
-  },
-  AREnableFramedFilter: {
-    description: "Enable show only framed works filter",
-    readyForRelease: true,
-    showInDevMenu: true,
-    echoFlagKey: "AREnableFramedFilter",
   },
   AREnableHidingDislikedArtworks: {
     description: "Enable hiding disliked artworks",
