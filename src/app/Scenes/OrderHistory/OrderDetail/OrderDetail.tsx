@@ -8,12 +8,15 @@ import {
   Screen,
   Spacer,
   Text,
+  useColor,
   useScreenDimensions,
   useSpace,
 } from "@artsy/palette-mobile"
 import { OrderDetailQuery } from "__generated__/OrderDetailQuery.graphql"
 import { OrderDetail_order$key } from "__generated__/OrderDetail_order.graphql"
 import { OrderDetailFulfillment } from "app/Scenes/OrderHistory/OrderDetail/Components/OrderDetailFulfillment"
+import { OrderDetailHelpLinks } from "app/Scenes/OrderHistory/OrderDetail/Components/OrderDetailHelpLinks"
+import { OrderDetailMessage } from "app/Scenes/OrderHistory/OrderDetail/Components/OrderDetailMessage"
 import { OrderDetailPaymentInfo } from "app/Scenes/OrderHistory/OrderDetail/Components/OrderDetailPaymentInfo"
 import { useFeatureFlag } from "app/utils/hooks/useFeatureFlag"
 import { NoFallback, SpinnerFallback, withSuspense } from "app/utils/hooks/withSuspense"
@@ -29,14 +32,15 @@ const IMAGE_MAX_HEIGHT = 380
 const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
   const { width: screenWidth } = useScreenDimensions()
   const space = useSpace()
+  const color = useColor()
   const showBlurhash = useFeatureFlag("ARShowBlurhashImagePlaceholder")
-  const data = useFragment(orderDetailFragment, order)
+  const orderData = useFragment(orderDetailFragment, order)
 
-  if (!data) {
+  if (!orderData) {
     return null
   }
 
-  const orderArtwork = data.lineItems?.[0]?.artwork
+  const orderArtwork = orderData.lineItems?.[0]?.artwork
 
   const { height, width } = sizeToFit(
     { height: orderArtwork?.image?.height ?? 0, width: orderArtwork?.image?.width ?? 0 },
@@ -44,34 +48,22 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
   )
 
   return (
-    <Screen.ScrollView contentContainerStyle={{ paddingVertical: space(2) }}>
+    <Screen.ScrollView
+      style={{ backgroundColor: color("mono5") }}
+      contentContainerStyle={{ paddingTop: space(2), backgroundColor: color("mono0") }}
+    >
       <Box px={2}>
         {/* 1st Part: Greetings */}
         <Box>
-          <Text variant="lg-display">Great Choice, Vivianna!</Text>
+          <Text variant="lg-display">{orderData.displayTexts.title}</Text>
 
-          <Text variant="xs">Order #123456789</Text>
+          <Text variant="xs">Order #{orderData.code}</Text>
         </Box>
 
         <Spacer y={4} />
 
         {/* 2nd Part: Overview */}
-        <Box>
-          <Text variant="sm">
-            Thank you! Your order is being processed. You will receive an email shortly with all the
-            details.
-            {"\n"}
-          </Text>
-
-          <Text variant="sm">
-            The gallery will confirm by <Text fontWeight="bold">Feb 21, 2:46 PM EDT.</Text>
-            {"\n"}
-          </Text>
-
-          <Text variant="sm">
-            You can <LinkText>contact the gallery</LinkText> with any questions about your order.
-          </Text>
-        </Box>
+        <OrderDetailMessage order={orderData} />
 
         <Spacer y={4} />
 
@@ -186,22 +178,31 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
       <Spacer y={2} />
 
       {/* 6th Part: Shipping */}
-      <OrderDetailFulfillment order={data} />
+      <OrderDetailFulfillment order={orderData} />
 
       <Spacer y={2} />
       <Box backgroundColor="mono5" height={10} />
       <Spacer y={2} />
 
       {/* 7th Part: Payment */}
-      <OrderDetailPaymentInfo order={data} />
+      <OrderDetailPaymentInfo order={orderData} />
+
+      <Spacer y={2} />
+
+      {/* 8th Part: Help links */}
+      <OrderDetailHelpLinks />
     </Screen.ScrollView>
   )
 }
 
 const orderDetailFragment = graphql`
   fragment OrderDetail_order on Order {
-    id
     internalID
+    code
+    displayTexts {
+      title
+    }
+    ...OrderDetailMessage_order
     ...OrderDetailPaymentInfo_order
     ...OrderDetailFulfillment_order
 
