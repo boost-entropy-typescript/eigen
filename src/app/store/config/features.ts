@@ -59,6 +59,7 @@ export const features = {
   ARImpressionsTrackingHomeItemViews: {
     description: "Enable Tracking Items views on Home Screen",
     readyForRelease: true,
+    showInDevMenu: true,
     echoFlagKey: "ARImpressionsTrackingHomeItemViews",
   },
   AREnableNewAuctionsRailCard: {
@@ -182,7 +183,7 @@ export const features = {
     echoFlagKey: "AREnableQuickLinksAnimation2",
   },
   AREnableNewOrderDetails: {
-    readyForRelease: false,
+    readyForRelease: true,
     showInDevMenu: true,
     description: "Enable new order details screen",
     echoFlagKey: "AREnableNewOrderDetails",
@@ -230,11 +231,17 @@ export const devToggles: { [key: string]: DevToggleDescriptor } = {
   DTLocationDetectionVisialiser: {
     description: "Location detection visualiser",
   },
+  DTCacheHitsVisialiser: {
+    description: "Cache hits visualiser",
+  },
   DTShowNavigationVisualiser: {
     description: "Navigation visualiser",
   },
   DTEasyMyCollectionArtworkCreation: {
     description: "MyCollection artworks easy add",
+  },
+  DTShowArtworkInternalIDOnRails: {
+    description: "Show artwork internal ID on artwork rails",
   },
   DTMyCollectionDeleteAllArtworks: {
     description: "MyCollection delete all artworks",
