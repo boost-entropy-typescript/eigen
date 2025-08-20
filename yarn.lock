@@ -4090,10 +4090,10 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-community/geolocation@3.0.6":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@react-native-community/geolocation/-/geolocation-3.0.6.tgz#e2c83c242f917ce5a494cedb161c37abd5f2a72a"
-  integrity sha512-+iidKFgw1HxCJSHVnlywAKu6uerdpDAKTXLRnlsUdhgqtgTiIixb496Z267iPVFmIO1bp4lOU6UiwzmvcyXdbg==
+"@react-native-community/geolocation@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/geolocation/-/geolocation-3.4.0.tgz#8b6ee024a71cf94526ab796af1e9ae140684802c"
+  integrity sha512-bzZH89/cwmpkPMKKveoC72C4JH0yF4St5Ceg/ZM9pA1SqX9MlRIrIrrOGZ/+yi++xAvFDiYfihtn9TvXWU9/rA==
 
 "@react-native-community/netinfo@11.3.2":
   version "11.3.2"
@@ -5602,10 +5602,10 @@
     "@stdlib/utils-constructor-name" "^0.0.x"
     "@stdlib/utils-global" "^0.0.x"
 
-"@stripe/stripe-react-native@0.39.0":
-  version "0.39.0"
-  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.39.0.tgz#5aff3d62b0c394785853868cf8f27356c4d55eef"
-  integrity sha512-KcsEQYsc3w2aGVVZ+jUKyuJiAkrWljEnomjcWaApVmthChXX46ComiSYM+n5uSPtkVnt7z2H4LfHVgdEzs627A==
+"@stripe/stripe-react-native@0.50.3":
+  version "0.50.3"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.50.3.tgz#4b80e55807a297127d8bd109c304309bbf179cf1"
+  integrity sha512-nzOjqZXQKdM7y33Em2JZxCTAgf/q/J51IJQ50XtwIL0QT6Jt5WSmfKm9rGmBhoXxxG4DcXu/qxJeAHlhcPDGQg==
 
 "@styled-system/background@^5.1.2":
   version "5.1.2"
@@ -14880,10 +14880,10 @@ react-native-screens@4.10.0:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-shake@5.5.2:
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/react-native-shake/-/react-native-shake-5.5.2.tgz#1e73cfb3dcefc9980f604d08a87cdc6ba3f3a479"
-  integrity sha512-GWQc/2h33u3ma2bBUEFG4sEQXfSmu2azEF1bUaqu+d0TeAT3vvmxpw3u6k7Z9XiZk4uRJ+NCVifx4JTHF5n67g==
+react-native-shake@6.7.8:
+  version "6.7.8"
+  resolved "https://registry.yarnpkg.com/react-native-shake/-/react-native-shake-6.7.8.tgz#346c0f43237a2916b8eabf787c1da58e689e88dc"
+  integrity sha512-XE4Y+3AJ5gqoqHo0lT5kGwryU1/xeq2wkE6A7hruoS+M97kAZKVdyhkl0LO6deQGdpvBT7HNoJTbmYd8arpm2A==
 
 react-native-share@12.0.9:
   version "12.0.9"
@@ -15980,10 +15980,10 @@ side-channel@^1.0.4:
     get-intrinsic "^1.0.2"
     object-inspect "^1.9.0"
 
-sift-react-native@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/sift-react-native/-/sift-react-native-0.1.8.tgz#85242b3a92b96b703e2e26bef086486243d75dff"
-  integrity sha512-+szVQmzmVY1qx3TB94kYjgASxVXffJ/bj14y1weYvggYNIIRgNUnqMmJyrGvXDqQTebGvQNQho/Z/hCGj/Rvag==
+sift-react-native@0.1.15:
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/sift-react-native/-/sift-react-native-0.1.15.tgz#3682c792f6045d6e2caf13c5eb76e3e4531ff3db"
+  integrity sha512-/DBoBJeY9MSYaDSCx584y2JDgbiFAoi2g3ae5/CrP//9KCNM68Rab8+0Y7U1P31dhyEcabcWKrWe+LTMtLPBew==
 
 signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
   version "3.0.6"
@@ -17266,10 +17266,10 @@ universalify@^2.0.0:
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
-unleash-proxy-client@3.7.3:
-  version "3.7.3"
-  resolved "https://registry.yarnpkg.com/unleash-proxy-client/-/unleash-proxy-client-3.7.3.tgz#2f69b4d4a3ea673f6f1c647b50e5a4433b955045"
-  integrity sha512-Cd7ovrhAIpwveNFdtpzs7HO0WeArC2fbjIVGL2Cjza8bHD+jJ1JbSuy3tFuKvvUkbVKq/EGV0RgosEa/3UVLgg==
+unleash-proxy-client@3.7.6:
+  version "3.7.6"
+  resolved "https://registry.yarnpkg.com/unleash-proxy-client/-/unleash-proxy-client-3.7.6.tgz#dec895fa1521d50b2ba9ea5a3fe31b124beed64a"
+  integrity sha512-ft3KpFySRL7kY07DL9INh9q0E1hZj+ORR69ZCKpdeag0byn6gR7TMZenS1yF3Lh4zSNpTnprSjb8mmr3Nx3deg==
   dependencies:
     tiny-emitter "^2.1.0"
     uuid "^9.0.1"
