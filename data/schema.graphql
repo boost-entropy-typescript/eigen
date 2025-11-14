@@ -2689,7 +2689,7 @@ type Artwork implements Node & Searchable & Sellable {
   # A checklist of items indicating how to improve the completeness score (ranked by importance)
   completenessChecklist: [ArtworkCompletenessChecklistItem]
 
-  # A score representing the listing quality of the artwork
+  # A number representing the listing score of the artwork
   completenessScore: Int
 
   # The tier classification of the completeness score (Incomplete, Good, or Excellent)
@@ -23814,6 +23814,8 @@ type UpdateArtistSuccess {
 }
 
 input UpdateArtworkEditionSetInput {
+  # Additional information about the artwork
+  additionalInformation: String
   artistProofs: String
 
   # The availability of the artwork
@@ -23956,6 +23958,8 @@ type UpdateArtworkImportSuccess {
 }
 
 input UpdateArtworkMutationInput {
+  # Additional information about the artwork
+  additionalInformation: String
   artistProofs: String
 
   # The availability of the artwork
