@@ -170,23 +170,11 @@ export const features = {
     showInDevMenu: true,
     echoFlagKey: "AREnableLongPressContextMenuOnboarding",
   },
-  AREnableProgressiveOnboardingPriceRangeHome: {
-    readyForRelease: true,
-    showInDevMenu: true,
-    description: "Enable progressive onboarding price range home",
-    echoFlagKey: "AREnableProgressiveOnboardingPriceRangeHome",
-  },
   ARShowOnboardingPriceRangeScreen: {
     readyForRelease: true,
     showInDevMenu: true,
     description: "Show onboarding price range screen",
     echoFlagKey: "ARShowOnboardingPriceRangeScreen",
-  },
-  AREnablePriceRangeToast: {
-    readyForRelease: true,
-    showInDevMenu: true,
-    description: "Enable price range toast prompting users to update a price range",
-    echoFlagKey: "AREnablePriceRangeToast",
   },
   AREnableNewHomeViewCardRailType: {
     readyForRelease: true,
