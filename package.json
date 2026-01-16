@@ -109,7 +109,7 @@
   "dependencies": {
     "@artsy/cohesion": "4.336.0",
     "@artsy/icons": "3.64.0",
-    "@artsy/palette-mobile": "22.4.0",
+    "@artsy/palette-mobile": "22.5.0",
     "@artsy/to-title-case": "1.2.0",
     "@braze/react-native-sdk": "16.1.0",
     "@d11/react-native-fast-image": "8.12.0",
@@ -215,7 +215,7 @@
     "yup": "0.31.1"
   },
   "devDependencies": {
-    "@artsy/update-repo": "0.7.0",
+    "@artsy/update-repo": "0.8.0",
     "@babel/core": "7.25.2",
     "@babel/plugin-proposal-decorators": "7.18.9",
     "@babel/plugin-transform-flow-strip-types": "7.18.9",
