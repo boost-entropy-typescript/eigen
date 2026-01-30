@@ -107,7 +107,7 @@
     "form-data": "fixed to specific versions to resolve security vulnerabilities - remove resolutions when we are away from 3.0.x and 4.0.x"
   },
   "dependencies": {
-    "@artsy/cohesion": "4.339.0",
+    "@artsy/cohesion": "4.340.0",
     "@artsy/icons": "3.64.0",
     "@artsy/palette-mobile": "22.7.0",
     "@artsy/to-title-case": "1.2.0",
@@ -201,7 +201,6 @@
     "react-tracking": "9.3.2",
     "react-use": "17.6.0",
     "remove-markdown": "0.5.0",
-    "rxjs": "7.5.6",
     "semver": "7.5.2",
     "sift-react-native": "0.1.15",
     "simple-markdown": "0.7.3",
