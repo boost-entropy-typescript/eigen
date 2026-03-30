@@ -9886,6 +9886,9 @@ type CreateArtworkImportSuccess {
 input CreateArtworkMutationInput {
   # The IDs of the artists associated with the artwork.
   artistIds: [String!]!
+
+  # Whether the artwork is listed on Artsy. If absent, it defaults to true
+  artsyListing: Boolean
   clientMutationId: String
 
   # The S3 bucket where the artwork image is stored.
@@ -14725,7 +14728,7 @@ type HomeViewSectionArtworks implements HomeViewSectionGeneric & Node {
 
   # [Analytics] `owner type` analytics value for this scetion when displayed in a standalone UI, as defined in our schema (artsy/cohesion)
   ownerType: String
-  showArtworksCardView: Boolean!
+  showArtworksCardView: Boolean! @deprecated(reason: "No longer used")
   trackItemImpressions: Boolean!
 }
 
