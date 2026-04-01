@@ -54,9 +54,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@artsy/palette-mobile@npm:23.8.0":
-  version: 23.8.0
-  resolution: "@artsy/palette-mobile@npm:23.8.0"
+"@artsy/palette-mobile@npm:23.9.0":
+  version: 23.9.0
+  resolution: "@artsy/palette-mobile@npm:23.9.0"
   dependencies:
     "@artsy/palette-tokens": "npm:7.0.0"
     "@react-spring/native": "npm:10.0.3"
@@ -76,7 +76,7 @@ __metadata:
     react-native-reanimated: "*"
     react-native-svg: "*"
     styled-components: ">= 5"
-  checksum: 10c0/0328080dbf5e3527d79f8b01c741e877babc4d43ee62fdc5ff2241171a5f604cea85ce6be7b4e6406e09dccfaee2d8531f2ac12e6a1f5d7a5023fac0377d361d
+  checksum: 10c0/666247307f7346db8939fc9183c65305726137a4f0237c2efcba69718fc4957b2ddc52fb20abc83d5d309c316275e147109b63f397faf45a63eed048e7ea661b
   languageName: node
   linkType: hard
 
@@ -10243,9 +10243,9 @@ __metadata:
   linkType: hard
 
 "@xmldom/xmldom@npm:^0.8.8":
-  version: 0.8.10
-  resolution: "@xmldom/xmldom@npm:0.8.10"
-  checksum: 10c0/c7647c442502720182b0d65b17d45d2d95317c1c8c497626fe524bda79b4fb768a9aa4fae2da919f308e7abcff7d67c058b102a9d641097e9a57f0b80187851f
+  version: 0.8.12
+  resolution: "@xmldom/xmldom@npm:0.8.12"
+  checksum: 10c0/b733c84292d1bee32ef21a05aba8f9063456b51a54068d0b4a1abf5545156ee0b9894b7ae23775b5881b11c35a8a03871d1b514fb7e1b11654cdbee57e1c2707
   languageName: node
   linkType: hard
 
@@ -13310,7 +13310,7 @@ __metadata:
   dependencies:
     "@artsy/cohesion": "npm:4.351.0"
     "@artsy/icons": "npm:3.65.0"
-    "@artsy/palette-mobile": "npm:23.8.0"
+    "@artsy/palette-mobile": "npm:23.9.0"
     "@artsy/to-title-case": "npm:1.2.0"
     "@artsy/update-repo": "npm:0.8.1"
     "@babel/core": "npm:7.25.2"
