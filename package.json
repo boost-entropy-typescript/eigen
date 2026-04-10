@@ -129,6 +129,7 @@
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-cookies/cookies": "6.0.11",
     "@react-native-documents/picker": "10.1.5",
+    "@react-native-documents/viewer": "4.0.0",
     "@react-native-firebase/app": "23.1.0",
     "@react-native-firebase/messaging": "23.1.0",
     "@react-native-google-signin/google-signin": "15.0.0",
@@ -222,7 +223,7 @@
     "zeego": "^3.0.6"
   },
   "devDependencies": {
-    "@artsy/update-repo": "0.8.1",
+    "@artsy/update-repo": "0.8.2",
     "@babel/core": "7.25.2",
     "@babel/plugin-proposal-decorators": "7.18.9",
     "@babel/plugin-transform-flow-strip-types": "7.18.9",

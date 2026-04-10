@@ -98,14 +98,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@artsy/update-repo@npm:0.8.1":
-  version: 0.8.1
-  resolution: "@artsy/update-repo@npm:0.8.1"
+"@artsy/update-repo@npm:0.8.2":
+  version: 0.8.2
+  resolution: "@artsy/update-repo@npm:0.8.2"
   dependencies:
     "@octokit/rest": "npm:^17.2.0"
     kleur: "npm:^3.0.3"
     tmp: "npm:^0.1.0"
-  checksum: 10c0/89a300b51fe23078df89b3456507c342c2eed7f298154dd25a6bd05e6910f24ebd0c798937ce537d0e4b219f4ebdde827aa8a29c060ba82003d76f227691caff
+  checksum: 10c0/28be771c47d8b0d89ce989650273d181dea521b5165109faec8f11a161fb274adc6f0fcb65b640cb8869e50e3e4af919cacc5fbd578bfdc36bba81c0e6b718a6
   languageName: node
   linkType: hard
 
@@ -6635,6 +6635,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/bc1215a73dd8919c45bc21337092b2baac2241d7d7708c5234306a35bf294358bc98c6fad6d01f68c7691da29e439e016dd86c22e0be91a9423fa67a80e234eb
+  languageName: node
+  linkType: hard
+
+"@react-native-documents/viewer@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@react-native-documents/viewer@npm:4.0.0"
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.79.0"
+  checksum: 10c0/5429e2e194a04d8bb05c001657b15587c6a2e7723067fcc9bae76a87c4c9c98cf8b659fc45b19997f3eaca5d79977048bb771c22a7191db1d6539f6b710f765f
   languageName: node
   linkType: hard
 
@@ -13312,7 +13322,7 @@ __metadata:
     "@artsy/icons": "npm:3.65.0"
     "@artsy/palette-mobile": "npm:23.10.0"
     "@artsy/to-title-case": "npm:1.2.0"
-    "@artsy/update-repo": "npm:0.8.1"
+    "@artsy/update-repo": "npm:0.8.2"
     "@babel/core": "npm:7.25.2"
     "@babel/plugin-proposal-decorators": "npm:7.18.9"
     "@babel/plugin-transform-flow-strip-types": "npm:7.18.9"
@@ -13340,6 +13350,7 @@ __metadata:
     "@react-native-community/netinfo": "npm:11.4.1"
     "@react-native-cookies/cookies": "npm:6.0.11"
     "@react-native-documents/picker": "npm:10.1.5"
+    "@react-native-documents/viewer": "npm:4.0.0"
     "@react-native-firebase/app": "npm:23.1.0"
     "@react-native-firebase/messaging": "npm:23.1.0"
     "@react-native-google-signin/google-signin": "npm:15.0.0"
