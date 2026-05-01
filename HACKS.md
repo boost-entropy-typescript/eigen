@@ -165,31 +165,30 @@ When we upgrade to 6.0.14 or higher, should do shortly but requires fixing a fai
 React native removed removeEventListener which this library uses and causes jest tests to fail with type errors. This commit fixes the issue:
 https://github.com/react-navigation/react-navigation/commit/6e9da7304127a7c33cda2da2fa9ea1740ef56604
 
-## Git link in podfile for SwiftyJSON
+## Artsy fork of Interstellar in Podfile
 
-#### When we can remove this:
+#### When can we remove this:
 
-When this issue is resolved and version 5.0.2 or above is published on Cocoapods.
-https://github.com/SwiftyJSON/SwiftyJSON/issues/1154
+Either when:
+
+- The upstream `JensRavens/Interstellar` publishes a new CocoaPods release that includes `unsubscribe()` on `ObserverToken` (added in master after 2.2.0, the last published version), **or**
+- We rewrite Live Auctions in React Native, at which point we can drop Interstellar entirely — it is only used by the native Live Auctions view controllers.
 
 #### Explanation/Context
 
-Apples has started requiring apps and certain 3rd party libraries declare in a privacy manifest why they use some apis, SwiftyJSON is one of them. The
-privacy manifest has been added in 5.0.2 but the version has not been published to cocoapods.
+The Artsy fork (`artsy/Interstellar`, branch `observable-unsubscribe`) exists solely to add `unsubscribe()` to `ObserverToken`, which is called throughout the native Live Auctions view controllers (`LiveAuctionViewController`, `LiveAuctionLotListViewController`, etc.). The upstream repo added this same feature to master after the 2.2.0 CocoaPods release, but has never cut a new release. The Artsy fork's branch is 18 commits behind upstream master and only 3 ahead — all three of those commits exist in some form upstream — so if needed, we could switch to `JensRavens/Interstellar` master directly (same pattern, true upstream).
 
 ## Modular headers for firebase deps in Podfile
 
 #### When we can remove this
 
-When we stop using flipper or this issue is resolved: https://github.com/invertase/react-native-firebase/issues/6425
+When we switch to `use_frameworks! :linkage => :static` globally (the recommended setup for Expo + Firebase). This requires removing the per-pod `:modular_headers => true` entries and adding `$RNFirebaseAsStaticFramework = true`. See https://rnfirebase.io/#altering-cocoapods-to-use-frameworks
 
 #### Explanation/Context
 
-The latest versions of react-native-firebase require using static frameworks, and unfortunately this breaks flipper.
-https://rnfirebase.io/#altering-cocoapods-to-use-frameworks
-The author of react-native-firebase basically said that people should just remove flipper since it is no longer going to be supported by
-react native in the future but a bit tough to pull off that bandaid so soon. If flipper does end up supporting this config: 1. remove the entries in the podfile
-that have `:modular_headers => true` and add the static frameworks line from the docs above.
+Flipper is gone, but we still can't use `use_frameworks! :linkage => :static` globally — which is what rnfirebase actually recommends. PR #11550 implemented this correctly, but it was reverted in PR #11898 because enabling static linkage for all pods significantly blew up iOS build times. The `:modular_headers => true` entries are the workaround that lets Firebase compile correctly without global static linkage.
+
+As the iOS pod count decreases, the build time penalty becomes more acceptable and this should be revisited. Alternatively, this could be managed via the `expo-build-properties` plugin (`useFrameworks: "static"` in app.json) rather than a manual Podfile entry. Removing this hack would also allow removing the Braze prebuilt-static podspec hack.
 
 ## Custom lane google_play_track_rollout_percentages in fastlane dir + associated monkey patches in Fastfile
 
@@ -348,6 +347,16 @@ Started seeing blank screens on android when app was crashing instead of regular
 #### When can we remove this:
 
 When the upstream expo-updates repository fixes the issue and releases a new version that properly handles crashes on Android with the new architecture. https://github.com/expo/expo/issues/41543
+
+## Braze prebuilt-static podspecs in Podfile
+
+#### When can we remove this:
+
+When Braze publishes a static variant to the main CocoaPods spec, or when Expo's module system no longer requires static linkage for Braze pods. Track: https://github.com/braze-inc/braze-swift-sdk
+
+#### Explanation/Context:
+
+During the Expo integration (PR #11938), Braze's standard dynamic frameworks conflicted with Expo's app delegate module import system. Using the `braze-swift-sdk-prebuilt-static` repo forces static linkage for BrazeKit, BrazeUI, and BrazeLocation without enabling `use_frameworks! :linkage => :static` globally (which breaks other pods). The version must be updated manually when upgrading Braze.
 
 ## Patch for @gorhom/bottom-sheet (scrollTo infinite loop on Fabric)
 

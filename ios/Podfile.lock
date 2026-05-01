@@ -242,7 +242,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 8.1)
     - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
-  - FLKAutoLayout (1.0.0)
+  - FLKAutoLayout (1.0.1)
   - fmt (11.0.2)
   - Forgeries/Core (1.0.0)
   - Forgeries/Mocks (1.0.0):
@@ -4096,7 +4096,7 @@ DEPENDENCIES:
   - FirebaseCore
   - FirebaseCoreExtension
   - FirebaseInstallations
-  - FLKAutoLayout (from `https://github.com/artsy/FLKAutoLayout.git`, branch `v1`)
+  - FLKAutoLayout (= 1.0.1)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - Forgeries/Mocks
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
@@ -4235,7 +4235,7 @@ DEPENDENCIES:
   - Specta (~> 2.0)
   - Starscream (= 4.0.8)
   - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
-  - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON/`, commit `af76cf3ef710b6ca5f8c05f3a31307d44a3c5828`)
+  - SwiftyJSON (= 5.0.2)
   - Then (= 2.3.0)
   - UICKeyChainStore
   - "XCTest+OHHTTPStubSuiteCleanUp"
@@ -4268,6 +4268,7 @@ SPEC REPOS:
     - FirebaseCoreInternal
     - FirebaseInstallations
     - FirebaseMessaging
+    - FLKAutoLayout
     - Forgeries
     - GoogleDataTransport
     - GoogleSignIn
@@ -4314,6 +4315,7 @@ SPEC REPOS:
     - StripePaymentSheet
     - StripePaymentsUI
     - StripeUICore
+    - SwiftyJSON
     - Then
     - TOCropViewController
     - Turf
@@ -4369,9 +4371,6 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/fast_float.podspec"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
-  FLKAutoLayout:
-    :branch: v1
-    :git: https://github.com/artsy/FLKAutoLayout.git
   fmt:
     :podspec: "../node_modules/react-native/third-party-podspecs/fmt.podspec"
   glog:
@@ -4608,22 +4607,13 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@segment/sovran-react-native"
   stripe-react-native:
     :path: "../node_modules/@stripe/stripe-react-native"
-  SwiftyJSON:
-    :commit: af76cf3ef710b6ca5f8c05f3a31307d44a3c5828
-    :git: https://github.com/SwiftyJSON/SwiftyJSON/
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 CHECKOUT OPTIONS:
-  FLKAutoLayout:
-    :commit: 44a277d21d4fa104589703a34a4d82647414f435
-    :git: https://github.com/artsy/FLKAutoLayout.git
   Interstellar:
     :commit: ca22646f5a8449795fba3d3436a045da0aeb5949
     :git: https://github.com/artsy/Interstellar.git
-  SwiftyJSON:
-    :commit: af76cf3ef710b6ca5f8c05f3a31307d44a3c5828
-    :git: https://github.com/SwiftyJSON/SwiftyJSON/
 
 SPEC CHECKSUMS:
   AFNetworking: 9d57de7506959955d82fb5274ee4bec86b930e52
@@ -4675,7 +4665,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: ff526c22671bb564d1b34a47615e29ba99389dee
   FirebaseInstallations: 6836550c466a6c3f753a777bec6f4e58ea228779
   FirebaseMessaging: 6538be0d8e8d0a3405407bc3813e2223287c0d17
-  FLKAutoLayout: 106b14dbae09d32c6730190f4e78a959759ba4a4
+  FLKAutoLayout: 37e1e09de6411dbee5526860d9f55d9063323ea8
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   Forgeries: 64ced144ea8341d89a7eec9d1d7986f0f1366250
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
@@ -4839,7 +4829,7 @@ SPEC CHECKSUMS:
   StripePaymentSheet: b126816213ae4f56ff4525ad25f94bb985a43e27
   StripePaymentsUI: 05d4be35b34f821d5ddc8617dee04219f3646253
   StripeUICore: d07bd63a4b53dee8cab4d6f81ce5a7ab3e28511e
-  SwiftyJSON: 576fbf26942d5ef414daad8870b1642413ecc00c
+  SwiftyJSON: f5b1bf1cd8dd53cd25887ac0eabcfd92301c6a5a
   Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
@@ -4847,6 +4837,6 @@ SPEC CHECKSUMS:
   "XCTest+OHHTTPStubSuiteCleanUp": 4469ec8863c6bc022c5089a9b94233eb3416c5ee
   Yoga: 728df40394d49f3f471688747cf558158b3a3bd1
 
-PODFILE CHECKSUM: 0fe2facf094f438d19f2bac203d166cb5b7c3a5d
+PODFILE CHECKSUM: 102d35dc318dc6dc1a105c1edca4a0fcaf473519
 
 COCOAPODS: 1.16.2
