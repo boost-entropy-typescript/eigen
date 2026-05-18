@@ -499,8 +499,6 @@ function getNativeModules(): OurNativeModules {
     },
     ArtsyNativeModule: {
       launchCount: 3,
-      setAppStyling: jest.fn(),
-      setAppLightContrast: jest.fn(),
       navigationBarHeight: 11,
       gitCommitShortHash: "de4dc0de",
       isBetaOrDev: true,
@@ -508,7 +506,6 @@ function getNativeModules(): OurNativeModules {
       getPushToken: jest.fn(),
       getRecentPushPayloads: jest.fn(),
       clearUserData: jest.fn(),
-      clearCache: jest.fn(),
     },
   }
 }
@@ -552,8 +549,6 @@ jest.mock("app/NativeModules/LegacyNativeModules", () => ({
     },
     ArtsyNativeModule: {
       launchCount: 3,
-      setAppStyling: jest.fn(),
-      setAppLightContrast: jest.fn(),
       navigationBarHeight: 11,
       gitCommitShortHash: "de4dc0de",
       isBetaOrDev: true,
