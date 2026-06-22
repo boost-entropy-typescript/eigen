@@ -4563,12 +4563,12 @@ __metadata:
   linkType: hard
 
 "@grpc/grpc-js@npm:~1.9.0":
-  version: 1.9.15
-  resolution: "@grpc/grpc-js@npm:1.9.15"
+  version: 1.9.16
+  resolution: "@grpc/grpc-js@npm:1.9.16"
   dependencies:
     "@grpc/proto-loader": "npm:^0.7.8"
     "@types/node": "npm:>=12.12.47"
-  checksum: 10c0/5bd40e1b886df238f8ffe4cab694ceb51250f94ede7da6f94233b4d9a2526a4e525aafbc8f319850c2d8126c189232be458991768877b2af441f0234fb4b4292
+  checksum: 10c0/dfe2b1a670d650489fe82bb7afc1c0336313b0cde4a102623a1331267cbdeb1bde9409143fb1432db074bc1845b38d96b82a4277bdd99929aa8322cf97d305aa
   languageName: node
   linkType: hard
 
@@ -13570,7 +13570,7 @@ __metadata:
     styled-components: "npm:6.1.19"
     styled-system: "npm:5.1.5"
     supercluster: "npm:7.1.5"
-    tmp: "npm:0.2.6"
+    tmp: "npm:0.2.7"
     tsx: "npm:4.19.1"
     typescript: "npm:5.9.2"
     unleash-proxy-client: "npm:3.7.6"
@@ -18460,14 +18460,14 @@ __metadata:
   linkType: hard
 
 "js-yaml@npm:^3.13.1":
-  version: 3.14.1
-  resolution: "js-yaml@npm:3.14.1"
+  version: 3.14.2
+  resolution: "js-yaml@npm:3.14.2"
   dependencies:
     argparse: "npm:^1.0.7"
     esprima: "npm:^4.0.0"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 10c0/6746baaaeac312c4db8e75fa22331d9a04cccb7792d126ed8ce6a0bbcfef0cedaddd0c5098fade53db067c09fe00aa1c957674b4765610a8b06a5a189e46433b
+  checksum: 10c0/3261f25912f5dd76605e5993d0a126c2b6c346311885d3c483706cd722efe34f697ea0331f654ce27c00a42b426e524518ec89d65ed02ea47df8ad26dcc8ce69
   languageName: node
   linkType: hard
 
@@ -24959,10 +24959,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tmp@npm:0.2.6":
-  version: 0.2.6
-  resolution: "tmp@npm:0.2.6"
-  checksum: 10c0/fa5b9bfbe60f70904aba5c96b4970e9158d99867891302d10320fe35eee1e45f42946fded4cf5c8514baa087bebee44419029b7deb227da05a68b5205a12d8ab
+"tmp@npm:0.2.7":
+  version: 0.2.7
+  resolution: "tmp@npm:0.2.7"
+  checksum: 10c0/59eb55584f2f07210d3231b6a1f6b5c2b9794d8a7b509c8ee867ed2acad6d2245ee2448b7937b676ffbff3155a70077edde8a69f9d7cf0f90c86a62e8910c357
   languageName: node
   linkType: hard
 
@@ -25434,17 +25434,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^6.18.2":
-  version: 6.24.1
-  resolution: "undici@npm:6.24.1"
-  checksum: 10c0/53fdbaa357139a2c12deed34f67d67fc6ad269630ba85a1507e7717f53ad2d3a02c95fbd17d3ab321e34c60b6f0a716cdc2f7e2eca1e07178702dc89cc3a73c4
-  languageName: node
-  linkType: hard
-
-"undici@npm:^6.22.0":
-  version: 6.26.0
-  resolution: "undici@npm:6.26.0"
-  checksum: 10c0/cf2b4caf58c33d6582970991290cc7a6486d6e738845f25dcdd16952d708ec844815c6d30362919764fcaf30f719891289341f1ada496f003ce2700310453a47
+"undici@npm:^6.18.2, undici@npm:^6.22.0":
+  version: 6.27.0
+  resolution: "undici@npm:6.27.0"
+  checksum: 10c0/f88c3dae3957dbf9d93cb481440aced317bd3c4941b5914fea5efba516d51138988cdb5c76006f0bb1337e41d56c3443351055d492e73af2428521c37ba2a76f
   languageName: node
   linkType: hard
 
