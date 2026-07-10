@@ -3,6 +3,7 @@ import { ChevronDownIcon, MoreIcon, ShareIcon } from "@artsy/icons/native"
 import { DEFAULT_HIT_SLOP, Flex, Screen, Text, Touchable } from "@artsy/palette-mobile"
 import { OnboardingProgressBadge } from "app/Components/OnboardingProgressBadge/OnboardingProgressBadge"
 import { getShareURL } from "app/Components/ShareSheet/helpers"
+import { StepProgressBar } from "app/Components/StepProgressBar/StepProgressBar"
 import { InfiniteDiscoveryArtwork } from "app/Scenes/InfiniteDiscovery/InfiniteDiscovery"
 import { useInfiniteDiscoveryTracking } from "app/Scenes/InfiniteDiscovery/hooks/useInfiniteDiscoveryTracking"
 import { useSavesSummaryToast } from "app/Scenes/InfiniteDiscovery/hooks/useSavesSummaryToast"
@@ -29,14 +30,22 @@ export const InfiniteDiscoveryHeader: React.FC<InfiniteDiscoveryHeaderProps> = (
   const newUserOnboardingSavedArtworkCount = GlobalStore.useAppState(
     (state) => state.infiniteDiscovery.sessionState.newUserOnboardingSavedArtworks.length
   )
+  const newUserOnboardingGoalReached = GlobalStore.useAppState(
+    (state) => state.infiniteDiscovery.sessionState.newUserOnboardingGoalReached
+  )
+  const displayedSavedArtworkCount = newUserOnboardingGoalReached
+    ? 5
+    : newUserOnboardingSavedArtworkCount
 
   const handleExitPressed = () => {
     track.tappedExit()
     goBack()
   }
 
-  const handleSkipPressed = () => {
-    trackTappedSkip(ContextModule.infiniteDiscovery, OwnerType.infiniteDiscoveryArtwork)
+  const handleSkipOrExitPressed = () => {
+    if (!newUserOnboardingGoalReached) {
+      trackTappedSkip(ContextModule.infiniteDiscovery, OwnerType.infiniteDiscoveryArtwork)
+    }
     trackCompletedOnboarding()
     GlobalStore.actions.onboarding.setOnboardingState("complete")
   }
@@ -82,21 +91,26 @@ export const InfiniteDiscoveryHeader: React.FC<InfiniteDiscoveryHeaderProps> = (
       <Flex mb={1}>
         <Screen.Header
           title="Discover Daily"
-          leftElements={
-            <OnboardingProgressBadge current={newUserOnboardingSavedArtworkCount} total={5} />
-          }
+          leftElements={<OnboardingProgressBadge current={displayedSavedArtworkCount} total={5} />}
           rightElements={
             <Touchable
               accessibilityRole="button"
-              accessibilityLabel="Skip new user onboarding"
-              onPress={handleSkipPressed}
+              accessibilityLabel={
+                newUserOnboardingGoalReached
+                  ? "Exit new user onboarding"
+                  : "Skip new user onboarding"
+              }
+              onPress={handleSkipOrExitPressed}
               hitSlop={DEFAULT_HIT_SLOP}
               haptic
             >
-              <Text>Skip</Text>
+              <Text>{newUserOnboardingGoalReached ? "Exit" : "Skip"}</Text>
             </Touchable>
           }
         />
+        <Flex px={2}>
+          <StepProgressBar current={newUserOnboardingSavedArtworkCount} total={5} />
+        </Flex>
       </Flex>
     )
   }
