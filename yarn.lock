@@ -49,9 +49,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@artsy/palette-mobile@npm:24.3.0":
-  version: 24.3.0
-  resolution: "@artsy/palette-mobile@npm:24.3.0"
+"@artsy/palette-mobile@npm:24.4.0":
+  version: 24.4.0
+  resolution: "@artsy/palette-mobile@npm:24.4.0"
   dependencies:
     "@artsy/palette-tokens": "npm:7.0.0"
     "@react-spring/native": "npm:10.0.3"
@@ -72,7 +72,7 @@ __metadata:
     react-native-svg: "*"
     react-native-worklets: "*"
     styled-components: ">= 5"
-  checksum: 10c0/5044e8a06fcf6491b2e2802250f47ab81fa1639e1f602ed2c98349577433566cd4970e1f30291fdc6aa5a64e5b646e99fd53e0c99247c074fd702550e2746b81
+  checksum: 10c0/d69e34f7ddcfe5e61f6b13f7162b092ac6e5204b519bce005df07e2c4fc91ea1fdd0e25bd6a04f43c440baacab711d96c5b68ac12aaf65523ad0899f37bd1d24
   languageName: node
   linkType: hard
 
@@ -13418,7 +13418,7 @@ __metadata:
     "@artsy/changelog": "npm:0.1.0"
     "@artsy/cohesion": "npm:4.388.0"
     "@artsy/icons": "npm:3.74.0"
-    "@artsy/palette-mobile": "npm:24.3.0"
+    "@artsy/palette-mobile": "npm:24.4.0"
     "@artsy/to-title-case": "npm:1.2.0"
     "@artsy/update-repo": "npm:0.8.2"
     "@babel/core": "npm:7.26.0"
@@ -13606,7 +13606,7 @@ __metadata:
     react-native-share: "npm:12.0.9"
     react-native-svg: "npm:15.15.3"
     react-native-url-polyfill: "npm:2.0.0"
-    react-native-view-shot: "npm:4.0.3"
+    react-native-view-shot: "npm:5.1.1"
     react-native-vimeo-iframe: "npm:1.2.1"
     react-native-webview: "npm:13.16.0"
     react-native-worklets: "npm:0.8.3"
@@ -21835,15 +21835,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-view-shot@npm:4.0.3":
-  version: 4.0.3
-  resolution: "react-native-view-shot@npm:4.0.3"
+"react-native-view-shot@npm:5.1.1":
+  version: 5.1.1
+  resolution: "react-native-view-shot@npm:5.1.1"
   dependencies:
     html2canvas: "npm:^1.4.1"
   peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/e172507eb7de8760a8a557a5e8632bdc248b60b89770cc941690c8fe6c788d28be1efd8259236fbc768eba3b33aaec8b7a833476b566dfef5b754618060edbec
+    react: ">=18.0.0"
+    react-native: ">=0.76.0"
+  checksum: 10c0/9806856d51d582e3c09da4127ad1a2876401d3e63b14ecb7e0d6ae56f92036b61d424d1f4dc0c15eac497b09ce3037e414a8b05f23a912f7572ec887417c56d3
   languageName: node
   linkType: hard
 
