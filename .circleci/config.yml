@@ -165,6 +165,9 @@ commands:
     steps:
       - android/change_java_version:
           java_version: 17
+      - run:
+          name: Install ninja
+          command: sudo apt-get install ninja-build
       - checkout
       - generate-checksums
       - restore_cache:
@@ -241,7 +244,7 @@ jobs:
 
   run-native-tests-android:
     docker:
-      - image: cimg/android:2025.03.1-node
+      - image: << pipeline.parameters.android_docker_image >>
     resource_class: xlarge
     steps:
       - prep-android-env
@@ -466,7 +469,7 @@ jobs:
 
   build-test-app-android:
     docker:
-      - image: cimg/android:2025.03.1-node
+      - image: << pipeline.parameters.android_docker_image >>
     resource_class: xlarge
     steps:
       - prep-android-env
@@ -521,6 +524,9 @@ parameters:
   android_native_cache_key:
     type: string
     default: v21-test-success-{{ checksum ".manifests/android_native" }}
+  android_docker_image:
+    type: string
+    default: "cimg/android:2026.02.1-node"
 
 workflows:
   nightly:
