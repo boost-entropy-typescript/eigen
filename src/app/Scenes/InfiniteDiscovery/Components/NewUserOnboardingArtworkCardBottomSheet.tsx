@@ -3,8 +3,9 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gor
 import { ArtworkCardBottomSheetHandle } from "app/Components/ArtworkCard/ArtworkCardBottomSheetHandle"
 import { ArtsyNativeModule } from "app/NativeModules/ArtsyNativeModule"
 import { NewUserOnboardingAboutTheWorkTab } from "app/Scenes/InfiniteDiscovery/Components/NewUserOnboardingAboutTheWorkTab" // pragma: allowlist secret
+import { SENTRY_TAG_NONE, setSentryBottomSheetTag } from "app/system/errorReporting/sentryTags"
 import { useBackHandler } from "app/utils/hooks/useBackHandler"
-import { FC, useCallback, useRef } from "react"
+import { FC, useCallback, useEffect, useRef } from "react"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 interface NewUserOnboardingArtworkCardBottomSheetProps {
@@ -32,6 +33,12 @@ export const NewUserOnboardingArtworkCardBottomSheet: FC<
   const color = useColor()
   const bottomSheetRef = useRef<BottomSheet>(null)
   const isExpandedRef = useRef(false)
+
+  // Expansion is tracked in a ref to avoid re-rendering the card on every swipe, so the
+  // Sentry tag is set imperatively from `onChange` rather than with useSentryBottomSheetTag.
+  useEffect(() => {
+    return () => setSentryBottomSheetTag(SENTRY_TAG_NONE)
+  }, [])
 
   // InfiniteDiscovery is a dead-end in onboarding, so always handle hardware back
   // ourselves to keep it from popping back to the previous step.
@@ -63,15 +70,25 @@ export const NewUserOnboardingArtworkCardBottomSheet: FC<
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      enableDynamicSizing={true}
+      // Fixed detents rather than dynamic sizing, matching ArtworkCardBottomSheet. This sheet is
+      // not remounted between artworks, so with `enableDynamicSizing` the content-sized detent was
+      // recomputed on every swipe while the sheet stayed put. Once the sheet's position no longer
+      // matched the recomputed one, gorhom stopped considering it EXTENDED and locked its
+      // scrollable, which fires a corrective scrollTo on every scroll event and can recurse until
+      // the native stack overflows (EIGEN-AZKQ).
+      enableDynamicSizing={false}
       enablePanDownToClose={false}
-      snapPoints={[bottom + 60]}
-      maxDynamicContentSize={height * 0.88}
+      snapPoints={[bottom + 60, height * 0.88]}
       index={0}
       backdropComponent={renderBackdrop}
       backgroundStyle={{ backgroundColor: color("mono0") }}
       handleComponent={ArtworkCardBottomSheetHandle}
-      onChange={(index) => (isExpandedRef.current = index > 0)}
+      onChange={(index) => {
+        isExpandedRef.current = index > 0
+        setSentryBottomSheetTag(
+          isExpandedRef.current ? "NewUserOnboardingArtworkCardBottomSheet" : SENTRY_TAG_NONE
+        )
+      }}
     >
       <NewUserOnboardingAboutTheWorkTab artworkID={artworkID} />
     </BottomSheet>
