@@ -1,4 +1,4 @@
-import { PhotographIcon } from "@artsy/icons/native"
+import { CameraFillIcon } from "@artsy/icons/native"
 import { Button, ButtonProps } from "@artsy/palette-mobile"
 import { PixelRatio } from "react-native"
 
@@ -9,7 +9,7 @@ interface SearchByPhotoButtonProps {
   variant?: ButtonProps["variant"]
 }
 
-const LABEL = "Search by photo"
+const LABEL = "Search by Photo"
 
 const ICON_SIZE = 20
 
@@ -31,7 +31,7 @@ export const SearchByPhotoButton: React.FC<SearchByPhotoButtonProps> = ({
       block
       size="large"
       variant={variant}
-      icon={<PhotographIcon width={ICON_SIZE} height={ICON_SIZE} />}
+      icon={<CameraFillIcon width={ICON_SIZE} height={ICON_SIZE} />}
       textVariant="sm-display"
       onPress={onPress}
       testID={testID}
