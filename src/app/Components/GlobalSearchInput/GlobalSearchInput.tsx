@@ -1,13 +1,14 @@
-import { ActionType, OwnerType } from "@artsy/cohesion"
+import { ActionType, ContextModule, ScreenOwnerType } from "@artsy/cohesion"
 import { Flex, RoundSearchInput, Touchable } from "@artsy/palette-mobile"
 import { GlobalSearchInputOverlay } from "app/Components/GlobalSearchInput/GlobalSearchInputOverlay"
 import { useDismissSearchOverlayOnTabBarPress } from "app/Components/GlobalSearchInput/utils/useDismissSearchOverlayOnTabBarPress"
 import { SearchByPhotoIconButton } from "app/Components/SearchByPhotoButton/SearchByPhotoIconButton"
+import { tappedSearchByImage } from "app/Components/SearchByPhotoButton/tracks"
 import { ICON_HIT_SLOP } from "app/Components/constants"
-import { useExperimentFlag } from "app/system/flags/hooks/useExperimentFlag"
 // eslint-disable-next-line no-restricted-imports
 import { navigate } from "app/system/navigation/navigate"
 import { useDebouncedValue } from "app/utils/hooks/useDebouncedValue"
+import { useEnableArtsyLens } from "app/utils/hooks/useEnableArtsyLens"
 import { forwardRef, Fragment, useEffect, useImperativeHandle, useState } from "react"
 import { useTracking } from "react-tracking"
 
@@ -16,7 +17,7 @@ export type GlobalSearchInput = {
 }
 
 interface GlobalSearchInputProps {
-  ownerType: OwnerType
+  ownerType: ScreenOwnerType
   onOverlayVisibilityChange?: (isVisible: boolean) => void
 }
 
@@ -27,7 +28,7 @@ export const GlobalSearchInput = forwardRef<GlobalSearchInput, GlobalSearchInput
     const debouncedIsVisible = useDebouncedValue({ value: isVisible })
 
     const tracking = useTracking()
-    const enableArtsyLens = useExperimentFlag("onyx_artsy-lens")
+    const enableArtsyLens = useEnableArtsyLens()
 
     useEffect(() => {
       onOverlayVisibilityChange?.(isVisible)
@@ -72,7 +73,20 @@ export const GlobalSearchInput = forwardRef<GlobalSearchInput, GlobalSearchInput
             </Flex>
           </Touchable>
 
-          {!!enableArtsyLens && <SearchByPhotoIconButton onPress={() => navigate("/lens")} />}
+          {!!enableArtsyLens && (
+            <SearchByPhotoIconButton
+              onPress={() => {
+                tracking.trackEvent(
+                  tappedSearchByImage({
+                    contextModule: ContextModule.header,
+                    contextScreenOwnerType: ownerType,
+                    type: "search_input_icon",
+                  })
+                )
+                navigate("/lens")
+              }}
+            />
+          )}
         </Flex>
 
         <GlobalSearchInputOverlay
@@ -86,7 +100,7 @@ export const GlobalSearchInput = forwardRef<GlobalSearchInput, GlobalSearchInput
 )
 
 const tracks = {
-  tappedGlobalSearchBar: ({ ownerType }: { ownerType: OwnerType }) => ({
+  tappedGlobalSearchBar: ({ ownerType }: { ownerType: ScreenOwnerType }) => ({
     action: ActionType.tappedGlobalSearchBar,
     context_screen_owner_type: ownerType,
   }),

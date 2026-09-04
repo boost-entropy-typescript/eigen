@@ -1,4 +1,10 @@
-import { OwnerType } from "@artsy/cohesion"
+import {
+  ActionType,
+  ContextModule,
+  OwnerType,
+  SearchedByImageWithNoResults,
+  SearchedByImageWithResults,
+} from "@artsy/cohesion"
 import { Screen, SimpleMessage } from "@artsy/palette-mobile"
 import { StackScreenProps } from "@react-navigation/stack"
 import { LensResultsQuery } from "__generated__/LensResultsQuery.graphql"
@@ -20,8 +26,10 @@ import { ProvidePlaceholderContext } from "app/utils/placeholders"
 import { ExtractNodeType } from "app/utils/relayHelpers"
 import { Suspense, useEffect } from "react"
 import { graphql, useLazyLoadQuery, usePaginationFragment } from "react-relay"
+import { useTracking } from "react-tracking"
 
-const MATCHES_TITLE = "Here are some matches to your photo"
+const MATCHES_TITLE = "Great taste! Here are some matches to your photo"
+const NO_MATCHES_TITLE = "Unfortunately, we couldn't find great matches for that photo"
 const SEARCHING_TITLE = "Searching for matches..."
 
 type Props = StackScreenProps<LensNavigationStack, "LensResults">
@@ -34,7 +42,8 @@ const restartSearch = (navigation: Navigation) => {
 }
 
 const LensResults: React.FC<Props> = ({ route, navigation }) => {
-  const { s3Bucket, s3Key, photoUri } = route.params
+  const { s3Bucket, s3Key, photoUri, fromLibrary } = route.params
+  const tracking = useTracking()
 
   const queryData = useLazyLoadQuery<LensResultsQuery>(lensResultsQuery, {
     s3Bucket,
@@ -51,12 +60,23 @@ const LensResults: React.FC<Props> = ({ route, navigation }) => {
   // Suspense holds the placeholder until the query resolves, so empty here means no matches.
   const hasNoMatches = artworks.length === 0
 
+  useEffect(() => {
+    const photoSource = fromLibrary ? "photo_library" : "camera"
+
+    tracking.trackEvent(
+      hasNoMatches
+        ? tracks.searchedByImageWithNoResults(photoSource)
+        : tracks.searchedByImageWithResults(photoSource)
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Screen>
       <LensResultsHeader
         onBack={goBack}
         photoUri={photoUri}
-        title={hasNoMatches ? undefined : MATCHES_TITLE}
+        title={hasNoMatches ? NO_MATCHES_TITLE : MATCHES_TITLE}
       />
 
       <Screen.Body fullwidth pt={1}>
@@ -68,12 +88,11 @@ const LensResults: React.FC<Props> = ({ route, navigation }) => {
         />
       </Screen.Body>
 
-      {/* Empty state only: with matches on screen, tapping one is the action, and a permanent CTA
-          over the grid would compete with it. */}
       {!!hasNoMatches && (
         <Screen.BottomView>
           <SearchByPhotoButton
             testID="lensResultsSearchByPhotoButton"
+            label="Try another photo"
             onPress={() => restartSearch(navigation)}
           />
         </Screen.BottomView>
@@ -91,18 +110,32 @@ const ArtworksGrid: React.FC<{
   return (
     <MasonryInfiniteScrollArtworkGrid
       artworks={artworks}
-      contextScreenOwnerType={OwnerType.search}
-      contextScreen={OwnerType.search}
+      contextModule={ContextModule.artworkGrid}
+      contextScreenOwnerType={OwnerType.searchByImage}
+      contextScreen={OwnerType.searchByImage}
       ListEmptyComponent={
-        <SimpleMessage m={2}>
-          We couldn't find any matches for that image. Try another photo.
-        </SimpleMessage>
+        <SimpleMessage m={2}>No matches found. Please try another photo.</SimpleMessage>
       }
       hasMore={hasNext}
       isLoading={isLoadingNext}
       loadMore={loadMore}
     />
   )
+}
+
+type PhotoSource = SearchedByImageWithResults["photo_source"]
+
+const tracks = {
+  searchedByImageWithResults: (photoSource: PhotoSource): SearchedByImageWithResults => ({
+    action: ActionType.searchedByImageWithResults,
+    context_owner_type: OwnerType.searchByImage,
+    photo_source: photoSource,
+  }),
+  searchedByImageWithNoResults: (photoSource: PhotoSource): SearchedByImageWithNoResults => ({
+    action: ActionType.searchedByImageWithNoResults,
+    context_owner_type: OwnerType.searchByImage,
+    photo_source: photoSource,
+  }),
 }
 
 const artworksFragment = graphql`

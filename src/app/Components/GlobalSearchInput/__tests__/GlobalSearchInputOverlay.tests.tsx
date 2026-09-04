@@ -2,8 +2,10 @@ import { OwnerType } from "@artsy/cohesion"
 import { PortalHost } from "@gorhom/portal"
 import { fireEvent, screen } from "@testing-library/react-native"
 import { GlobalSearchInputOverlay } from "app/Components/GlobalSearchInput/GlobalSearchInputOverlay"
+import { __globalStoreTestUtils__ } from "app/store/GlobalStore"
 import { useExperimentFlag } from "app/system/flags/hooks/useExperimentFlag"
 import { navigate } from "app/system/navigation/navigate"
+import { mockTrackEvent } from "app/utils/tests/globallyMockedStuff"
 import { renderWithWrappers } from "app/utils/tests/renderWithWrappers"
 
 jest.mock("app/system/flags/hooks/useExperimentFlag", () => ({
@@ -36,6 +38,16 @@ describe("GlobalSearchInputOverlay — Search by Photo entry point", () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    __globalStoreTestUtils__?.injectFeatureFlags({ AREnableArtsyLens: true })
+  })
+
+  it("hides the Search by Photo button when AREnableArtsyLens is off", () => {
+    mockUseExperimentFlag.mockImplementation((key) => key === "onyx_artsy-lens")
+    __globalStoreTestUtils__?.injectFeatureFlags({ AREnableArtsyLens: false })
+
+    renderOverlay()
+
+    expect(screen.queryByTestId("search-by-photo-button")).not.toBeOnTheScreen()
   })
 
   it("renders the Search by Photo button when onyx_artsy-lens is on", () => {
@@ -64,6 +76,22 @@ describe("GlobalSearchInputOverlay — Search by Photo entry point", () => {
 
     expect(hideModal).toHaveBeenCalledTimes(1)
     expect(navigate).toHaveBeenCalledWith("/lens")
+  })
+
+  it("reports the button tap as the overlay button entry point", () => {
+    mockUseExperimentFlag.mockImplementation((key) => key === "onyx_artsy-lens")
+
+    renderOverlay()
+
+    fireEvent.press(screen.getByTestId("search-by-photo-button"))
+
+    expect(mockTrackEvent).toHaveBeenCalledExactlyOnceWith({
+      action: "tappedSearchByImage",
+      context_module: "searchOverlay",
+      context_screen_owner_type: "home",
+      destination_screen_owner_type: "searchByImage",
+      type: "search_overlay_button",
+    })
   })
 
   describe("the camera icon inside the input", () => {
@@ -108,6 +136,22 @@ describe("GlobalSearchInputOverlay — Search by Photo entry point", () => {
 
       expect(hideModal).toHaveBeenCalledTimes(1)
       expect(navigate).toHaveBeenCalledWith("/lens")
+    })
+
+    it("reports the tap against the overlay, not the search bar", () => {
+      mockUseExperimentFlag.mockImplementation((key) => key === "onyx_artsy-lens")
+
+      renderOverlay()
+
+      fireEvent.press(screen.getByTestId("search-overlay-camera-icon"))
+
+      expect(mockTrackEvent).toHaveBeenCalledExactlyOnceWith({
+        action: "tappedSearchByImage",
+        context_module: "searchOverlay",
+        context_screen_owner_type: "home",
+        destination_screen_owner_type: "searchByImage",
+        type: "search_input_icon",
+      })
     })
   })
 })

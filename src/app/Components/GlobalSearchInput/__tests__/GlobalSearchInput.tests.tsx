@@ -1,6 +1,7 @@
 import { OwnerType } from "@artsy/cohesion"
 import { fireEvent, screen } from "@testing-library/react-native"
 import { GlobalSearchInput } from "app/Components/GlobalSearchInput/GlobalSearchInput"
+import { __globalStoreTestUtils__ } from "app/store/GlobalStore"
 import { useExperimentFlag } from "app/system/flags/hooks/useExperimentFlag"
 import { navigate } from "app/system/navigation/navigate"
 import { useSelectedTab } from "app/utils/hooks/useSelectedTab"
@@ -31,6 +32,7 @@ describe("GlobalSearchInput", () => {
     jest.clearAllMocks()
     mockUseledTab.mockReturnValue("home")
     mockUseExperimentFlag.mockReturnValue(false)
+    __globalStoreTestUtils__?.injectFeatureFlags({ AREnableArtsyLens: true })
   })
 
   it("renders the search label properly", () => {
@@ -69,6 +71,15 @@ describe("GlobalSearchInput", () => {
       expect(screen.queryByTestId("search-input-camera-icon")).not.toBeOnTheScreen()
     })
 
+    it("hides the camera icon when AREnableArtsyLens is off, even if the experiment is on", () => {
+      mockUseExperimentFlag.mockImplementation((key) => key === "onyx_artsy-lens")
+      __globalStoreTestUtils__?.injectFeatureFlags({ AREnableArtsyLens: false })
+
+      renderWithWrappers(<GlobalSearchInput ownerType={OwnerType.home} />)
+
+      expect(screen.queryByTestId("search-input-camera-icon")).not.toBeOnTheScreen()
+    })
+
     // The icon used to sit inside the bar's `pointerEvents="none"` subtree, so tapping it opened
     // the text-search overlay like any other part of the bar.
     it("opens the camera directly, without the search overlay, when the icon is tapped", () => {
@@ -86,7 +97,22 @@ describe("GlobalSearchInput", () => {
 
       expect(navigate).toHaveBeenCalledWith("/lens")
       expect(onOverlayVisibilityChange).not.toHaveBeenCalledWith(true)
-      expect(mockTrackEvent).not.toHaveBeenCalled()
+    })
+
+    it("reports the tap as the search input icon entry point", () => {
+      mockUseExperimentFlag.mockImplementation((key) => key === "onyx_artsy-lens")
+
+      renderWithWrappers(<GlobalSearchInput ownerType={OwnerType.home} />)
+
+      fireEvent.press(screen.getByTestId("search-input-camera-icon"))
+
+      expect(mockTrackEvent).toHaveBeenCalledExactlyOnceWith({
+        action: "tappedSearchByImage",
+        context_module: "header",
+        context_screen_owner_type: "home",
+        destination_screen_owner_type: "searchByImage",
+        type: "search_input_icon",
+      })
     })
   })
 

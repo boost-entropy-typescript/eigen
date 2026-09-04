@@ -85,7 +85,12 @@ export const LensAnalyzing: React.FC<Props> = ({ route, navigation }) => {
 
         // LensResults owns the cropped file after navigation.
         tempPhotoUris.current = tempPhotoUris.current.filter((uri) => uri !== cropped.uri)
-        navigation.replace("LensResults", { s3Bucket: bucket, s3Key: key, photoUri: cropped.uri })
+        navigation.replace("LensResults", {
+          s3Bucket: bucket,
+          s3Key: key,
+          photoUri: cropped.uri,
+          fromLibrary: !!photo.fromLibrary,
+        })
       })
       .catch((error) => {
         if (cancelled) {
@@ -140,7 +145,7 @@ export const LensAnalyzing: React.FC<Props> = ({ route, navigation }) => {
               height={displayCard.height}
               borderRadius={16}
               overflow="hidden"
-              bg="mono10"
+              bg="mono100"
               justifyContent="center"
               alignItems="center"
             >
