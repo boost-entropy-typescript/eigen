@@ -1,6 +1,6 @@
 import { CameraStrokeIcon } from "@artsy/icons/native"
 import { Flex, Spinner, Text, Theme } from "@artsy/palette-mobile"
-import { useIsFocused } from "@react-navigation/native"
+import { useFocusEffect, useIsFocused } from "@react-navigation/native"
 import { StackScreenProps } from "@react-navigation/stack"
 import { captureException, withScope } from "@sentry/react-native"
 import {
@@ -17,11 +17,12 @@ import { LensCornerBrackets } from "app/Scenes/Lens/Components/LensCornerBracket
 import { LensHeader } from "app/Scenes/Lens/Components/LensHeader"
 import { LensPermissionPlaceholder } from "app/Scenes/Lens/Components/LensPermissionPlaceholder"
 import { LensNavigationStack } from "app/Scenes/Lens/types"
+import { GlobalStore } from "app/store/GlobalStore"
 import { goBack } from "app/system/navigation/navigate"
 import { requestPhotos } from "app/utils/requestPhotos"
 import useAppState from "app/utils/useAppState"
-import { useRef, useState } from "react"
-import { AppState, Linking } from "react-native"
+import { useCallback, useRef, useState } from "react"
+import { AppState, Linking, StatusBar } from "react-native"
 
 type Props = StackScreenProps<LensNavigationStack, "LensCamera">
 
@@ -33,7 +34,7 @@ type LensScreenState = LensCameraStatus | { kind: "loading" }
  */
 export const LensCamera: React.FC<Props> = ({ navigation }) => {
   const [state, setState] = useState<LensScreenState>({ kind: "loading" })
-  const [torchEnabled, setTorchEnabled] = useState(false)
+  const [torchMode, setTorchMode] = useState<"on" | "off">()
   const camera = useRef<LensCameraPreviewHandle>(null)
   // Measured, not read from useWindowDimensions(), which over-reports height on Android -- see
   // `LensPhoto.captureContainerWidth`. With the window's value the brackets sit below true center.
@@ -41,6 +42,8 @@ export const LensCamera: React.FC<Props> = ({ navigation }) => {
 
   const isFocused = useIsFocused()
   const [appState, setAppState] = useState(AppState.currentState)
+  const theme = GlobalStore.useAppState((state) => state.devicePrefs.colorScheme)
+
   useAppState({ onChange: setAppState })
   const isActive = isFocused && appState === "active"
 
@@ -64,7 +67,7 @@ export const LensCamera: React.FC<Props> = ({ navigation }) => {
   }
 
   const handleToggleTorch = () => {
-    setTorchEnabled((current) => !current)
+    setTorchMode((current) => (current === "on" ? "off" : "on"))
   }
 
   const handleSelectFromLibrary = async () => {
@@ -96,6 +99,19 @@ export const LensCamera: React.FC<Props> = ({ navigation }) => {
     }
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      requestAnimationFrame(() => {
+        // Explicitly set the status bar style to Light Content
+        StatusBar.setBarStyle("light-content", true)
+      })
+
+      return () => {
+        StatusBar.setBarStyle(theme === "dark" ? "light-content" : "dark-content", true)
+      }
+    }, [theme])
+  )
+
   return (
     <Theme theme="v3light">
       <Flex
@@ -125,7 +141,7 @@ export const LensCamera: React.FC<Props> = ({ navigation }) => {
         <LensCameraPreview
           ref={camera}
           isActive={!!isActive && state.kind === "ready"}
-          torchEnabled={torchEnabled}
+          torchMode={torchMode}
           onStatusChange={setState}
           onCapture={(photo) =>
             navigation.navigate("LensAnalyzing", {
@@ -169,7 +185,7 @@ export const LensCamera: React.FC<Props> = ({ navigation }) => {
             mode={state.kind === "ready" ? "camera" : "libraryOnly"}
             isCameraInitialized={state.kind === "ready"}
             deviceHasTorch={state.kind === "ready" && state.hasTorch}
-            isTorchEnabled={torchEnabled}
+            isTorchEnabled={torchMode === "on"}
             onTakePhoto={handleTakePhoto}
             onToggleTorch={handleToggleTorch}
             onSelectFromLibrary={handleSelectFromLibrary}
