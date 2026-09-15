@@ -31,6 +31,20 @@ type AI {
   ): AIPromptTemplateConnection
 }
 
+"""
+A stable, client-safe description of what the agent is currently doing.
+"""
+enum AIAgentActivity {
+  FINDING_RECOMMENDATIONS
+  LOADING_ARTWORK_DETAILS
+  SEARCHING_ARTISTS
+  SEARCHING_ARTSY
+  SEARCHING_ARTWORKS
+  SEARCHING_FAIRS
+  SEARCHING_SHOWS
+  THINKING
+}
+
 union AIAgentEvent = AIAgentTextDelta | AIAgentToolCall | AIAgentToolResult | AIAgentTurnComplete
 
 input AIAgentMessageInput {
@@ -50,13 +64,27 @@ type AIAgentTextDelta {
 
 type AIAgentToolCall {
   """
-  Human-readable label, e.g. "Searching artists…".
+  Stable, client-safe activity for rendering localized progress UI.
+  """
+  activity: AIAgentActivity!
+
+  """
+  Developer-facing tool arguments, populated only when debug mode is enabled.
+  """
+  debugSummary: String
+
+  """
+  Generic human-readable label, e.g. "Searching for artists…".
   """
   summary: String
   toolName: String!
 }
 
 type AIAgentToolResult {
+  """
+  Developer-facing failure detail, populated only when debug mode is enabled.
+  """
+  debugSummary: String
   ok: Boolean!
   summary: String
   toolName: String!
@@ -82,6 +110,11 @@ input AIAgentTurnInput {
   Prior turns, owned and replayed by the client.
   """
   history: [AIAgentMessageInput!]
+
+  """
+  Request developer-facing tool-call details. Honored only where the server enables debug mode; ignored elsewhere.
+  """
+  includeDebugToolCalls: Boolean
 
   """
   The new user message.
@@ -8643,7 +8676,7 @@ type CityGuideEvent {
   The city guide event's UUID
   """
   internalID: String!
-  itineraries: [Itinerary!]!
+  itineraries: [CityGuideEventItinerary!]!
   publishedAt(
     format: String
 
@@ -8672,6 +8705,32 @@ type CityGuideEvent {
     """
     timezone: String
   ): String!
+}
+
+type CityGuideEventItinerary {
+  """
+  A globally unique ID.
+  """
+  id: ID!
+
+  """
+  The attachment's own UUID, not the itinerary's
+  """
+  internalID: String!
+  itinerary: Itinerary!
+  position: Int!
+}
+
+type CityGuideEventMutationFailure {
+  mutationError: GravityMutationError
+}
+
+union CityGuideEventMutationResponseOrError =
+    CityGuideEventMutationFailure
+  | CityGuideEventMutationSuccess
+
+type CityGuideEventMutationSuccess {
+  cityGuideEvent: CityGuideEvent
 }
 
 enum CityGuideEventStatus {
@@ -26385,6 +26444,18 @@ type Mutation {
   ): CreateCatalogArtworkDocumentMutationPayload
 
   """
+  Create a city guide event. Needs the editorial or content-manager role.
+  """
+  createCityGuideEvent(input: createCityGuideEventInput!): createCityGuideEventPayload
+
+  """
+  Attach a curated itinerary to a city guide event, at the end of its list. Returns the event with its itineraries in their new order.
+  """
+  createCityGuideEventItinerary(
+    input: createCityGuideEventItineraryInput!
+  ): createCityGuideEventItineraryPayload
+
+  """
   Create a collection
   """
   createCollection(input: createCollectionInput!): createCollectionPayload
@@ -26693,6 +26764,18 @@ type Mutation {
   deleteCatalogArtworkDocument(
     input: DeleteCatalogArtworkDocumentMutationInput!
   ): DeleteCatalogArtworkDocumentMutationPayload
+
+  """
+  Delete a city guide event and its itinerary attachments. The itineraries themselves are left alone.
+  """
+  deleteCityGuideEvent(input: deleteCityGuideEventInput!): deleteCityGuideEventPayload
+
+  """
+  Detach an itinerary from a city guide event. The itinerary itself is left alone. Returns the event with its remaining itineraries.
+  """
+  deleteCityGuideEventItinerary(
+    input: deleteCityGuideEventItineraryInput!
+  ): deleteCityGuideEventItineraryPayload
 
   """
   Delete a collection
@@ -27040,6 +27123,11 @@ type Mutation {
   ): MyCollectionUpdateArtworkPayload
 
   """
+  Publish a city guide event, making it visible to everyone. Needs the editorial or content-manager role.
+  """
+  publishCityGuideEvent(input: publishCityGuideEventInput!): publishCityGuideEventPayload
+
+  """
   Publish an itinerary. Needs the publish ability.
   """
   publishItinerary(input: publishItineraryInput!): publishItineraryPayload
@@ -27277,6 +27365,11 @@ type Mutation {
   ): UnlinkAuthenticationMutationPayload
 
   """
+  Unpublish a city guide event, hiding it from everyone but editors. Needs the editorial or content-manager role.
+  """
+  unpublishCityGuideEvent(input: unpublishCityGuideEventInput!): unpublishCityGuideEventPayload
+
+  """
   Unpublish an itinerary. Also revokes its share link, so it becomes private. Needs the publish ability.
   """
   unpublishItinerary(input: unpublishItineraryInput!): unpublishItineraryPayload
@@ -27358,6 +27451,18 @@ type Mutation {
   Updates a catalog edition set. Requires partner or partner support permissions.
   """
   updateCatalogEditionSet(input: UpdateCatalogEditionSetInput!): UpdateCatalogEditionSetPayload
+
+  """
+  Update a city guide event. Only the fields sent are changed.
+  """
+  updateCityGuideEvent(input: updateCityGuideEventInput!): updateCityGuideEventPayload
+
+  """
+  Move an itinerary within its city guide event's list. Returns the event with its itineraries in their new order.
+  """
+  updateCityGuideEventItinerary(
+    input: updateCityGuideEventItineraryInput!
+  ): updateCityGuideEventItineraryPayload
 
   """
   Update a collection
@@ -44739,6 +44844,60 @@ type createBuyerOfferPayload {
   offerOrError: OfferMutationResponse
 }
 
+input createCityGuideEventInput {
+  """
+  A featured city's slug, e.g. london-united-kingdom.
+  """
+  citySlug: String!
+  clientMutationId: String
+  description: String
+
+  """
+  ISO 8601 datetime. Must not be before `startAt`.
+  """
+  endAt: String!
+
+  """
+  URL of an image already uploaded to S3, from which Gravity builds the event's hero `ArImage`
+  """
+  imageURL: String
+
+  """
+  ISO 8601 datetime, e.g. 2026-10-05T00:00:00Z.
+  """
+  startAt: String!
+  subtitle: String
+
+  """
+  IANA time zone identifier, e.g. Europe/London.
+  """
+  timeZone: String
+  title: String!
+}
+
+input createCityGuideEventItineraryInput {
+  """
+  The event's id or slug.
+  """
+  cityGuideEventID: String!
+  clientMutationId: String
+
+  """
+  The itinerary's id or slug. Must be a curated guide.
+  """
+  itineraryID: String!
+}
+
+type createCityGuideEventItineraryPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
+}
+
+type createCityGuideEventPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
+}
+
 input createCollectionInput {
   clientMutationId: String
   name: String!
@@ -44945,6 +45104,34 @@ type deleteAlertPayload {
   responseOrError: DeleteAlertResponseOrError
 }
 
+input deleteCityGuideEventInput {
+  clientMutationId: String
+
+  """
+  The event's id or slug.
+  """
+  id: String!
+}
+
+input deleteCityGuideEventItineraryInput {
+  clientMutationId: String
+
+  """
+  The attachment's id (not the itinerary's).
+  """
+  id: String!
+}
+
+type deleteCityGuideEventItineraryPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
+}
+
+type deleteCityGuideEventPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
+}
+
 input deleteCollectionInput {
   clientMutationId: String
   id: String!
@@ -45146,6 +45333,20 @@ type partnerBiographyBlurb {
   text: String
 }
 
+input publishCityGuideEventInput {
+  clientMutationId: String
+
+  """
+  The event's id or slug.
+  """
+  id: String!
+}
+
+type publishCityGuideEventPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
+}
+
 input publishItineraryInput {
   clientMutationId: String
   id: String!
@@ -45313,6 +45514,20 @@ type submitOrderPayload {
   orderOrError: OrderMutationResponse
 }
 
+input unpublishCityGuideEventInput {
+  clientMutationId: String
+
+  """
+  The event's id or slug.
+  """
+  id: String!
+}
+
+type unpublishCityGuideEventPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
+}
+
 input unpublishItineraryInput {
   clientMutationId: String
   id: String!
@@ -45417,6 +45632,66 @@ input updateBuyerOfferInput {
 type updateBuyerOfferPayload {
   clientMutationId: String
   offerOrError: OfferMutationResponse
+}
+
+input updateCityGuideEventInput {
+  """
+  A featured city's slug, e.g. london-united-kingdom.
+  """
+  citySlug: String
+  clientMutationId: String
+  description: String
+
+  """
+  ISO 8601 datetime. Must not be before `startAt`.
+  """
+  endAt: String
+
+  """
+  The event's id or slug.
+  """
+  id: String!
+
+  """
+  URL of an image already uploaded to S3, from which Gravity builds the event's hero `ArImage`. Pass `null` to clear the current hero image.
+  """
+  imageURL: String
+
+  """
+  ISO 8601 datetime, e.g. 2026-10-05T00:00:00Z.
+  """
+  startAt: String
+  subtitle: String
+
+  """
+  IANA time zone identifier, e.g. Europe/London.
+  """
+  timeZone: String
+  title: String
+}
+
+input updateCityGuideEventItineraryInput {
+  clientMutationId: String
+
+  """
+  The attachment's id (not the itinerary's).
+  """
+  id: String!
+
+  """
+  Zero-based position among the event's itineraries, via acts_as_list's insert_at.
+  """
+  position: Int!
+}
+
+type updateCityGuideEventItineraryPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
+}
+
+type updateCityGuideEventPayload {
+  clientMutationId: String
+  responseOrError: CityGuideEventMutationResponseOrError
 }
 
 input updateCollectionInput {
