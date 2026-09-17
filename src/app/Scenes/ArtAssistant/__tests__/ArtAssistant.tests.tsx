@@ -5,6 +5,7 @@ import { ART_ASSISTANT_SUGGESTIONS } from "app/Scenes/ArtAssistant/Components/Ar
 import { ART_ASSISTANT_TURN_IDLE_TIMEOUT_MS } from "app/Scenes/ArtAssistant/hooks/useArtAssistantConversation"
 import { __globalStoreTestUtils__ } from "app/store/GlobalStore"
 import { renderWithHookWrappersTL, renderWithWrappers } from "app/utils/tests/renderWithWrappers"
+import { KeyboardController } from "react-native-keyboard-controller"
 import { createMockEnvironment } from "relay-test-utils"
 
 jest.mock("app/Scenes/ArtAssistant/Components/ArtAssistantArtworkRail", () => ({
@@ -29,6 +30,7 @@ describe("ArtAssistant", () => {
     expect(screen.getByText("Art Assistant")).toBeOnTheScreen()
     expect(screen.getByText("What are you looking for?")).toBeOnTheScreen()
     expect(screen.getByTestId("art-assistant-layout")).toBeOnTheScreen()
+    expect(screen.queryByRole("button", { name: "Start a new chat" })).not.toBeOnTheScreen()
     expect(screen.getByLabelText("Art Assistant prompt")).toBeOnTheScreen()
     expect(screen.getByLabelText("Send")).toBeDisabled()
 
@@ -65,7 +67,22 @@ describe("ArtAssistant", () => {
     expect(screen.getByLabelText("Send")).toBeDisabled()
   })
 
-  it("shows progress before publishing the completed response", async () => {
+  it("highlights the composer while it is focused", () => {
+    renderWithWrappers(<ArtAssistant />)
+
+    const composer = screen.getByTestId("art-assistant-composer-input-container")
+    const prompt = screen.getByLabelText("Art Assistant prompt")
+
+    expect(composer).toHaveStyle({ borderColor: "#D8D8D8" })
+
+    fireEvent(prompt, "focus")
+    expect(composer).toHaveStyle({ borderColor: "#1023D7" })
+
+    fireEvent(prompt, "blur")
+    expect(composer).toHaveStyle({ borderColor: "#D8D8D8" })
+  })
+
+  it("shows activity before publishing the completed response", async () => {
     const environment = createMockEnvironment()
     renderWithHookWrappersTL(<ArtAssistant />, environment)
 
@@ -202,5 +219,50 @@ describe("ArtAssistant", () => {
     fireEvent.press(screen.getByLabelText("Close Art Assistant"))
 
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it("starts a new chat after confirmation", () => {
+    const environment = createMockEnvironment()
+    renderWithHookWrappersTL(<ArtAssistant />, environment)
+
+    fireEvent.changeText(screen.getByLabelText("Art Assistant prompt"), "blue painting")
+    fireEvent.press(screen.getByLabelText("Send"))
+
+    const firstConversationID =
+      environment.mock.getMostRecentOperation().request.variables.input.conversationID
+
+    fireEvent.changeText(screen.getByLabelText("Art Assistant prompt"), "red sculpture")
+    fireEvent.press(screen.getByRole("button", { name: "Start a new chat" }))
+
+    expect(screen.getByText("Start a new chat?")).toBeOnTheScreen()
+    expect(screen.getByText("Your current chat will be lost.")).toBeOnTheScreen()
+    expect(KeyboardController.dismiss).toHaveBeenCalledTimes(1)
+
+    fireEvent.press(screen.getByTestId("dialog-primary-action-button"))
+
+    expect(screen.queryByText("blue painting")).not.toBeOnTheScreen()
+    expect(screen.getByText("What are you looking for?")).toBeOnTheScreen()
+    expect(screen.queryByRole("button", { name: "Start a new chat" })).not.toBeOnTheScreen()
+    expect(screen.getByLabelText("Art Assistant prompt")).toHaveProp("value", "red sculpture")
+
+    fireEvent.press(screen.getByLabelText("Send"))
+
+    const { input } = environment.mock.getMostRecentOperation().request.variables
+
+    expect(input.conversationID).not.toEqual(firstConversationID)
+    expect(input.history).toEqual([])
+  })
+
+  it("keeps the current chat when starting a new chat is canceled", () => {
+    const environment = createMockEnvironment()
+    renderWithHookWrappersTL(<ArtAssistant />, environment)
+
+    fireEvent.changeText(screen.getByLabelText("Art Assistant prompt"), "blue painting")
+    fireEvent.press(screen.getByLabelText("Send"))
+    fireEvent.press(screen.getByRole("button", { name: "Start a new chat" }))
+    fireEvent.press(screen.getByTestId("dialog-secondary-action-button"))
+
+    expect(screen.getByText("blue painting")).toBeOnTheScreen()
+    expect(screen.getByRole("button", { name: "Start a new chat" })).toBeOnTheScreen()
   })
 })

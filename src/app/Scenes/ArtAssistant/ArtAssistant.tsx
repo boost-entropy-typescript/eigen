@@ -1,6 +1,8 @@
-import { CloseIcon } from "@artsy/icons/native"
+import { CloseIcon, EditIcon } from "@artsy/icons/native"
 import {
+  Button,
   DEFAULT_HIT_SLOP,
+  Dialog,
   Flex,
   Input,
   Screen,
@@ -18,6 +20,7 @@ import { goBack } from "app/system/navigation/navigate"
 import { KeyboardAvoidingContainer } from "app/utils/keyboard/KeyboardAvoidingContainer"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { StyleSheet } from "react-native"
+import { KeyboardController } from "react-native-keyboard-controller"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 interface ArtAssistantProps {
@@ -29,11 +32,24 @@ export const ArtAssistant: React.FC<ArtAssistantProps> = ({ onClose = goBack }) 
   const space = useSpace()
   const { bottom } = useSafeAreaInsets()
   const [prompt, setPrompt] = useState("")
-  const { isResponding, messages, submit } = useArtAssistantConversation()
+  const [isComposerFocused, setIsComposerFocused] = useState(false)
+  const [isNewChatDialogVisible, setIsNewChatDialogVisible] = useState(false)
+  const { isResponding, messages, startNewConversation, submit } = useArtAssistantConversation()
   const messageListRef = useRef<FlashListRef<ArtAssistantMessageType>>(null)
   const pendingScrollIndex = useRef<number | null>(null)
   const composerKeyboardGap = space(1)
   const canSend = prompt.trim().length > 0 && !isResponding
+
+  const handleOpenNewChatDialog = () => {
+    KeyboardController.dismiss()
+    setIsNewChatDialogVisible(true)
+  }
+
+  const handleStartNewConversation = () => {
+    setIsNewChatDialogVisible(false)
+    pendingScrollIndex.current = null
+    startNewConversation()
+  }
 
   const handleSend = () => {
     const text = prompt.trim()
@@ -81,8 +97,19 @@ export const ArtAssistant: React.FC<ArtAssistantProps> = ({ onClose = goBack }) 
   return (
     <Screen>
       <Screen.Header
-        hideLeftElements
         hideTitle
+        hideLeftElements={messages.length === 0}
+        leftElements={
+          <Button
+            accessibilityLabel="Start a new chat"
+            icon={<EditIcon />}
+            onPress={handleOpenNewChatDialog}
+            size="small"
+            variant="outline"
+          >
+            New
+          </Button>
+        }
         rightElements={
           <Touchable
             accessibilityLabel="Close Art Assistant"
@@ -131,17 +158,20 @@ export const ArtAssistant: React.FC<ArtAssistantProps> = ({ onClose = goBack }) 
         >
           <Flex
             flex={1}
-            borderColor="mono15"
+            borderColor={isComposerFocused ? "blue100" : "mono15"}
             borderRadius={50}
             borderWidth={StyleSheet.hairlineWidth}
             minHeight={50}
             justifyContent="center"
             px={2}
+            testID="art-assistant-composer-input-container"
           >
             <Input
               accessibilityLabel="Art Assistant prompt"
               multiline
+              onBlur={() => setIsComposerFocused(false)}
               onChangeText={setPrompt}
+              onFocus={() => setIsComposerFocused(true)}
               placeholder="Tell us what you'd like..."
               placeholderTextColor={color("mono60")}
               style={{
@@ -178,6 +208,21 @@ export const ArtAssistant: React.FC<ArtAssistantProps> = ({ onClose = goBack }) 
           </Touchable>
         </Flex>
       </KeyboardAvoidingContainer>
+
+      <Dialog
+        detail="Your current chat will be lost."
+        isVisible={isNewChatDialogVisible}
+        onBackgroundPress={() => setIsNewChatDialogVisible(false)}
+        primaryCta={{
+          text: "Start new chat",
+          onPress: handleStartNewConversation,
+        }}
+        secondaryCta={{
+          text: "Cancel",
+          onPress: () => setIsNewChatDialogVisible(false),
+        }}
+        title="Start a new chat?"
+      />
     </Screen>
   )
 }
