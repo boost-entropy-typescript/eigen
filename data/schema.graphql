@@ -6263,6 +6263,13 @@ type ArtworksCollectionsBatchUpdateSuccess {
   removedFromCollections: [Collection]
 }
 
+enum ArtworksForUserBackfillSource {
+  """
+  Biddable lots with the most bids, as shown on /auctions
+  """
+  TRENDING_LOTS
+}
+
 enum AssetType {
   ADDITIONAL_FILE
   IMAGE
@@ -8680,6 +8687,22 @@ type CityGuideEvent {
   articles: [CityGuideEventArticle!]!
   citySlug: String!
   description: String
+  displayEndAt(
+    format: String
+
+    """
+    A tz database time zone, otherwise falls back to "X-TIMEZONE" header. See http://www.iana.org/time-zones, https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    """
+    timezone: String
+  ): String
+  displayStartAt(
+    format: String
+
+    """
+    A tz database time zone, otherwise falls back to "X-TIMEZONE" header. See http://www.iana.org/time-zones, https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    """
+    timezone: String
+  ): String
   endAt(
     format: String
 
@@ -8779,7 +8802,7 @@ enum CityGuideEventStatus {
   CLOSED
 
   """
-  Started, hasn't ended
+  Within the event's display window
   """
   CURRENT
 
@@ -23458,6 +23481,11 @@ type Itinerary {
   authorName: String
   citySlug: String!
   description: String
+
+  """
+  Whether the guide is editorially featured, to be surfaced ahead of its peers.
+  """
+  featured: Boolean!
   heroImage: Image
 
   """
@@ -33246,6 +33274,11 @@ type Query {
     The ID of the marketing collection to be used for backfill
     """
     backfillMarketingCollectionID: String
+
+    """
+    Where backfill artworks come from. Defaults to the marketing collection, or the backfill set.
+    """
+    backfillSource: ArtworksForUserBackfillSource
     before: String
     excludeArtworkIds: [String] = []
     excludeDislikedArtworks: Boolean = false
@@ -34177,6 +34210,11 @@ type Query {
     Only itineraries for this city
     """
     citySlug: String
+
+    """
+    Only featured, or only unfeatured, itineraries
+    """
+    featured: Boolean
     first: Int
 
     """
@@ -43222,6 +43260,11 @@ type Viewer {
     The ID of the marketing collection to be used for backfill
     """
     backfillMarketingCollectionID: String
+
+    """
+    Where backfill artworks come from. Defaults to the marketing collection, or the backfill set.
+    """
+    backfillSource: ArtworksForUserBackfillSource
     before: String
     excludeArtworkIds: [String] = []
     excludeDislikedArtworks: Boolean = false
@@ -43948,6 +43991,11 @@ type Viewer {
     Only itineraries for this city
     """
     citySlug: String
+
+    """
+    Only featured, or only unfeatured, itineraries
+    """
+    featured: Boolean
     first: Int
 
     """
@@ -45283,6 +45331,16 @@ input createCityGuideEventInput {
   description: String
 
   """
+  Display until (ISO 8601). Null defaults to endAt.
+  """
+  displayEndAt: String
+
+  """
+  Display from (ISO 8601). Null defaults to startAt.
+  """
+  displayStartAt: String
+
+  """
   ISO 8601 datetime. Must not be before `startAt`.
   """
   endAt: String!
@@ -45356,6 +45414,11 @@ input createItineraryInput {
   citySlug: String!
   clientMutationId: String
   description: String
+
+  """
+  Mark the guide as editorially featured. Needs the content_manager role.
+  """
+  featured: Boolean
 
   """
   URL of an image already uploaded to S3, from which Gravity builds the itinerary's hero `ArImage`
@@ -46149,6 +46212,16 @@ input updateCityGuideEventInput {
   description: String
 
   """
+  Display until (ISO 8601). Null defaults to endAt.
+  """
+  displayEndAt: String
+
+  """
+  Display from (ISO 8601). Null defaults to startAt.
+  """
+  displayStartAt: String
+
+  """
   ISO 8601 datetime. Must not be before `startAt`.
   """
   endAt: String
@@ -46236,6 +46309,11 @@ input updateItineraryInput {
   citySlug: String
   clientMutationId: String
   description: String
+
+  """
+  Mark the guide as editorially featured. Needs the content_manager role.
+  """
+  featured: Boolean
 
   """
   Generate a new share token for this itinerary, replacing any existing one
