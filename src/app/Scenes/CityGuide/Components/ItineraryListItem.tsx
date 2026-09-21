@@ -21,6 +21,11 @@ interface Props {
   rightSlot?: React.ReactNode
   /** "card" is the home rail's white rounded tile; "row" is the list screen's plain row. */
   variant?: "row" | "card"
+  /**
+   * Fired before RouterLink's default navigate-on-press. Optional: shared with the
+   * itineraries list screen, which has no tap tracking of its own to add here.
+   */
+  onPress?: () => void
 }
 
 export const ItineraryListItem: React.FC<Props> = ({
@@ -30,6 +35,7 @@ export const ItineraryListItem: React.FC<Props> = ({
   href,
   rightSlot,
   variant = "row",
+  onPress,
 }) => {
   const isCard = variant === "card"
 
@@ -37,6 +43,7 @@ export const ItineraryListItem: React.FC<Props> = ({
     <RouterLink
       testID="itinerary-list-item"
       to={href}
+      onPress={onPress}
       disablePrefetch
       style={
         isCard
@@ -64,22 +71,18 @@ export const ItineraryListItem: React.FC<Props> = ({
             }}
           />
         ) : (
-          // Only the home rail's card keeps a placeholder box — the list screen's plain row
-          // just drops the image section instead.
-          isCard && (
-            <Flex
-              testID="itinerary-list-item-no-image"
-              width={IMAGE_SIZE}
-              height={IMAGE_SIZE}
-              backgroundColor="mono10"
-              alignItems="center"
-              justifyContent="center"
-              borderTopLeftRadius={CARD_RADIUS}
-              borderBottomLeftRadius={CARD_RADIUS}
-            >
-              <NoArtIcon width={NO_ICON_SIZE} height={NO_ICON_SIZE} fill="mono60" />
-            </Flex>
-          )
+          <Flex
+            testID="itinerary-list-item-no-image"
+            width={IMAGE_SIZE}
+            height={IMAGE_SIZE}
+            backgroundColor="mono10"
+            alignItems="center"
+            justifyContent="center"
+            borderTopLeftRadius={isCard ? CARD_RADIUS : 0}
+            borderBottomLeftRadius={isCard ? CARD_RADIUS : 0}
+          >
+            <NoArtIcon width={NO_ICON_SIZE} height={NO_ICON_SIZE} fill="mono60" />
+          </Flex>
         )}
 
         <Flex flex={1} py={0.5}>

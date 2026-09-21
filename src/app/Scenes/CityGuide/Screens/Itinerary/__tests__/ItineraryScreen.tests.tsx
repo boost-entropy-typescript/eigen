@@ -1,8 +1,14 @@
+import { ActionType, ContextModule, OwnerType } from "@artsy/cohesion"
 import { act, fireEvent, screen, waitFor } from "@testing-library/react-native"
 import { ItineraryScreen } from "app/Scenes/CityGuide/Screens/Itinerary/ItineraryScreen"
+import { goBack } from "app/system/navigation/navigate"
+import { mockTrackEvent } from "app/utils/tests/globallyMockedStuff"
 import { setupTestWrapper } from "app/utils/tests/setupTestWrapper"
-import { RefreshControl } from "react-native"
+import { Alert, RefreshControl } from "react-native"
+import { PanGesture } from "react-native-gesture-handler"
+import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils"
 import RNShare from "react-native-share"
+import { ReactTestInstance } from "react-test-renderer"
 import { MockPayloadGenerator } from "relay-test-utils"
 
 // React-test-renderer has issues with memo components, so we need to mock the palette-mobile
@@ -13,6 +19,15 @@ jest.mock("@artsy/palette-mobile", () => ({
 }))
 
 jest.mock("react-native-share", () => ({ open: jest.fn() }))
+
+// A stop title `Text` renders its string directly, or as the lone string among other
+// (falsy, conditional) children — either way, this pulls out just the string.
+const stopTitleText = (element: ReactTestInstance) => {
+  // eslint-disable-next-line testing-library/no-node-access -- React props, not a DOM node.
+  const children = element.props.children
+
+  return Array.isArray(children) ? children.find((child) => typeof child === "string") : children
+}
 
 const stop = (n: number) => ({
   internalID: `stop-${n}`,
@@ -39,6 +54,7 @@ const stop = (n: number) => ({
 const ITINERARY = {
   internalID: "chill-vibes-only",
   isCurated: true,
+  isMine: false,
   citySlug: "london-united-kingdom",
   slug: "chill-vibes-only",
   shareToken: null,
@@ -69,6 +85,36 @@ describe("ItineraryScreen", () => {
     expect(await screen.findByText("Chill Vibes Only")).toBeTruthy()
     expect(screen.getByText("Day 1 — Easing in")).toBeTruthy()
     expect(screen.getByText("Day 2 — London Frieze")).toBeTruthy()
+  })
+
+  it("tracks the screen view against the guide's own id and slug", async () => {
+    renderWithRelay({ Itinerary: () => ITINERARY }, props)
+
+    await screen.findByText("Chill Vibes Only")
+
+    expect(mockTrackEvent).toHaveBeenCalledWith({
+      action: ActionType.screen,
+      context_screen_owner_type: OwnerType.cityGuideGuide,
+      context_screen_owner_id: "chill-vibes-only",
+      context_screen_owner_slug: "chill-vibes-only",
+    })
+  })
+
+  it("tracks the map/list toggle under the cityGuideMapToggle module", async () => {
+    renderWithRelay({ Itinerary: () => ITINERARY }, props)
+
+    fireEvent.press(await screen.findByTestId("itinerary-view-toggle"))
+
+    expect(mockTrackEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: ActionType.tappedNavigationTab,
+        context_module: ContextModule.cityGuideMapToggle,
+        context_screen_owner_type: OwnerType.cityGuideGuide,
+        context_screen_owner_id: "chill-vibes-only",
+        context_screen_owner_slug: "chill-vibes-only",
+        subject: "map",
+      })
+    )
   })
 
   it("numbers stops continuously across sections", async () => {
@@ -130,9 +176,7 @@ describe("ItineraryScreen", () => {
   })
 
   describe("your own itinerary", () => {
-    // `isCurated` is the only ownership signal available: Query.itinerary exposes no
-    // "is this mine".
-    const own = { ...ITINERARY, isCurated: false }
+    const own = { ...ITINERARY, isCurated: false, isMine: true }
 
     it("labels it Your Itinerary and drops the byline", async () => {
       renderWithRelay({ Itinerary: () => own }, props)
@@ -219,6 +263,30 @@ describe("ItineraryScreen", () => {
       // Still no numbering: the headings say where you are, not in what order.
       expect(screen.queryAllByTestId("itinerary-stop-number")).toHaveLength(0)
     })
+
+    it("offers to edit it", async () => {
+      renderWithRelay({ Itinerary: () => own }, props)
+
+      fireEvent.press(await screen.findByLabelText("Edit Chill Vibes Only"))
+
+      expect(await screen.findByText("Edit Itinerary")).toBeOnTheScreen()
+      expect(screen.getByTestId("itinerary-edit-name")).toHaveProp("value", "Chill Vibes Only")
+    })
+
+    it("goes back once the itinerary is deleted from its own edit sheet", async () => {
+      const view = renderWithRelay({ Itinerary: () => own }, props)
+
+      fireEvent.press(await screen.findByLabelText("Edit Chill Vibes Only"))
+      fireEvent.press(await screen.findByTestId("itinerary-edit-delete"))
+
+      view.mockResolveLastOperation({
+        deleteItineraryPayload: () => ({
+          responseOrError: { __typename: "ItineraryMutationSuccess" },
+        }),
+      })
+
+      await waitFor(() => expect(goBack).toHaveBeenCalled())
+    })
   })
 
   describe("a curated guide", () => {
@@ -240,6 +308,27 @@ describe("ItineraryScreen", () => {
 
       expect(screen.queryByTestId("itinerary-picker")).not.toBeOnTheScreen()
     })
+
+    it("offers no way to edit it", async () => {
+      renderWithRelay({ Itinerary: () => ITINERARY }, props)
+
+      await screen.findByText("Chill Vibes Only")
+
+      expect(screen.queryByTestId("itinerary-edit")).not.toBeOnTheScreen()
+    })
+  })
+
+  // `isCurated` alone can't distinguish your own itinerary from someone else's personal one
+  // opened via their share link — only `isMine` can.
+  it("offers no way to edit someone else's personal itinerary opened via a share link", async () => {
+    renderWithRelay(
+      { Itinerary: () => ({ ...ITINERARY, isCurated: false, isMine: false, shareToken: "tok" }) },
+      { ...props, shareToken: "tok" }
+    )
+
+    await screen.findByText("Chill Vibes Only")
+
+    expect(screen.queryByTestId("itinerary-edit")).not.toBeOnTheScreen()
   })
 
   // `ItineraryStop.image` is the curator's uploaded one, and the app sends none when it
@@ -521,6 +610,207 @@ describe("ItineraryScreen", () => {
       expect(await screen.findAllByText("Chill Vibes Only")).toHaveLength(2)
       expect(screen.getByText("Stop 1")).toBeOnTheScreen()
       expect(screen.getByText("Stop 2")).toBeOnTheScreen()
+    })
+  })
+
+  // No real ownership field on `Query.itinerary` yet (FIREWORKS-36 is adding one), so the gate
+  // is `!isCurated && !shareToken` — exercised here rather than restated per screen.
+  describe("swipe to delete a stop", () => {
+    const own = { ...ITINERARY, isCurated: false, shareToken: null }
+
+    beforeEach(() => {
+      jest.spyOn(Alert, "alert").mockImplementation((_title, _message, buttons) => {
+        buttons?.find((button) => button.style === "destructive")?.onPress?.()
+      })
+    })
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    const swipeAndConfirmDelete = (stopID: string) => {
+      fireGestureHandler<PanGesture>(getByGestureTestId(`pan-itinerary-stop-${stopID}`), [
+        { translationX: 0 },
+        { translationX: -100 },
+      ])
+      fireEvent.press(screen.getByTestId(`delete-button-${stopID}`))
+    }
+
+    it("offers no swipe gesture on a curated guide", async () => {
+      renderWithRelay({ Itinerary: () => ITINERARY }, props)
+
+      await screen.findByText("Stop 1")
+
+      expect(screen.queryByTestId("delete-button-stop-1")).toBeNull()
+    })
+
+    it("offers no swipe gesture on a shared link to somebody else's itinerary", async () => {
+      renderWithRelay(
+        { Itinerary: () => ({ ...own, shareToken: "abc123" }) },
+        { ...props, shareToken: "abc123" }
+      )
+
+      await screen.findByText("Stop 1")
+
+      expect(screen.queryByTestId("delete-button-stop-1")).toBeNull()
+    })
+
+    it("removes the swiped stop from the list and the map after a confirmed delete", async () => {
+      const view = renderWithRelay({ Itinerary: () => own }, props)
+
+      expect(await screen.findByText("Stop 1")).toBeOnTheScreen()
+
+      swipeAndConfirmDelete("stop-1")
+
+      await waitFor(() =>
+        expect(view.env.mock.getMostRecentOperation().request.node.params.name).toBe(
+          "useDeleteItineraryStopMutation"
+        )
+      )
+
+      await act(async () => {
+        view.env.mock.resolveMostRecentOperation((operation) =>
+          MockPayloadGenerator.generate(operation, {
+            Mutation: () => ({
+              deleteItineraryStop: {
+                responseOrError: {
+                  __typename: "ItineraryStopMutationSuccess",
+                  itineraryStop: { internalID: "stop-1" },
+                },
+              },
+            }),
+          })
+        )
+      })
+
+      await waitFor(() => expect(screen.queryByText("Stop 1")).not.toBeOnTheScreen())
+      expect(screen.getByText("Stop 2")).toBeOnTheScreen()
+    })
+
+    // Removing the only stop left in a day empties that section, which the screen already
+    // drops rather than showing a heading over nothing.
+    it("drops a section once its last stop is swipe-deleted", async () => {
+      const twoDays = {
+        ...own,
+        sections: [
+          { internalID: "day-1", title: "Day 1 — Easing in", stops: [stop(1)] },
+          { internalID: "day-2", title: "Day 2 — London Frieze", stops: [stop(2)] },
+        ],
+      }
+      const view = renderWithRelay({ Itinerary: () => twoDays }, props)
+
+      expect(await screen.findByText("Stop 1")).toBeOnTheScreen()
+
+      swipeAndConfirmDelete("stop-1")
+
+      await waitFor(() =>
+        expect(view.env.mock.getMostRecentOperation().request.node.params.name).toBe(
+          "useDeleteItineraryStopMutation"
+        )
+      )
+
+      await act(async () => {
+        view.env.mock.resolveMostRecentOperation((operation) =>
+          MockPayloadGenerator.generate(operation, {
+            Mutation: () => ({
+              deleteItineraryStop: {
+                responseOrError: {
+                  __typename: "ItineraryStopMutationSuccess",
+                  itineraryStop: { internalID: "stop-1" },
+                },
+              },
+            }),
+          })
+        )
+      })
+
+      await waitFor(() => expect(screen.queryByText("Stop 1")).not.toBeOnTheScreen())
+      // The section itself is gone too, not just its stop, since it now has none left.
+      expect(screen.queryByText("Day 1 — Easing in")).not.toBeOnTheScreen()
+      expect(screen.getByText("Stop 2")).toBeOnTheScreen()
+    })
+
+    // Regression test: `handleReorderStop` used to resolve its section and previous order from
+    // the raw itinerary rather than the displayed one, so a drag after a delete in the same
+    // section ran `moveStop` on stale indices and produced the wrong order.
+    it("keeps the order correct when a stop is dragged after an earlier delete in the same section", async () => {
+      const fourStops = {
+        ...own,
+        sections: [
+          {
+            internalID: "day-1",
+            title: "Day 1 — Easing in",
+            stops: [stop(1), stop(2), stop(3), stop(4)],
+          },
+        ],
+      }
+      const view = renderWithRelay({ Itinerary: () => fourStops }, props)
+
+      expect(await screen.findByText("Stop 1")).toBeOnTheScreen()
+
+      // Delete Stop 2, so the displayed section is [Stop 1, Stop 3, Stop 4] while the raw
+      // itinerary this screen still holds keeps all four.
+      swipeAndConfirmDelete("stop-2")
+
+      await waitFor(() =>
+        expect(view.env.mock.getMostRecentOperation().request.node.params.name).toBe(
+          "useDeleteItineraryStopMutation"
+        )
+      )
+
+      await act(async () => {
+        view.env.mock.resolveMostRecentOperation((operation) =>
+          MockPayloadGenerator.generate(operation, {
+            Mutation: () => ({
+              deleteItineraryStop: {
+                responseOrError: {
+                  __typename: "ItineraryStopMutationSuccess",
+                  itineraryStop: { internalID: "stop-2" },
+                },
+              },
+            }),
+          })
+        )
+      })
+
+      await waitFor(() => expect(screen.queryByText("Stop 2")).not.toBeOnTheScreen())
+
+      // Drag Stop 1 (displayed index 0 of 3) to the end of the displayed section.
+      act(() => {
+        fireGestureHandler<PanGesture>(getByGestureTestId("drag-itinerary-stop-stop-1"), [
+          { translationY: 0 },
+          { translationY: 20 },
+        ])
+      })
+
+      await waitFor(() =>
+        expect(view.env.mock.getMostRecentOperation().request.node.params.name).toBe(
+          "useReorderItineraryStopMutation"
+        )
+      )
+
+      await act(async () => {
+        view.env.mock.resolveMostRecentOperation((operation) =>
+          MockPayloadGenerator.generate(operation, {
+            Mutation: () => ({
+              updateItineraryStop: {
+                responseOrError: {
+                  __typename: "ItineraryStopMutationSuccess",
+                  itineraryStop: { internalID: "stop-1" },
+                },
+              },
+            }),
+          })
+        )
+      })
+
+      // Dragging Stop 1 to the end of the displayed [Stop 1, Stop 3, Stop 4] gives
+      // [Stop 3, Stop 4, Stop 1] — resolving the section against the raw (undeleted)
+      // itinerary would instead have produced [Stop 3, Stop 1, Stop 4].
+      await waitFor(() => {
+        const titles = screen.getAllByText(/^Stop \d$/).map(stopTitleText)
+        expect(titles).toEqual(["Stop 3", "Stop 4", "Stop 1"])
+      })
     })
   })
 })
