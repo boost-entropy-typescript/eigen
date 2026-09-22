@@ -12,7 +12,7 @@ import { matchClusterLeavesToPlaces } from "app/Scenes/CityGuide/Components/Map/
 import { BOUNDS_PADDING, PREVIEW_BOTTOM_OFFSET } from "app/Scenes/CityGuide/utils/constants"
 import { ArtsyMapStyleURL, configureMapbox } from "app/utils/mapbox"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Platform, ScrollView } from "react-native"
+import { ScrollView } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 configureMapbox()
@@ -57,6 +57,12 @@ export const MapView: React.FC<Props> = ({
 }) => {
   const [selectedSectionId, setSelectedSectionId] = useState(ALL_PILL_ID)
   const [isMapLoaded, setIsMapLoaded] = useState(false)
+  // Only remaining use is the camera bounds' paddingTop below: how much of an overlay sits
+  // on top of the map that fitted pins need clearance from. 0 until the pills row renders
+  // and measures itself — a single-section itinerary never renders that row (see
+  // `showPills`), and correctly has no overlay to clear. Previously also fed the scale
+  // bar's top offset, which needed `pillsTopOffset` as a floor before the pills row
+  // measured anything bigger; now moot, since the scale bar is disabled outright below.
   const [overlayHeight, setOverlayHeight] = useState(0)
   // The tapped cluster's id (to recolour its circle) and places (for the rail), kept as one
   // state so the two can never drift apart.
@@ -196,10 +202,7 @@ export const MapView: React.FC<Props> = ({
         // Tapping empty map dismisses the rail, the same way tapping empty map dismisses
         // the frozen City Guide map's selection (CityGuideMap.tsx's onPressMap).
         onPress={dismissClusterRail}
-        scaleBarPosition={{
-          top: overlayHeight + (Platform.OS === "ios" ? space(2) : top),
-          left: space(2),
-        }}
+        scaleBarEnabled={false}
       >
         <MapboxGL.Camera
           ref={cameraRef}
