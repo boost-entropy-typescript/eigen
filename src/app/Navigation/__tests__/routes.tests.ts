@@ -87,6 +87,60 @@ describe("artsy.net routes", () => {
     `)
   })
 
+  it("routes a shared itinerary link to CityGuideItinerary with its shareToken", () => {
+    expect(
+      matchRoute(
+        "https://staging.artsy.net/city-guide/new-york-ny-usa/itinerary/abc123?shareToken=xyz"
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "module": "CityGuideItinerary",
+        "params": {
+          "citySlug": "new-york-ny-usa",
+          "itineraryId": "abc123",
+          "shareToken": "xyz",
+        },
+        "type": "match",
+      }
+    `)
+  })
+
+  it("preserves `+`, `/` and `=` in a base64 shareToken instead of decoding `+` into a space", () => {
+    expect(
+      matchRoute(
+        "https://staging.artsy.net/city-guide/new-york-ny-usa/itinerary/abc123?shareToken=aB%2BcD%2FeF%3D"
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "module": "CityGuideItinerary",
+        "params": {
+          "citySlug": "new-york-ny-usa",
+          "itineraryId": "abc123",
+          "shareToken": "aB+cD/eF=",
+        },
+        "type": "match",
+      }
+    `)
+  })
+
+  it("does not throw on a shareToken containing a literal, unencoded `%`", () => {
+    expect(
+      matchRoute(
+        "https://staging.artsy.net/city-guide/new-york-ny-usa/itinerary/abc123?shareToken=100%25"
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "module": "CityGuideItinerary",
+        "params": {
+          "citySlug": "new-york-ny-usa",
+          "itineraryId": "abc123",
+          "shareToken": "100%",
+        },
+        "type": "match",
+      }
+    `)
+  })
+
   it("routes to Artist", () => {
     expect(matchRoute("/artist/banksy")).toMatchInlineSnapshot(`
       {
@@ -951,6 +1005,28 @@ describe("artsy.net routes", () => {
     expect(matchRoute("/local-discovery?citySlug=london-united-kingdom")).toMatchInlineSnapshot(`
       {
         "module": "LocalDiscovery",
+        "params": {
+          "citySlug": "london-united-kingdom",
+        },
+        "type": "match",
+      }
+    `)
+  })
+
+  it("routes to CityGuide", () => {
+    expect(matchRoute("/city-guide")).toMatchInlineSnapshot(`
+      {
+        "module": "CityGuide",
+        "params": {},
+        "type": "match",
+      }
+    `)
+  })
+
+  it("routes to CityGuide with a preselected city slug", () => {
+    expect(matchRoute("/city-guide?citySlug=london-united-kingdom")).toMatchInlineSnapshot(`
+      {
+        "module": "CityGuide",
         "params": {
           "citySlug": "london-united-kingdom",
         },
