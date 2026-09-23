@@ -19349,6 +19349,11 @@ type Fair implements EntityWithFilterArtworksConnectionInterface & Node {
   ): String
   bannerSize: String
   cached: Int
+
+  """
+  The City Guide city nearest to this fair's location, if one is within range
+  """
+  cityGuideCity: City
   contact(format: Format): String
   counts: FairCounts
   endAt(
@@ -23752,9 +23757,17 @@ type ItineraryStop {
 }
 
 enum ItineraryStopCategory {
+  BAR
+  CAFE
   FAIR
   GALLERY
+  HOTEL
+  LANDMARK
   MUSEUM
+  OTHER
+  PARK
+  RESTAURANT
+  SHOP
   SHOW
 }
 
@@ -37700,6 +37713,11 @@ type Show implements EntityWithFilterArtworksConnectionInterface & Node {
   The general city, derived from a fair location, a show location or a potential city
   """
   city: String
+
+  """
+  The City Guide city nearest to this show's location (fair location, then show location), if one is within range
+  """
+  cityGuideCity: City
 
   """
   An object that represents some of the numbers you might want to highlight
