@@ -8655,6 +8655,11 @@ type City {
   ): FairConnection
   fullName: String!
   name: String!
+
+  """
+  Recent editorial articles about artists showing in this city now, ranked by the signed-in user's taste. Excludes the city's curated articles. Empty when signed out.
+  """
+  recommendedArticlesConnection(first: Int = 4): ArticleConnection
   showsConnection(
     after: String
     before: String
@@ -8664,6 +8669,11 @@ type City {
     """
     dayThreshold: Int
     first: Int
+
+    """
+    Rank shows by the signed-in user's taste, ignoring `sort`. Signed-out requests, and requests Gravity can't rank, fall back to `sort`, or START_AT_ASC if `sort` is not set.
+    """
+    forYou: Boolean
 
     """
     Whether to include local discovery stubs
@@ -19178,7 +19188,7 @@ type Fair implements EntityWithFilterArtworksConnectionInterface & Node {
   cached: Int
 
   """
-  The City Guide city nearest to this fair's location, if one is within range
+  The City Guide city nearest to this fair's location, if one is within range. Without coordinates, the City Guide city whose name exactly matches the fair's city
   """
   cityGuideCity: City
   contact(format: Format): String
@@ -37473,7 +37483,7 @@ type Show implements EntityWithFilterArtworksConnectionInterface & Node {
   city: String
 
   """
-  The City Guide city nearest to this show's location (fair location, then show location), if one is within range
+  The City Guide city nearest to this show's location (fair location, then show location), if one is within range. Without coordinates, the City Guide city whose name exactly matches the show's city
   """
   cityGuideCity: City
 
