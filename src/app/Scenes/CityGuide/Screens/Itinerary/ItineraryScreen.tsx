@@ -246,14 +246,6 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
   */
   const showSectionHeaders = isEditorial || sections.length > 1
 
-  // Numbering runs continuously across sections, so each needs its running start.
-  let runningTotal = 0
-  const sectionStartNumbers = sections.map((section) => {
-    const start = runningTotal + 1
-    runningTotal += section.stops.length
-    return start
-  })
-
   return (
     <ProvideScreenTrackingWithCohesionSchema
       info={screen({
@@ -356,7 +348,6 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
                 citySlug={citySlug}
                 selectedPlaceId={selectedStopId}
                 onSelectPlace={setSelectedStopId}
-                numbered={isEditorial}
                 safeArea
               />
             ) : (
@@ -375,7 +366,9 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
                       handlers.onContentSizeChange(width, height)
                     )
                   }}
-                  contentContainerStyle={{ paddingBottom: 40 }}
+                  // Tied to the map button's `bottom: -50` / `translateY: -60` below:
+                  // changing those offsets changes this gap too.
+                  contentContainerStyle={{ paddingBottom: 60 }}
                   refreshControl={
                     <RefreshControl
                       refreshing={isRefreshing}
@@ -395,7 +388,6 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
                           key={section.internalID}
                           section={section}
                           sectionIndex={index}
-                          startNumber={isEditorial ? sectionStartNumbers[index] : undefined}
                           showHeader={showSectionHeaders}
                           citySlug={itinerary.citySlug}
                           itineraryId={itineraryId}

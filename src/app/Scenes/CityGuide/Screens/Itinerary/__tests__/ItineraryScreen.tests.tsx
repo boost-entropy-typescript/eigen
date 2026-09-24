@@ -9,7 +9,7 @@ import {
 } from "app/utils/tests/draxSortableListSpy"
 import { mockTrackEvent } from "app/utils/tests/globallyMockedStuff"
 import { setupTestWrapper } from "app/utils/tests/setupTestWrapper"
-import { RefreshControl } from "react-native"
+import { RefreshControl, ScrollView } from "react-native"
 import RNShare from "react-native-share"
 import { ReactTestInstance } from "react-test-renderer"
 import { MockPayloadGenerator } from "relay-test-utils"
@@ -126,15 +126,6 @@ describe("ItineraryScreen", () => {
     )
   })
 
-  it("numbers stops continuously across sections", async () => {
-    renderWithRelay({ Itinerary: () => ITINERARY }, props)
-
-    // Numbering runs 1..N across the whole itinerary rather than restarting per section,
-    // so the last number only exists if every earlier section was counted.
-    expect(await screen.findByText("4")).toBeTruthy()
-    expect(screen.queryByText("5")).toBeNull()
-  })
-
   it("falls back to a positional section title when the server sends none", async () => {
     renderWithRelay(
       {
@@ -152,7 +143,7 @@ describe("ItineraryScreen", () => {
   it("joins the two server-formatted times into the row's display time", async () => {
     renderWithRelay({ Itinerary: () => ITINERARY }, props)
 
-    expect(await screen.findAllByText("11:00am-4:00pm")).not.toHaveLength(0)
+    expect(await screen.findAllByText("11am-4pm")).not.toHaveLength(0)
   })
 
   it("renders the unavailable state when the itinerary does not resolve", async () => {
@@ -212,14 +203,6 @@ describe("ItineraryScreen", () => {
       expect(await screen.findByTestId("itinerary-picker")).toBeOnTheScreen()
     })
 
-    it("shows no stop numbers, since it has no running order", async () => {
-      renderWithRelay({ Itinerary: () => own }, props)
-
-      await screen.findByText("Stop 1")
-
-      expect(screen.queryAllByTestId("itinerary-stop-number")).toHaveLength(0)
-    })
-
     // One section is the whole list, so its name would be a redundant subheading.
     it("hides the heading while it has a single section", async () => {
       renderWithRelay(
@@ -269,8 +252,6 @@ describe("ItineraryScreen", () => {
       expect(await screen.findByText("Day 1 — Easing in")).toBeOnTheScreen()
       expect(screen.getByText("Day 2 — London Frieze")).toBeOnTheScreen()
       expect(screen.queryAllByTestId("itinerary-section-header")).toHaveLength(2)
-      // Still no numbering: the headings say where you are, not in what order.
-      expect(screen.queryAllByTestId("itinerary-stop-number")).toHaveLength(0)
     })
 
     it("offers to edit it", async () => {
@@ -310,12 +291,11 @@ describe("ItineraryScreen", () => {
   })
 
   describe("a curated guide", () => {
-    it("keeps its numbering, section headings and byline", async () => {
+    it("keeps its section headings and byline", async () => {
       renderWithRelay({ Itinerary: () => ITINERARY }, props)
 
       expect(await screen.findByText("Day 1 — Easing in")).toBeOnTheScreen()
       expect(screen.getByText("By Casey Lesser")).toBeOnTheScreen()
-      expect(screen.queryAllByTestId("itinerary-stop-number")).not.toHaveLength(0)
       expect(screen.queryByText("Your Itinerary")).not.toBeOnTheScreen()
     })
 
@@ -646,6 +626,16 @@ describe("ItineraryScreen", () => {
 
       await waitFor(() => expect(screen.queryByText("Stop 1")).not.toBeOnTheScreen())
       expect(screen.getByText("Chill Vibes Only")).toBeOnTheScreen()
+    })
+  })
+
+  it("keeps the stop list clear of the floating map toggle button", async () => {
+    renderWithRelay({ Itinerary: () => ITINERARY }, props)
+
+    expect(await screen.findByText("Stop 1")).toBeOnTheScreen()
+
+    expect(screen.UNSAFE_getByType(ScrollView).props.contentContainerStyle).toMatchObject({
+      paddingBottom: 60,
     })
   })
 

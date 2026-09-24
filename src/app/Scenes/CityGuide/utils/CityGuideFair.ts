@@ -15,7 +15,10 @@ export const cityGuideFairFragment = graphql`
       partners
     }
     location {
-      postalCode
+      address
+      cityGuideNeighborhood {
+        slug
+      }
       coordinates {
         lat
         lng
