@@ -13,6 +13,7 @@ import {
 } from "@artsy/palette-mobile"
 import { ItineraryScreenQuery } from "__generated__/ItineraryScreenQuery.graphql"
 import { LoadFailureView } from "app/Components/LoadFailureView"
+import { ZeroState } from "app/Components/States/ZeroState"
 import { useToast } from "app/Components/Toast/toastHook"
 import { ACCESSIBLE_DEFAULT_ICON_SIZE, BACK_BUTTON_SIZE_SIZE } from "app/Components/constants"
 import { AddToItineraryProvider } from "app/Scenes/CityGuide/Components/AddToItinerarySheet/AddToItineraryProvider"
@@ -105,6 +106,7 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
   const [isMapView, setIsMapView] = useState(false)
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [coverSavedAt, setCoverSavedAt] = useState(0)
 
   const color = useColor()
 
@@ -382,9 +384,24 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
                     />
                   }
                 >
-                  <ItineraryHeader itinerary={itinerary} topInset={top + NAVBAR_HEIGHT} />
+                  <ItineraryHeader
+                    itinerary={itinerary}
+                    topInset={top + NAVBAR_HEIGHT}
+                    localCoverRefreshKey={coverSavedAt}
+                  />
 
                   <Flex px={2} pt={2}>
+                    {!sections.length && (
+                      <ZeroState
+                        bigTitle="No stops yet"
+                        subtitle={
+                          canEdit
+                            ? "Tap + on any show, fair or gallery in City Guide, or on its own page, to add it to this itinerary."
+                            : "Stops added to this itinerary will show up here."
+                        }
+                      />
+                    )}
+
                     <Join separator={<Spacer y={2} />}>
                       {sections.map((section, index) => (
                         <ItinerarySectionRow
@@ -413,41 +430,44 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
             {/*
               Positioning copied from CityGuideFloatingMapButton for matching height. Not
               reused directly since that component hardcodes a navigate to /local-discovery.
+              Hidden with no stops: there is nothing to place on a map.
             */}
-            <MotiView
-              from={{ opacity: 0.5, translateY: 0 }}
-              animate={{ opacity: 1, translateY: -60 }}
-              transition={{ type: "timing", duration: 300, delay: 200 }}
-            >
-              <Flex
-                style={{
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "absolute",
-                  bottom: -50,
-                  zIndex: 1000,
-                }}
+            {!!sections.length && (
+              <MotiView
+                from={{ opacity: 0.5, translateY: 0 }}
+                animate={{ opacity: 1, translateY: -60 }}
+                transition={{ type: "timing", duration: 300, delay: 200 }}
               >
-                <Button
-                  testID="itinerary-view-toggle"
-                  size="small"
-                  onPress={() => {
-                    trackCohesionEvent({
-                      action: ActionType.tappedNavigationTab,
-                      context_module: ContextModule.cityGuideMapToggle,
-                      context_screen_owner_type: OwnerType.cityGuideGuide,
-                      context_screen_owner_id: itinerary.internalID,
-                      context_screen_owner_slug: itinerary.slug ?? undefined,
-                      subject: isMapView ? "list" : "map",
-                    })
-                    setIsMapView((current) => !current)
+                <Flex
+                  style={{
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "absolute",
+                    bottom: -50,
+                    zIndex: 1000,
                   }}
                 >
-                  {isMapView ? "Show in List" : "Show in Map"}
-                </Button>
-              </Flex>
-            </MotiView>
+                  <Button
+                    testID="itinerary-view-toggle"
+                    size="small"
+                    onPress={() => {
+                      trackCohesionEvent({
+                        action: ActionType.tappedNavigationTab,
+                        context_module: ContextModule.cityGuideMapToggle,
+                        context_screen_owner_type: OwnerType.cityGuideGuide,
+                        context_screen_owner_id: itinerary.internalID,
+                        context_screen_owner_slug: itinerary.slug ?? undefined,
+                        subject: isMapView ? "list" : "map",
+                      })
+                      setIsMapView((current) => !current)
+                    }}
+                  >
+                    {isMapView ? "Show in List" : "Show in Map"}
+                  </Button>
+                </Flex>
+              </MotiView>
+            )}
           </Screen.Body>
         </Screen>
 
@@ -459,12 +479,14 @@ const Itinerary: React.FC<Props> = ({ citySlug, itineraryId, shareToken }) => {
               internalID: itinerary.internalID,
               name: itinerary.title,
               description: itinerary.description,
+              coverImageUrl: itinerary.heroImage?.url,
             }}
             citySlug={itinerary.citySlug}
             // The guide is gone once deleted — leave, rather than refetch it. The itineraries
-            // list is evicted separately, by the sheet's own delete mutation updater, since this
+            // list is evicted and reloaded separately, by the sheet's own delete, since this
             // screen doesn't own that list's Relay connection.
             onDeleted={goBack}
+            onCoverSaved={() => setCoverSavedAt(Date.now())}
           />
         )}
       </AddToItineraryProvider>
@@ -487,6 +509,9 @@ export const itineraryQuery = graphql`
       description
       slug
       shareToken
+      heroImage {
+        url(version: "large")
+      }
       ...ItineraryHeader_itinerary
       ...ItineraryShareButton_itinerary
 
