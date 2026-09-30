@@ -377,6 +377,36 @@ describe("ItineraryScreen", () => {
     expect(screen.queryByTestId("itinerary-share")).not.toBeOnTheScreen()
   })
 
+  it.each([
+    {
+      heroImage: ITINERARY.heroImage,
+      authorName: "Alex Collector",
+      label: "Created by Alex Collector",
+    },
+    { heroImage: null, authorName: "Alex Collector", label: "Created by Alex Collector" },
+    { heroImage: ITINERARY.heroImage, authorName: null, label: "Shared Itinerary" },
+    { heroImage: null, authorName: " ", label: "Shared Itinerary" },
+  ])(
+    "identifies a shared itinerary as $label with hero $heroImage",
+    async ({ heroImage, authorName, label }) => {
+      renderWithRelay(
+        {
+          Itinerary: () => ({
+            ...ITINERARY,
+            isCurated: false,
+            isMine: false,
+            heroImage,
+            authorName,
+          }),
+        },
+        { ...props, shareToken: "tok" }
+      )
+
+      expect(await screen.findByText(label)).toBeOnTheScreen()
+      expect(screen.queryByText("Your Itinerary")).not.toBeOnTheScreen()
+    }
+  )
+
   // `ItineraryStop.image` is the curator's uploaded one, and the app sends none when it
   // creates a stop, so without a fallback every entity-backed stop rendered an empty box.
   describe("a stop's image", () => {
@@ -474,12 +504,23 @@ describe("ItineraryScreen", () => {
   })
 
   describe("the share button", () => {
-    it("offers no way to share a curated guide", async () => {
-      renderWithRelay({ Itinerary: () => ITINERARY }, props)
+    it("shares a curated guide by its public slug, with no token", async () => {
+      const view = renderWithRelay({ Itinerary: () => ITINERARY }, props)
 
-      await screen.findByText("Chill Vibes Only")
+      fireEvent.press(await screen.findByTestId("itinerary-share"))
 
-      expect(screen.queryByTestId("itinerary-share")).not.toBeOnTheScreen()
+      await waitFor(() => expect(RNShare.open).toHaveBeenCalled())
+      expect(RNShare.open).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining(
+            "https://staging.artsy.net/city-guide/london-united-kingdom/itinerary/chill-vibes-only"
+          ),
+        })
+      )
+      expect(RNShare.open).not.toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining("shareToken") })
+      )
+      expect(view.env.mock.getAllOperations()).toHaveLength(0)
     })
 
     it("mints a share token for a personal itinerary and includes it in the link", async () => {
